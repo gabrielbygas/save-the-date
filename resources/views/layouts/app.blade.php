@@ -14,9 +14,14 @@
         <!-- Scripts -->
         @vite(['resources/css/app.css', 'resources/js/app.js'])
     </head>
-    <body class="font-sans antialiased">
+    <body class="font-sans antialiased" style="max-width: 90%; margin: 0 auto;">
         <div class="min-h-screen bg-gray-100">
-            @include('layouts.navigation')
+            <!-- Header with Logo -->
+            <header class="bg-white shadow">
+                <div class="max-w-7xl mx-auto py-4 px-4 sm:px-6 lg:px-8 flex justify-center">
+                    <img src="{{ asset('path_to_your_logo.png') }}" alt="Logo" class="h-16">
+                </div>
+            </header>
 
             <!-- Page Heading -->
             @isset($header)
@@ -29,7 +34,7 @@
 
             <!-- Page Content -->
             <main>
-                {{ $slot }}
+                @yield('content')
             </main>
         </div>
     </body>
