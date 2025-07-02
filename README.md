@@ -1,61 +1,114 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# 💍 Save The Date – Application de commande d'affiches et vidéos de mariage  
+**Save The Date** is a Laravel web application for creating beautiful wedding visuals: posters & one-minute video clips.
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+---
 
-## About Laravel
+## 🌍 Résumé / Summary
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+**FR 🇫🇷**  
+Une application élégante et intuitive, pensée pour les couples africains (notamment congolais), qui souhaitent commander en ligne :  
+- ✅ 1 affiche personnalisée  
+- ✅ 4 affiches personnalisées  
+- ✅ 4 affiches + 1 vidéo de 60 secondes
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+**EN 🇬🇧**  
+A stylish, modern platform tailored for African couples (esp. Congolese), to order:  
+- ✅ 1 customized poster  
+- ✅ 4 customized posters  
+- ✅ 4 posters + 60-second video
+  
+## 📌 Public ciblé / Target Audience
+**FR 🇫🇷**  Couples congolais ou africains, wedding planners, familles souhaitant offrir un joli souvenir avant le grand jour.
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+**EN 🇬🇧** Congolese and African couples, event planners, and anyone wishing to create a memorable save-the-date.
 
-## Learning Laravel
+## 🎨 Inspirations culturelles / Cultural Style
+**FR 🇫🇷** Tissus traditionnels : wax, pagne, madras
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+Couleurs vives & élégance festive
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+Célébration de l’amour africain
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+**EN 🇬🇧** Traditional fabrics: wax, pagne, madras
 
-## Laravel Sponsors
+Vibrant colors & festive elegance
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+Celebration of African love
 
-### Premium Partners
+---
 
-- **[Vehikl](https://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development)**
-- **[Active Logic](https://activelogic.com)**
+## ✨ Fonctionnalités / Features
 
-## Contributing
+| Français 🇫🇷                                      | English 🇬🇧                                   |
+|--------------------------------------------------|-----------------------------------------------|
+| Interface intuitive en une page                  | Clean one-page user interface                 |
+| Téléchargement d’images (max 5 fichiers)         | Upload up to 5 media files                    |
+| Téléchargement vidéo (si pack sélectionné)       | Video upload option based on chosen pack      |
+| Choix de thème parmi 10 styles         | 10 available wedding design themes    |
+| Confirmation automatique après commande          | Auto confirmation & success message           |
+| Code sécurisé (Laravel validation & storage)     | Safe form processing, Laravel validation rules|
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+---
 
-## Code of Conduct
+## ⚙️ Technologies utilisées / Tech Stack
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+- Laravel 11.x  
+- Blade + Alpine.js  
+- Tailwind CSS  
+- MySQL  
+- Storage public + Preview system
 
-## Security Vulnerabilities
+---
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+## 📦 Installation
 
-## License
+```bash
+git clone https://github.com/gabrielbygas/save-the-date.git
+cd save-the-date
+composer install
+npm install && npm run dev
+cp .env.example .env
+php artisan key:generate
+php artisan migrate --seed
+php artisan storage:link
+php artisan serve
+```
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+
+## ✍️ Auteur / Author
+**FR 🇫🇷 Gabriel KALALA** Passionné par la tech, la culture congolaise et les expériences numériques mémorables. Ce projet est né du désir de sublimer la célébration de l’amour à l’africaine, avec raffinement et simplicité.
+
+**EN 🇬🇧 Gabriel KALALA**  Passionate about tech, Congolese culture, and memorable digital experiences. This project was born from the desire to elevate the celebration of African love with sophistication and simplicity.  
+
+## 📬 Contact & Contributions
+**FR 🇫🇷** Créé avec ❤️ par Gabriel KALALA. Contributions bienvenues via GitHub. **📫 Email : gabrielkalala@protonmail.com**
+**EN 🇬🇧** Created with ❤️ by Gabriel KALALA. Contributions are welcome via GitHub. **📫 Email: gabrielkalala@protonmail.com**
+
+## 📝 Licence
+
+**FR 🇫🇷** Ce projet est distribué sous la licence MIT.  
+> You are free to use, modify and share, with attribution to the original author.  
+Créé avec ❤️ par Gabriel KALALA.
+
+**EN 🇬🇧**  
+This project is distributed under the MIT License.  
+> You are free to use, modify and share, with attribution to the original author.  
+Built with ❤️ by Gabriel KALALA.  
+
+## 🙏 Remerciements / Acknowledgements
+
+**FR 🇫🇷 Merci à...**
+**EN 🇬🇧 Thanks to...**
+
+- 🤖 **Microsoft Copilot** 
+- 🤖 **ChatGPT**
+- 🤖 **Mistral**  
+- **Net Ninja** [https://www.youtube.com/@NetNinja]
+- **Graphikart** [https://www.youtube.com/@grafikart]
+- 🎨 **FR 🇫🇷 la culture congolaise et africaine** — pour son esthétique vibrante, son sens de la célébration, et ses inspirations visuelles inépuisables. **EN🇬🇧 Congolese & African culture** - for its vibrant aesthetics, celebratory spirit, and endless visual inspiration.
+- 💍 **FR 🇫🇷 Tous les couples afro qui célèbrent l’amour** avec fierté, élégance et créativité. **EN🇬🇧 All Afro couples celebrating love** with pride, elegance, and creativity.
+- 🚀 **FR 🇫🇷 La communauté Laravel** — pour sa documentation, ses packages puissants, et son esprit open source. **EN🇬🇧 The Laravel community** - for its documentation, powerful packages, and open-source ethos.
+- 💻 **FR 🇫🇷 Les développeurs et designers africains** dont le talent mérite encore plus de lumière. **EN🇬🇧 African developers & designers** whose talents deserve even greater recognition.
+
+**FR 🇫🇷 Et surtout, à toi qui utilises ce projet avec amour et respect.**
+**EN🇬🇧 And most importantly, to you who uses this project with love and respect.**
