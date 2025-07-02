@@ -115,6 +115,6 @@
             alert(`${fileCount} fichier(s) sélectionné(s).`);
         });
     });
-</scrip>
+</script>
 
 @endsection

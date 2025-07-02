@@ -29,7 +29,7 @@
         </div>
     </header>
 
-    <div class="min-h-screen items-center justify-center" style="max-width: 80%; margin: 0 auto;">
+    <div class="min-h-screen items-center justify-center rounded-4" style="max-width: 980px; margin: 0 auto;">
 
         <!-- Page Heading -->
         @isset($header)
@@ -41,7 +41,7 @@
         @endisset
 
         <!-- Page Content -->
-        <main class="py-4 px-4">
+        <main class="py-4 px-4 rounded-9" style="max-width: 80%; margin: 0 auto;">
             @yield('content')
         </main>
     </div>
