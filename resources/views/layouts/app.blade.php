@@ -25,7 +25,7 @@
     <!-- Header with Logo -->
     <header class="bg-white shadow">
         <div class="max-w-7xl mx-auto py-4 px-4 sm:px-6 lg:px-8 flex justify-center">
-            <img src="{{ asset('images/savethedate.png') }}" alt="Logo" class="h-16">
+            <a href="{{ route('order.create') }}"><img src="{{ asset('images/savethedate.png') }}" alt="Logo" class="h-16"></a>
         </div>
     </header>
 
@@ -45,6 +45,14 @@
             @yield('content')
         </main>
     </div>
+
+    <!-- Pied de page -->
+    <footer class="bg-white shadow text-center mt-8 text-sm text-gray-700 py-2">
+        <p>© {{ date('Y') }} Save The Date. Tous droits réservés. 
+            <a href="{{ route('terms') }}" class="text-blue-600 underline">Conditions d'utilisation</a>
+        </p>
+    </footer>
+
 </body>
 
 </html>

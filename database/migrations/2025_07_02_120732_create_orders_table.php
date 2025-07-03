@@ -18,10 +18,11 @@ return new class extends Migration
             // 🛠️ CORRECTION : déclaration manuelle
             $table->unsignedBigInteger('theme_id')->nullable();
             $table->foreign('theme_id')->references('id')->on('themes')->onDelete('set null');
+            $table->string('order_id')->unique(); // Assure que chaque commande est unique
             $table->string('wedding_title'); // ex: "Mariage de Marie et Paul"
             $table->date('wedding_date');
             $table->string('wedding_location');
-            $table->enum('status', ['pending', 'processing', 'completed'])->default('pending');
+            $table->enum('status', ['pending', 'processing', 'completed', 'canceled'])->default('pending');
             $table->timestamps();
         });
 

@@ -20,4 +20,7 @@ Route::middleware('auth')->group(function () {
 Route::get('/order', [OrderController::class, 'create'])->name('order.create');
 Route::post('/order', [OrderController::class, 'store'])->name('order.store');
 
+Route::view('/terms', 'terms')->name('terms');
+
+
 require __DIR__.'/auth.php';
