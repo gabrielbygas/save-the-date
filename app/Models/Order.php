@@ -15,6 +15,8 @@ class Order extends Model
         'wedding_date',
         'wedding_location',
         'status', // e.g., "pending", "processing", "completed"
+        'confirmation_number', // <-- Assurez-vous qu'il est présent
+        'payment_due_at',
     ];
     
     /** @use HasFactory<\Database\Factories\OrderFactory> */

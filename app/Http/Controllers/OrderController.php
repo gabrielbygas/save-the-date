@@ -9,6 +9,8 @@ use App\Models\Client;
 use App\Models\Media;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
+use Carbon\Carbon;
+use Illuminate\Support\Facades\Log;
 
 class OrderController extends Controller
 {
@@ -40,7 +42,10 @@ class OrderController extends Controller
         $request['wedding_title'] = 'Mariage de ' . $request->mr_first_name . ' et ' . $request->mrs_first_name;
 
         // Génération d'un numéro de commande unique
-        $request['order_id'] = 'ORDER-' . strtoupper(uniqid());
+        $request['confirmation_number'] = 'ORDER-' . strtoupper(uniqid());
+
+        // date limite de paiement
+        $request['payment_due_at'] = Carbon::now()->addWeekdays(3); // 3 jours après la commande, ignorant les dimanches
 
         // 1. Créer le client
         $client = Client::create($request->only(['mr_first_name', 'mr_last_name', 'mrs_first_name', 'mrs_last_name', 'email', 'phone']));
@@ -49,10 +54,21 @@ class OrderController extends Controller
         $order = $client->orders()->create([
             'pack_id'          => $request->pack_id,
             'theme_id'         => $request->theme_id,
-            'order_id'         => $request->order_id,
-            'client_id'        => $client->id,
+            'confirmation_number'     => $request->confirmation_number,
             'wedding_title'    => $request->wedding_title,
             'wedding_date'     => $request->wedding_date,
+            'wedding_location' => $request->wedding_location,
+            'payment_due_at'   => $request->payment_due_at,
+        ]);
+
+        //sauvergader dans Log
+        Log::info('Nouvelle commande créée', [
+            'confirmation_number' => $order->confirmation_number,
+            'client_id' => $client->id,
+            'pack_id' => $request->pack_id,
+            'theme_id' => $request->theme_id,
+            'wedding_title' => $request->wedding_title,
+            'wedding_date' => $request->wedding_date,
             'wedding_location' => $request->wedding_location,
         ]);
 
