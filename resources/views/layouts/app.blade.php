@@ -20,7 +20,7 @@
 </head>
 
 <body class="font-sans antialiased"
-    style="background-image: url('{{ asset('images/savethedate_bg.png') }}'); background-size: cover; background-position: center;">
+    style="background-image: url('{{ asset('images/savethedate_bg1.jpg') }}'); background-size: cover; background-position: center;">
 
     <!-- Header with Logo -->
     <header class="bg-white shadow">

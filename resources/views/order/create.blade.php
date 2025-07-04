@@ -52,7 +52,7 @@
         <label class="block mt-4">Email *</label>
         <input type="email" name="email" class="w-full border p-2 rounded" value="{{ old('email') }}" required>
 
-        <label class="block mt-4">Téléphone *</label>
+        <label class="block mt-4">Numéro Whatsapp *</label>
         <input type="text" name="phone" class="w-full border p-2 rounded" value="{{ old('phone') }}" required>
 
         <label class="block mt-4">Date du mariage *</label>
