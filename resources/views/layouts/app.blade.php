@@ -20,12 +20,12 @@
 </head>
 
 <body class="font-sans antialiased"
-    style="background-image: url('{{ asset('images/savethedate_bg1.jpg') }}'); background-size: cover; background-position: center;">
+    style="background-image: url('{{ asset('images/savethedate_bg1.webp') }}'); background-size: cover; background-position: center;">
 
     <!-- Header with Logo -->
     <header class="bg-white shadow">
         <div class="max-w-7xl mx-auto py-4 px-4 sm:px-6 lg:px-8 flex justify-center">
-            <a href="{{ route('order.create') }}"><img src="{{ asset('images/savethedate.png') }}" alt="Logo" class="h-16"></a>
+            <a href="{{ route('order.create') }}"><img src="{{ asset('images/savethedate.webp') }}" alt="Logo" class="h-16"></a>
         </div>
     </header>
 
