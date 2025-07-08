@@ -6,7 +6,7 @@ use App\Http\Controllers\OrderController;
 
 
 Route::controller(OrderController::class)->group(function () {
-    Route::get('/', 'create')->name('order.create');
+    Route::get('/', 'create')->name('order.home');
     Route::get('/order', 'create')->name('order.create');
     Route::post('/order', 'store')->name('order.store');
 });
