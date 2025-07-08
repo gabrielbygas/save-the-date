@@ -5,7 +5,11 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\OrderController;
 
 
-Route::get('/', [OrderController::class, 'create'])->name('order.create');
+Route::controller(OrderController::class)->group(function () {
+    Route::get('/', 'create')->name('order.create');
+    Route::get('/order', 'create')->name('order.create');
+    Route::post('/order', 'store')->name('order.store');
+});
 
 Route::get('/dashboard', function () {
     return view('dashboard');
@@ -17,8 +21,7 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
-Route::get('/order', [OrderController::class, 'create'])->name('order.create');
-Route::post('/order', [OrderController::class, 'store'])->name('order.store');
+Route::view('/order/confirmation', 'mail.order_confirmation')->name('order.confirmation');
 
 Route::view('/terms', 'terms')->name('terms');
 

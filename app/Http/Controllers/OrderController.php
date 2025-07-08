@@ -11,6 +11,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\OrderConfirmation;
 
 class OrderController extends Controller
 {
@@ -41,16 +43,16 @@ class OrderController extends Controller
         
         $request['wedding_title'] = 'Mariage de ' . $request->mr_first_name . ' et ' . $request->mrs_first_name;
 
-        // Génération d'un numéro de commande unique
+        // 1. Génération d'un numéro de commande unique
         $request['confirmation_number'] = 'ORDER-' . strtoupper(uniqid());
 
-        // date limite de paiement
+        // 2. date limite de paiement
         $request['payment_due_at'] = Carbon::now()->addWeekdays(3); // 3 jours après la commande, ignorant les dimanches
 
-        // 1. Créer le client
+        // 3. Créer le client
         $client = Client::create($request->only(['mr_first_name', 'mr_last_name', 'mrs_first_name', 'mrs_last_name', 'email', 'phone']));
 
-        // 2. Créer la commande
+        // 4. Créer la commande
         $order = $client->orders()->create([
             'pack_id'          => $request->pack_id,
             'theme_id'         => $request->theme_id,
@@ -61,7 +63,7 @@ class OrderController extends Controller
             'payment_due_at'   => $request->payment_due_at,
         ]);
 
-        //sauvergader dans Log
+        // 5. Sauvegarder dans Log
         Log::info('Nouvelle commande créée', [
             'confirmation_number' => $order->confirmation_number,
             'client_id' => $client->id,
@@ -72,7 +74,7 @@ class OrderController extends Controller
             'wedding_location' => $request->wedding_location,
         ]);
 
-        // 3. Upload fichiers
+        // 6. Upload fichiers
         if ($request->hasFile('photos')) {
             foreach ($request->file('photos') as $file) {
                 $path = $file->store('uploads/media', 'public');
@@ -90,7 +92,9 @@ class OrderController extends Controller
                 ]);
             }
         }
-
+        
+        // 7. Envoi de l'email de confirmation
+        Mail::to($client->email)->send(new OrderConfirmation($order));
 
         return redirect()->route('order.create')->with('success', 'Votre commande a été enregistrée !');
     }

@@ -28,11 +28,11 @@
         {{-- Coordonnées de Monsieur --}}
         <div class="grid grid-cols-2 gap-4">
             <div>
-                <label class="block">Prénom (Monsieur) *</label>
+                <label class="block">Prénom Monsieur *</label>
                 <input type="text" name="mr_first_name" class="w-full border p-2 rounded" value="{{ old('mr_first_name') }}" required>
             </div>
             <div>
-                <label class="block">Nom (Monsieur) *</label>
+                <label class="block">Nom Monsieur *</label>
                 <input type="text" name="mr_last_name" class="w-full border p-2 rounded" value="{{ old('mr_last_name') }}" required>
             </div>
         </div>
@@ -40,11 +40,11 @@
         {{-- Coordonnées de Madame --}}
         <div class="grid grid-cols-2 gap-4 mt-4">
             <div>
-                <label class="block">Prénom (Madame) *</label>
+                <label class="block">Prénom Madame *</label>
                 <input type="text" name="mrs_first_name" class="w-full border p-2 rounded" value="{{ old('mrs_first_name') }}" required>
             </div>
             <div>
-                <label class="block">Nom (Madame) *</label>
+                <label class="block">Nom Madame *</label>
                 <input type="text" name="mrs_last_name" class="w-full border p-2 rounded" value="{{ old('mrs_last_name') }}" required>
             </div>
         </div>
@@ -65,7 +65,7 @@
         <label class="block mt-4">Pack *</label>
         <select name="pack_id" class="w-full border p-2 rounded" required>
             @foreach ($packs as $pack)
-                <option value="{{ $pack->id }}" {{ old('pack_id') == $pack->id ? 'selected' : '' }}>{{ $pack->name }} - {{ number_format($pack->price, 2) }}$</option>
+                <option value="{{ $pack->id }}" {{ old('pack_id') == $pack->id ? 'selected' : '' }}>{{ $pack->name }} - {{ intval($pack->price) }}$</option>
             @endforeach
         </select>
 
