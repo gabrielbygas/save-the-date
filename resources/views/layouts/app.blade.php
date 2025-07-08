@@ -25,7 +25,7 @@
     <!-- Header with Logo -->
     <header class="bg-white shadow">
         <div class="max-w-7xl mx-auto py-4 px-4 sm:px-6 lg:px-8 flex justify-center">
-            <a href="{{ route('order.create') }}"><img src="{{ asset('images/savethedate.webp') }}" alt="Logo" class="h-16"></a>
+            <a href="{{ route('home') }}"><img src="{{ asset('images/savethedate.webp') }}" alt="Logo" class="h-16"></a>
         </div>
     </header>
 

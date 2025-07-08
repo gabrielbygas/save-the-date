@@ -5,10 +5,11 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\OrderController;
 
 
+Route::view('/', 'welcome')->name('home');
+
 Route::controller(OrderController::class)->group(function () {
-    Route::get('/', 'create')->name('order.home');
-    Route::get('/order', 'create')->name('order.create');
-    Route::post('/order', 'store')->name('order.store');
+    Route::get('/order/create', 'create')->name('order.create');
+    Route::post('/order/store', 'store')->name('order.store');
 });
 
 Route::get('/dashboard', function () {
@@ -20,8 +21,6 @@ Route::middleware('auth')->group(function () {
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
-
-Route::view('/order/confirmation', 'mail.order_confirmation')->name('order.confirmation');
 
 Route::view('/terms', 'terms')->name('terms');
 
