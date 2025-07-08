@@ -40,8 +40,8 @@ class OrderController extends Controller
             'photos'               => 'nullable|array|max:5',
             'photos.*'             => 'file|mimes:jpeg,png,jpg,mp4,mov,ogg|max:10240',
         ]);
-        
-        $request['wedding_title'] = 'Mariage de ' . $request->mr_first_name . ' et ' . $request->mrs_first_name;
+
+        $request['wedding_title'] = 'Mariage de ' . strtoupper($request->mr_first_name) . ' et ' . strtoupper($request->mrs_first_name);
 
         // 1. Génération d'un numéro de commande unique
         $request['confirmation_number'] = 'ORDER-' . strtoupper(uniqid());
