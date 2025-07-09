@@ -2,7 +2,7 @@
 
 @section('content')
 <div class="max-w-2xl mx-auto p-6 bg-white shadow rounded-xl mt-8">
-    <h1 class="text-2xl font-bold mb-4">Passer une commande Save The Date</h1>
+    <h1 class="text-2xl font-bold mb-8 mt-5 text-center">Passer une commande Save The Date</h1>
 
     @if (session('success'))
         <div class="bg-green-100 text-green-700 p-3 mb-4 rounded">{{ session('success') }}</div>
@@ -29,11 +29,11 @@
         <div class="grid grid-cols-2 gap-4">
             <div>
                 <label class="block">Prénom Monsieur *</label>
-                <input type="text" name="mr_first_name" class="w-full border p-2 rounded" value="{{ old('mr_first_name') }}" required>
+                <input type="text" name="mr_first_name" class="w-full border p-2 rounded" value="{{ old('mr_first_name') }}" placeholder="John" required>
             </div>
             <div>
                 <label class="block">Nom Monsieur *</label>
-                <input type="text" name="mr_last_name" class="w-full border p-2 rounded" value="{{ old('mr_last_name') }}" required>
+                <input type="text" name="mr_last_name" class="w-full border p-2 rounded" value="{{ old('mr_last_name') }}" placeholder="Doe" required>
             </div>
         </div>
 
@@ -41,25 +41,25 @@
         <div class="grid grid-cols-2 gap-4 mt-4">
             <div>
                 <label class="block">Prénom Madame *</label>
-                <input type="text" name="mrs_first_name" class="w-full border p-2 rounded" value="{{ old('mrs_first_name') }}" required>
+                <input type="text" name="mrs_first_name" class="w-full border p-2 rounded" value="{{ old('mrs_first_name') }}" placeholder="Jane" required>
             </div>
             <div>
                 <label class="block">Nom Madame *</label>
-                <input type="text" name="mrs_last_name" class="w-full border p-2 rounded" value="{{ old('mrs_last_name') }}" required>
+                <input type="text" name="mrs_last_name" class="w-full border p-2 rounded" value="{{ old('mrs_last_name') }}" placeholder="Kayla" required>
             </div>
         </div>
 
         <label class="block mt-4">Email *</label>
-        <input type="email" name="email" class="w-full border p-2 rounded" value="{{ old('email') }}" required>
+        <input type="email" name="email" class="w-full border p-2 rounded" value="{{ old('email') }}" placeholder="exemple@domaine.com" required>
 
         <label class="block mt-4">Numéro Whatsapp *</label>
-        <input type="text" name="phone" class="w-full border p-2 rounded" value="{{ old('phone') }}" required>
+        <input type="text" name="phone" class="w-full border p-2 rounded" value="{{ old('phone') }}" placeholder="+243 081 123 789" required>
 
         <label class="block mt-4">Date du mariage *</label>
         <input type="date" name="wedding_date" class="w-full border p-2 rounded" value="{{ old('wedding_date') }}" required>
 
         <label class="block mt-4">Lieu du mariage *</label>
-        <input type="text" name="wedding_location" class="w-full border p-2 rounded" value="{{ old('wedding_location') }}" required>
+        <input type="text" name="wedding_location" class="w-full border p-2 rounded" value="{{ old('wedding_location') }}" placeholder="Kinshasa, Le Jardin" required>
 
         {{-- Sélections --}}
         <label class="block mt-4">Pack *</label>
@@ -80,7 +80,7 @@
         {{-- Upload --}}
         <label class="block mt-4">Medias (JPG/PNG max 2Mo, MP4/MOV max 20Mo, max 5 fichiers)</label>
         <input type="file" name="photos[]" multiple class="w-full border p-2 rounded" accept="image/jpeg,image/png,video/mp4,video/mov,video/ogg">
-        <p class="text-sm text-gray-500 mt-1">Vous pouvez télécharger jusqu'à 5 fichiers au total, avec un maximum de 10 Mo par fichier.</p>
+        <p class="text-sm text-gray-500 mt-1">Vous pouvez télécharger jusqu'à 5 fichiers au total, avec un maximum de 20 Mo par fichier.</p>
 
         {{-- Message --}}
 
@@ -95,9 +95,11 @@
             </label>
         </div>
 
-        <button type="submit" class="text-center mt-6 bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
+        <div class="flex justify-center mt-6">
+            <button type="submit" class="bg-pink-500 hover:bg-pink-600 text-white px-4 py-2 rounded">
             Envoyer la commande
-        </button>
+            </button>
+        </div>
     </form>
 </div>
 
@@ -110,7 +112,7 @@ document.addEventListener('DOMContentLoaded', function () {
         const files = Array.from(fileInput.files);
         const maxFiles = 5;
         const allowedTypes = ['image/jpeg', 'image/png', 'video/mp4', 'video/mov', 'video/ogg'];
-        const maxSize = 10 * 1024 * 20240; // 20MB
+        const maxSize = 20 * 1024 * 1024; // 20MB
 
         // Vérifie le nombre de fichiers
         if (files.length > maxFiles) {

@@ -17,38 +17,49 @@
 
     <!-- Scripts -->
     @vite(['resources/css/app.css', 'resources/js/app.js'])
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tailwindcss/ui@latest/dist/tailwind-ui.min.css">
 </head>
 
 <body class="font-sans antialiased"
     style="background-image: url('{{ asset('images/savethedate_bg1.webp') }}'); background-size: cover; background-position: center;">
 
     <!-- Header with Logo -->
-    <header class="bg-white shadow">
+    {{-- <header class="bg-white shadow">
         <div class="max-w-7xl mx-auto py-4 px-4 sm:px-6 lg:px-8 flex justify-center">
             <a href="{{ route('home') }}"><img src="{{ asset('images/savethedate.webp') }}" alt="Logo" class="h-16"></a>
+        </div>
+    </header> --}}
+    <header class="bg-white shadow">
+        <div class="max-w-6xl mx-auto px-4 py-4 flex justify-between items-center">
+            <h1 class="text-2xl font-bold text-pink-600"><a href="{{ route('home') }}">Save The Date</a></h1>
+            <a href="{{ route('home') }}"><img src="{{ asset('images/savethedate.webp') }}" alt="Logo"
+                    class="h-16"></a>
+            <a href="{{ route('order.create') }}" class="bg-pink-500 hover:bg-pink-600 text-white px-4 py-2 rounded">
+                Commander </a>
         </div>
     </header>
 
     <div class="min-h-screen items-center justify-center rounded-4" style="max-width: 980px; margin: 0 auto;">
 
         <!-- Page Heading -->
-        @isset($header)
+        {{-- @isset($header)
             <header class="bg-white shadow">
                 <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
                     {{ $header }}
                 </div>
             </header>
-        @endisset
+        @endisset --}}
 
         <!-- Page Content -->
-        <main class="py-4 px-4 rounded-9" style="max-width: 80%; margin: 0 auto;">
+        <main class="py-4 px-4 rounded-9" style="margin: 0 auto;">
             @yield('content')
         </main>
     </div>
 
     <!-- Pied de page -->
     <footer class="bg-white shadow text-center mt-8 text-sm text-gray-500 py-2">
-        <p class="mb-2"> <a href="mailto:gabrielkalala@protonmail.com" class="text-blue-600 underline">gabrielkalala@protonmail.com</a>&nbsp;|
+        <p class="mb-2"> <a href="mailto:gabrielkalala@protonmail.com"
+                class="text-blue-600 underline">gabrielkalala@protonmail.com</a>&nbsp;|
             &nbsp;© {{ date('Y') }} <span class="text-gray-800">Save The Date</span> Tous droits réservés&nbsp;|
             &nbsp;<a href="{{ route('terms') }}" class="text-blue-600 underline">Conditions d'utilisation</a>&nbsp;
         </p>
