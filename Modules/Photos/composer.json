@@ -1,0 +1,30 @@
+{
+    "name": "nwidart/photos",
+    "description": "",
+    "authors": [
+        {
+            "name": "Nicolas Widart",
+            "email": "n.widart@gmail.com"
+        }
+    ],
+    "extra": {
+        "laravel": {
+            "providers": [],
+            "aliases": {
+
+            }
+        }
+    },
+    "autoload": {
+        "psr-4": {
+            "Modules\\Photos\\": "app/",
+            "Modules\\Photos\\Database\\Factories\\": "database/factories/",
+            "Modules\\Photos\\Database\\Seeders\\": "database/seeders/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Modules\\Photos\\Tests\\": "tests/"
+        }
+    }
+}
