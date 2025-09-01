@@ -59,6 +59,16 @@ return [
             'throw' => false,
             'report' => false,
         ],
+        
+        'albums' => [ //photos albums storage
+            'driver' => 's3',
+            'key'    => env('ALBUMS_AWS_KEY'),
+            'secret' => env('ALBUMS_AWS_SECRET'),
+            'region' => env('ALBUMS_AWS_REGION', 'eu-west-1'),
+            'bucket' => env('ALBUMS_AWS_BUCKET'),
+            'url'    => env('ALBUMS_AWS_URL'),
+            'visibility' => 'private',
+        ],
 
     ],
 

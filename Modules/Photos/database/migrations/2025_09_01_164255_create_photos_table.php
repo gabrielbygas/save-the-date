@@ -11,11 +11,18 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('photos', function (Blueprint $table) {
+       Schema::create('photos', function (Blueprint $table) {
             $table->id();
-            
+            $table->foreignId('album_id')->constrained()->onDelete('cascade');
+            $table->string('original_path');
+            $table->string('thumb_path')->nullable();
+            $table->unsignedBigInteger('size_bytes');
+            $table->string('mime');
+            $table->json('exif_json')->nullable();
+            $table->string('uploaded_ip')->nullable();
             $table->timestamps();
         });
+
     }
 
     /**

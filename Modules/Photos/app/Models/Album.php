@@ -13,7 +13,19 @@ class Album extends Model
     /**
      * The attributes that are mass assignable.
      */
-    protected $fillable = [];
+    protected $fillable = [
+        'slug', 'couple_names', 'wedding_date', 'status',
+        'qr_code_path', 'share_url_token', 'max_guests',
+        'opens_at', 'storage_until_at', 'owner_id'
+    ];
+
+     public function photos() {
+        return $this->hasMany(Photo::class);
+    }
+
+    public function payments() {
+        return $this->hasMany(Payment::class);
+    }
 
     // protected static function newFactory(): AlbumFactory
     // {

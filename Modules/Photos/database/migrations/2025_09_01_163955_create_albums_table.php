@@ -13,9 +13,19 @@ return new class extends Migration
     {
         Schema::create('albums', function (Blueprint $table) {
             $table->id();
-            
+            $table->string('slug')->unique(); // identifiant public de l’album
+            $table->string('couple_names');
+            $table->date('wedding_date');
+            $table->enum('status', ['draft', 'active', 'archived'])->default('draft');
+            $table->string('qr_code_path')->nullable();
+            $table->string('share_url_token')->unique();
+            $table->unsignedInteger('max_guests')->default(300);
+            $table->timestamp('opens_at')->nullable();
+            $table->timestamp('storage_until_at')->nullable();
+            $table->foreignId('owner_id')->constrained('users')->onDelete('cascade');
             $table->timestamps();
         });
+
     }
 
     /**

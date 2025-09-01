@@ -13,9 +13,13 @@ return new class extends Migration
     {
         Schema::create('album_access_logs', function (Blueprint $table) {
             $table->id();
-            
+            $table->foreignId('album_id')->constrained()->onDelete('cascade');
+            $table->enum('action', ['view', 'upload', 'download']);
+            $table->ipAddress('ip');
+            $table->string('user_agent')->nullable();
             $table->timestamps();
         });
+
     }
 
     /**
