@@ -10,11 +10,12 @@ return [
     App\Providers\AuthServiceProvider::class,
     App\Providers\EventServiceProvider::class,
     App\Providers\RouteServiceProvider::class,
+    Modules\Photos\Providers\PhotosServiceProvider::class,
 
     /*
     |--------------------------------------------------------------------------
     | Package Service Providers
     |--------------------------------------------------------------------------
     */
-    //Nwidart\Modules\LaravelModulesServiceProvider::class,
+    Nwidart\Modules\LaravelModulesServiceProvider::class,
 ];
