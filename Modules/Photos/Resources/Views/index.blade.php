@@ -5,6 +5,7 @@
         <div class="max-w-7xl mx-auto px-6 lg:px-8 grid lg:grid-cols-2 gap-12 items-center">
             <!-- Texte -->
             <div>
+                <h1> INDEX </h1>
                 <h1 class="text-4xl font-extrabold text-gray-900 leading-tight">
                     Collectez vos <span class="text-pink-600">souvenirs de mariage</span> avec notre QR Code
                 </h1>
@@ -18,7 +19,7 @@
                     <li>✅ Jusqu'à 300 invités pour partager</li>
                 </ul>
                 <div class="mt-8">
-                    <a href="{{ route('photos.create') }}"
+                    <a href="{{ route('albums.index') }}"
                        class="px-6 py-3 bg-pink-600 text-white rounded-lg shadow hover:bg-pink-700">
                         Créer mon album photo mariage
                     </a>

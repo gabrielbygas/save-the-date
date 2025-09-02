@@ -3,8 +3,9 @@
 namespace Modules\Photos\Http\Controllers;
 
 use App\Http\Controllers\Controller;
-use Modules\Photos\App\Models\Album as Album;
+use Modules\Photos\Models\Album as Album;
 use Illuminate\Http\Request;
+// use Modules\Photos\Models\Album;
 
 class AlbumController extends Controller
 {   

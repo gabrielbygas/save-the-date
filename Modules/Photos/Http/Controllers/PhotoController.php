@@ -5,7 +5,7 @@ namespace Modules\Photos\Http\Controllers;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
-use Modules\Photos\Models\Photo as Photo;
+use Modules\Photos\Models\Photo;
 use Modules\Photos\Models\Album;
 
 
@@ -22,7 +22,7 @@ class PhotoController extends Controller
     {
         //corriger ici pour utiliser le slug
         $photo = Photo::where('slug', $slug)->firstOrFail(); 
-        return view('savethedatephotos::photos.show', compact('photo'));
+        return view('photos::photos.show', compact('photo'));
     }
 
     public function store(Request $request, $slug) // utilise $slug au lieu de $albumId

@@ -4,7 +4,7 @@ namespace Modules\Photos\Http\Controllers;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use Modules\Photos\App\Models\Payment as Payment;
+use Modules\Photos\Models\Payment as Payment;
 use Modules\Photos\Models\Album;
 use Modules\Photos\Models\AlbumAccessLog;
 

@@ -17,7 +17,7 @@ Route::prefix('photos')->group(function () {
     Route::post('/albums', [AlbumController::class, 'store'])->name('albums.store');
 
     // Photos
-    Route::get('/albums/{slug}/download', [PhotoController::class, 'show'])->name('photos.index');
+    Route::get('/albums/{slug}/download', [PhotoController::class, 'show'])->name('photos.download');
     Route::get('/albums/{slug}/show', [PhotoController::class, 'show'])->name('photos.show');
     Route::post('/albums/{slug}/upload', [PhotoController::class, 'store'])->name('photos.store');
 
