@@ -13,7 +13,11 @@ class AlbumAccessLog extends Model
     /**
      * The attributes that are mass assignable.
      */
-    protected $fillable = [];
+    protected $fillable = ['album_id', 'action', 'ip', 'user_agent'];
+
+    public function album() {
+        return $this->belongsTo(Album::class);
+    }
 
     // protected static function newFactory(): AlbumAccessLogFactory
     // {

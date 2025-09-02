@@ -4,9 +4,23 @@ namespace Modules\Photos\Http\Controllers;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use Modules\Photos\App\Models\Payment as Payment;
+use Modules\Photos\Models\Album;
+use Modules\Photos\Models\AlbumAccessLog;
 
-class PhotosController extends Controller
+class AlbumAccessLogsController extends Controller
 {
+    /**
+     * Display access logs for a specific album.
+     */
+    public function logs($slug)
+    {
+        $album = Album::where('slug', $slug)->firstOrFail();
+        $accessLogs = AlbumAccessLog::where('album_id', $album->id)->get();
+
+        return view('photos::access_logs.show', compact('album', 'accessLogs'));
+    }
+
     /**
      * Display a listing of the resource.
      */

@@ -13,14 +13,21 @@ Route::prefix('photos')->group(function () {
 
     // Albums
     Route::get('/albums', [AlbumController::class, 'index'])->name('albums.index');
-    Route::get('/albums/{id}', [AlbumController::class, 'show'])->name('albums.show');
+    Route::get('/albums/{slug}', [AlbumController::class, 'show'])->name('albums.show');
     Route::post('/albums', [AlbumController::class, 'store'])->name('albums.store');
 
     // Photos
-    Route::get('/albums/{albumId}/photos', [PhotoController::class, 'index'])->name('photos.index');
-    Route::post('/albums/{albumId}/photos', [PhotoController::class, 'store'])->name('photos.store');
+    Route::get('/albums/{slug}/download', [PhotoController::class, 'show'])->name('photos.index');
+    Route::get('/albums/{slug}/show', [PhotoController::class, 'show'])->name('photos.show');
+    Route::post('/albums/{slug}/upload', [PhotoController::class, 'store'])->name('photos.store');
 
     // Paiements
-    Route::get('/payments', [PaymentController::class, 'index'])->name('payments.index');
-    Route::post('/payments', [PaymentController::class, 'store'])->name('payments.store');
+    Route::get('/albums/{slug}/checkout', [PaymentController::class, 'show'])->name('payments.show');
+    Route::post('/albums/{slug}/pay', [PaymentController::class, 'store'])->name('payments.store');
+
+    // Album Access Logs For Admin
+    // acceder uniquement si on est admin
+    Route::middleware(['auth', 'admin'])->group(function () {
+        Route::get('/albums/{slug}/logs', [AlbumController::class, 'logs'])->name('albums.logs');
+    });
 });

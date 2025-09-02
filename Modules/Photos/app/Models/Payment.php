@@ -13,7 +13,11 @@ class Payment extends Model
     /**
      * The attributes that are mass assignable.
      */
-    protected $fillable = [];
+    protected $fillable = ['album_id', 'amount', 'currency', 'provider', 'status', 'provider_ref', 'paid_at'];
+
+    public function album() {
+        return $this->belongsTo(Album::class);
+    }
 
     // protected static function newFactory(): PaymentFactory
     // {

@@ -27,6 +27,10 @@ class Album extends Model
         return $this->hasMany(Payment::class);
     }
 
+    public function album_access_logs() {
+        return $this->hasMany(AlbumAccessLog::class);
+    }
+
     // protected static function newFactory(): AlbumFactory
     // {
     //     // return AlbumFactory::new();

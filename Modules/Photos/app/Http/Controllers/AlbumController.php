@@ -7,17 +7,17 @@ use Modules\Photos\App\Models\Album as Album;
 use Illuminate\Http\Request;
 
 class AlbumController extends Controller
-{
+{   
     public function index()
     {
         $albums = Album::all();
-        return view('photos.albums.index', compact('albums'));
+        return view('photos::albums.index', compact('albums'));
     }
 
-    public function show($id)
+    public function show($slug) //affiche les photos d un album
     {
-        $album = Album::findOrFail($id);
-        return view('photos.albums.show', compact('album'));
+        $album = Album::where('slug', $slug)->with('photos')->firstOrFail();
+        return view('photos::albums.show', compact('album'));
     }
 
     public function store(Request $request)
