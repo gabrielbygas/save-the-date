@@ -14,7 +14,8 @@ return new class extends Migration
         Schema::create('albums', function (Blueprint $table) {
             $table->id();
             $table->string('slug')->unique(); // identifiant public de l’album
-            $table->string('couple_names');
+            $table->foreignId('client_id')->constrained()->onDelete('cascade');
+            $table->string('album_title');
             $table->date('wedding_date');
             $table->enum('status', ['draft', 'active', 'archived'])->default('draft');
             $table->string('qr_code_path')->nullable();
@@ -22,7 +23,6 @@ return new class extends Migration
             $table->unsignedInteger('max_guests')->default(300);
             $table->timestamp('opens_at')->nullable();
             $table->timestamp('storage_until_at')->nullable();
-            $table->foreignId('owner_id')->constrained('users')->onDelete('cascade');
             $table->timestamps();
         });
 

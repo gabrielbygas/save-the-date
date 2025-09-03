@@ -13,8 +13,11 @@ Route::prefix('photos')->group(function () {
 
     // Albums
     Route::get('/albums', [AlbumController::class, 'index'])->name('albums.index');
+    Route::get('/albums/create', [AlbumController::class, 'create'])->name('albums.create');
     Route::get('/albums/{slug}', [AlbumController::class, 'show'])->name('albums.show');
     Route::post('/albums', [AlbumController::class, 'store'])->name('albums.store');
+    Route::get('/albums/share/{token}', [AlbumController::class, 'share'])->name('albums.share');
+
 
     // Photos
     Route::get('/albums/{slug}/download', [PhotoController::class, 'show'])->name('photos.download');

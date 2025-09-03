@@ -49,8 +49,11 @@ class OrderController extends Controller
         // 2. date limite de paiement
         $request['payment_due_at'] = Carbon::now()->addWeekdays(3); // 3 jours après la commande, ignorant les dimanches
 
-        // 3. Créer le client
-        $client = Client::create($request->only(['mr_first_name', 'mr_last_name', 'mrs_first_name', 'mrs_last_name', 'email', 'phone']));
+        // 3. Créer le client en evitant le doublon
+        $client = Client::firstOrCreate(
+            ['email' => $request->email],
+            $request->only(['mr_first_name', 'mr_last_name', 'mrs_first_name', 'mrs_last_name', 'phone'])
+        );
 
         // 4. Créer la commande
         $order = $client->orders()->create([

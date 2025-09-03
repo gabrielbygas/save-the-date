@@ -4,7 +4,7 @@ namespace Modules\Photos\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-// use Modules\Photos\Database\Factories\PaymentFactory;
+use Modules\Photos\Models\Album;
 
 class Payment extends Model
 {

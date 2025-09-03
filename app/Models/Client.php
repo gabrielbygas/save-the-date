@@ -4,6 +4,8 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use App\Models\Order;
+use Modules\Photos\Models\Album;
 
 class Client extends Model
 {
@@ -22,6 +24,11 @@ class Client extends Model
     public function orders()
     {
         return $this->hasMany(Order::class);
+    }
+
+    public function albums()
+    {
+        return $this->hasMany(Album::class);
     }
 
     public function getFullNameAttribute()
