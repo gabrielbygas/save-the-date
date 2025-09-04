@@ -7,6 +7,23 @@
             <p class="text-gray-600 mt-2">Retrouvez tous vos souvenirs en un seul endroit</p>
         </div>
 
+        @if (session('success'))
+            <div class="bg-green-100 text-green-700 p-3 mb-4 rounded">{{ session('success') }}</div>
+        @endif
+
+        @if ($errors->any())
+            <div class="bg-red-100 text-red-800 p-4 mb-4 rounded">
+                <ul class="list-disc pl-5 space-y-1">
+                    @foreach ($errors->all() as $error)
+                        <li>{{ $error }}</li>
+                    @endforeach
+                    @error('photos.0')
+                        <div class="text-red-500 text-sm mt-1">{{ $message }}</div>
+                    @enderror
+                </ul>
+            </div>
+        @endif
+
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 bg-white">
             @forelse ($albums as $album)
                 <div class="bg-white rounded-lg shadow-md overflow-hidden">

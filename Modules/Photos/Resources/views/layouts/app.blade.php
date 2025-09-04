@@ -25,8 +25,8 @@
 
     <header class="bg-white shadow">
         <div class="max-w-6xl mx-auto px-4 py-4 flex justify-between items-center">
-            <h1 class="text-2xl font-bold text-pink-600"><a href="{{ route('home') }}">Save The Date</a></h1>
-            <a href="{{ route('home') }}"><img src="{{ asset('images/savethedate.webp') }}" alt="Logo"
+            <h1 class="text-2xl font-bold text-pink-600"><a href="{{ route('photos.index') }}">Save The Date</a></h1>
+            <a href="{{ route('photos.index') }}"><img src="{{ asset('images/savethedate.webp') }}" alt="Logo"
                     class="h-16"></a>
             <a href="{{ route('albums.create') }}" class="bg-pink-500 hover:bg-pink-600 text-white px-4 py-2 rounded">
                 Créer mon album photo mariage </a>

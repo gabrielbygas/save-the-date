@@ -9,7 +9,7 @@ use Modules\Photos\Http\Controllers\PaymentController;
 Route::prefix('photos')->group(function () {
     
     // Page d'accueil du module
-    Route::get('/', [AlbumController::class, 'index'])->name('photos.index');
+    Route::get('/', [AlbumController::class, 'home'])->name('photos.index');
 
     // Albums
     Route::get('/albums', [AlbumController::class, 'index'])->name('albums.index');
