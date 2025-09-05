@@ -14,6 +14,7 @@ class ThemeSeeder extends Seeder
     public function run(): void
     {
         DB::table('themes')->insert([
+            ['name' => 'Veuillez choisir pour moi', 'style' => 'Veuillez choisir pour moi'],
             ['name' => 'Boho Chic', 'style' => 'Nature, beige, fleurs'],
             ['name' => 'Minimaliste Moderne', 'style' => 'Noir et blanc, sobre'],
             ['name' => 'Rustique', 'style' => 'Bois, rétro, vintage'],

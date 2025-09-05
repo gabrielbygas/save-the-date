@@ -15,11 +15,11 @@ return new class extends Migration
             $table->id();
             $table->foreignId('album_id')->constrained()->onDelete('cascade');
             $table->string('original_path');
+            $table->string('file_name')->nullable()->unique();
             $table->string('thumb_path')->nullable();
             $table->unsignedBigInteger('size_bytes');
             $table->string('mime');
             $table->json('exif_json')->nullable();
-            $table->string('uploaded_ip')->nullable();
             $table->timestamps();
         });
 

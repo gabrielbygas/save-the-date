@@ -13,7 +13,7 @@ class Photo extends Model
     /**
      * The attributes that are mass assignable.
      */
-    protected $fillable = ['album_id', 'original_path', 'thumb_path', 'size_bytes', 'mime', 'exif_json', 'uploaded_ip'];
+    protected $fillable = ['album_id', 'original_path', 'file_name', 'thumb_path', 'size_bytes', 'mime', 'exif_json'];
 
     public function album() {
         return $this->belongsTo(Album::class);

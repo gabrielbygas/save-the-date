@@ -15,9 +15,10 @@ class PackSeeder extends Seeder
     {
         // database/seeders/PackSeeder.php
         DB::table('packs')->insert([
-            ['name' => '1 affiche', 'price' => 25],
-            ['name' => '2 affiches', 'price' => 35],
-            ['name' => '4 affiches + vidéo', 'price' => 50],
+            ['name' => '1 affiche', 'price' => 15],
+            ['name' => '1 video', 'price' => 25],
+            ['name' => '1 site web (QR CODE)', 'price' => 50],
+            ['name' => 'TOUT INCLUS', 'price' => 80],
         ]);
 
     }

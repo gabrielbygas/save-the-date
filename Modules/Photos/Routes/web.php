@@ -20,9 +20,10 @@ Route::prefix('photos')->group(function () {
 
 
     // Photos
-    Route::get('/albums/{slug}/download', [PhotoController::class, 'show'])->name('photos.download');
-    Route::get('/albums/{slug}/show', [PhotoController::class, 'show'])->name('photos.show');
-    Route::post('/albums/{slug}/upload', [PhotoController::class, 'store'])->name('photos.store');
+    Route::get('/albums/{slug}/download', [PhotoController::class, 'index'])->name('photos.download');
+    Route::get('/albums/{slug}/upload', [PhotoController::class, 'create'])->name('photos.create');
+    Route::get('/albums/{slug}/{id}', [PhotoController::class, 'show'])->name('photos.show');
+    Route::post('/albums/{slug}/store', [PhotoController::class, 'store'])->name('photos.store');
 
     // Paiements
     Route::get('/albums/{slug}/checkout', [PaymentController::class, 'show'])->name('payments.show');

@@ -18,4 +18,6 @@ return [
     |--------------------------------------------------------------------------
     */
     Nwidart\Modules\LaravelModulesServiceProvider::class,
+    SimpleSoftwareIO\QrCode\QrCodeServiceProvider::class,
+    Intervention\Image\ImageServiceProvider::class,
 ];
