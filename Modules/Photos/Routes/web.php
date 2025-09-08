@@ -9,7 +9,7 @@ use Modules\Photos\Http\Controllers\PaymentController;
 Route::prefix('photos')->group(function () {
     
     // Page d'accueil du module
-    Route::get('/', [AlbumController::class, 'home'])->name('photos.index');
+    Route::get('/', [AlbumController::class, 'home'])->name('photos.home');
 
     // Albums
     Route::get('/albums', [AlbumController::class, 'index'])->name('albums.index');
@@ -20,10 +20,11 @@ Route::prefix('photos')->group(function () {
 
 
     // Photos
-    Route::get('/albums/{slug}/download', [PhotoController::class, 'index'])->name('photos.download');
+    Route::get('/albums/{slug}/photos', [PhotoController::class, 'index'])->name('photos.index');
     Route::get('/albums/{slug}/upload', [PhotoController::class, 'create'])->name('photos.create');
     Route::get('/albums/{slug}/{id}', [PhotoController::class, 'show'])->name('photos.show');
     Route::post('/albums/{slug}/store', [PhotoController::class, 'store'])->name('photos.store');
+    Route::delete('/albums/{slug}/{id}/destroy', [PhotoController::class, 'destroy'])->name('photos.destroy');
 
     // Paiements
     Route::get('/albums/{slug}/checkout', [PaymentController::class, 'show'])->name('payments.show');

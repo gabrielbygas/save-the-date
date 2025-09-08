@@ -8,6 +8,7 @@
     <meta name="description" content="Save The Date - Commandez vos faire-part de mariage personnalisés.">
     <meta name="keywords" content="Save The Date, faire-part de mariage, mariage, invitations, personnalisation">
     <meta name="author" content="Gabriel KALALA">
+    <meta name="robots" content="noindex">.
 
     <title>{{ config('app.name', 'Laravel') }}</title>
 
@@ -21,19 +22,19 @@
 </head>
 
 <body class="font-sans antialiased"
-    style="background-image: url('{{ asset('images/savethedate_bg1.webp') }}'); background-size: cover; background-position: center;">
+    style="background-image: url('{{ asset('images/savethedate_bg3.webp') }}'); background-size: cover; background-position: center;">
 
     <header class="bg-white shadow">
         <div class="max-w-6xl mx-auto px-4 py-4 flex justify-between items-center">
-            <h1 class="text-2xl font-bold text-pink-600"><a href="{{ route('photos.index') }}">Save The Date</a></h1>
-            <a href="{{ route('photos.index') }}"><img src="{{ asset('images/savethedate.webp') }}" alt="Logo"
+            <h1 class="text-2xl font-bold text-pink-600"><a href="{{ route('photos.home') }}">Save The Date</a></h1>
+            <a href="{{ route('photos.home') }}"><img src="{{ asset('images/savethedate.webp') }}" alt="Logo"
                     class="h-16"></a>
             <a href="{{ route('albums.create') }}" class="bg-pink-500 hover:bg-pink-600 text-white px-4 py-2 rounded">
-                Créer mon album photo mariage </a>
+                Créer un album</a>
         </div>
     </header>
 
-    <div class="min-h-screen items-center justify-center rounded-4" style="max-width: 980px; margin: 0 auto;">
+    <div class="min-h-screen items-center justify-center rounded-4" style="max-width: 1080px; margin: 0 auto;">
 
         <main class="py-4 px-4 rounded-9" style="margin: 0 auto;">
             @yield('content')

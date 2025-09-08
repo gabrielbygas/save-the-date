@@ -29,19 +29,24 @@ class AlbumController extends Controller
     public function index()
     {
         $albums = Album::all();
-        return view('photos::albums.index', compact('albums'));
+        $client = $albums->first()->client;
+        return view('photos::albums.index', compact('albums', 'client'));
     }
 
     public function show($slug)
     {
         $album = Album::where('slug', $slug)->with('photos')->firstOrFail();
-        return view('photos::albums.show', compact('album'));
+        $photos = $album->photos()->latest()->get();
+        // renvoyer aussi le client Mr name ane Mrs name
+        $client = $album->client;
+        return view('photos::albums.show', compact('album', 'photos', 'client'));
     }
 
     public function share($token)
     {
         $album = Album::where('share_url_token', $token)->with('photos')->firstOrFail();
-        return view('photos::albums.show', compact('album'));
+        $photos = $album->photos()->latest()->get();
+        return view('photos::albums.show', compact('album', 'photos'));
     }
 
     public function store(Request $request)

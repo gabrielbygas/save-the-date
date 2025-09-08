@@ -8,7 +8,9 @@ use Illuminate\Support\Facades\Storage;
 use Modules\Photos\Models\Photo;
 use Modules\Photos\Models\Album;
 use Illuminate\Support\Str;
-use Intervention\Image\Facades\Image;
+//use Intervention\Image\Facades\Image;
+use Intervention\Image\Laravel\Facades\Image;
+
 
 
 class PhotoController extends Controller
@@ -23,8 +25,10 @@ class PhotoController extends Controller
     {
         $album = Album::where('slug', $slug)->firstOrFail();
         $photos = $album->photos()->latest()->get();
+        // renvoyer aussi le client Mr name ane Mrs name
+        $client = $album->client;
 
-        return view('photos::photos.index', compact('photos', 'album'));
+        return view('photos::photos.index', compact('photos', 'album', 'client'));
     }
 
     public function show($slug, $id) // afficher une seule photo d'un album
@@ -140,16 +144,15 @@ class PhotoController extends Controller
      * @param string $slug Le slug de l'album pour nommer la miniature.
      * @return string Le chemin de la miniature créée.
      */
-    private function createThumbnail(string $originalPhotoPath, string $slug): string
+    public function createThumbnail($originalPhotoPath, $slug)
     {
         if (!Storage::disk('public')->exists($originalPhotoPath)) {
             throw new \Exception("Fichier introuvable : {$originalPhotoPath}");
         }
 
-        $image = Image::make(Storage::disk('public')->path($originalPhotoPath))
-            ->fit(300, 300, function ($constraint) {
-                $constraint->upsize();
-            });
+        // ✅ En v3, on utilise `read()` et `cover()`
+        $image = Image::read(Storage::disk('public')->path($originalPhotoPath))
+            ->cover(300, 300);
 
         $thumbDirectory = "thumbs/{$slug}";
         $thumbFileName = pathinfo($originalPhotoPath, PATHINFO_FILENAME) . '_thumb.jpg';
@@ -159,7 +162,7 @@ class PhotoController extends Controller
             Storage::disk('public')->makeDirectory($thumbDirectory);
         }
 
-        Storage::disk('public')->put($thumbPath, (string) $image->encode('jpg', 80));
+        $image->save(Storage::disk('public')->path($thumbPath));
 
         return $thumbPath;
     }
