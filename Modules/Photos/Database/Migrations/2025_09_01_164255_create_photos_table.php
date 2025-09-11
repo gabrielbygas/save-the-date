@@ -19,7 +19,7 @@ return new class extends Migration
             $table->string('thumb_path')->nullable();
             $table->unsignedBigInteger('size_bytes');
             $table->string('mime');
-            $table->enum('category', ['civil', 'religieux', 'coutumier', 'reception', 'autre', 'tout'])->default('tout');
+            $table->enum('category', ['civil', 'religieux', 'coutumier', 'reception', 'autre', 'invite', 'tout'])->default('tout');
             $table->json('exif_json')->nullable();
             $table->timestamps();
         });
