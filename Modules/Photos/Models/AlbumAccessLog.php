@@ -13,7 +13,7 @@ class AlbumAccessLog extends Model
     /**
      * The attributes that are mass assignable.
      */
-    protected $fillable = ['album_id', 'action', 'ip', 'user_agent'];
+    protected $fillable = ['album_id', 'photo_id', 'action', 'visitor_ip', 'user_agent'];
 
     public function album() {
         return $this->belongsTo(Album::class);
