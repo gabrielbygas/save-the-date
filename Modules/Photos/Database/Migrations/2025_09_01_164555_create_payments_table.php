@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('payments', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('album_id')->constrained()->onDelete('cascade');
+            $table->foreignId('album_id')->constrained()->onDelete('cascade')->unique();
             $table->decimal('amount', 12, 2);
             $table->string('currency', 3)->default('USD');
             $table->string('provider'); // ex: orange_money, airtel_money
