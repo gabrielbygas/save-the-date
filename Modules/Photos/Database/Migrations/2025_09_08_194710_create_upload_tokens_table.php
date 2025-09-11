@@ -11,16 +11,16 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('album_access_logs', function (Blueprint $table) {
+        Schema::create('upload_tokens', function (Blueprint $table) {
             $table->id();
             $table->foreignId('album_id')->constrained()->onDelete('cascade');
-            $table->foreignId('photo_id')->nullable()->constrained()->onDelete('set null');
-            $table->ipAddress('visitor_ip');
-            $table->enum('action', ['view', 'upload', 'download']);
-            $table->string('user_agent')->nullable();
+            $table->string('token')->unique();
+            $table->string('visitor_name')->nullable();
+            $table->string('visitor_email')->unique();
+            $table->string('visitor_phone')->nullable();
+            $table->boolean('used')->default(false);
             $table->timestamps();
         });
-
     }
 
     /**
@@ -28,6 +28,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('album_access_logs');
+        Schema::dropIfExists('upload_tokens');
     }
 };

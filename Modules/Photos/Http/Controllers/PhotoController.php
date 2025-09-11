@@ -7,55 +7,153 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Modules\Photos\Models\Photo;
 use Modules\Photos\Models\Album;
+use Modules\Photos\Models\UploadToken;
+use Modules\Photos\Models\AlbumAccessLog;
 use Illuminate\Support\Str;
-//use Intervention\Image\Facades\Image;
 use Intervention\Image\Laravel\Facades\Image;
-
-
+use Illuminate\Support\Facades\Log;
+use Symfony\Component\HttpFoundation\StreamedResponse;
+use ZipArchive;
 
 class PhotoController extends Controller
 {
-    public function create($slug) // creer ou ajouter des photos dans un album
+    /**
+     * Affiche le formulaire pour ajouter des photos à un album.
+     */
+    public function create($slug)
     {
-        $album = Album::where('slug', $slug)->firstOrFail(); // utilise le slug pour trouver l'album
+        $album = Album::where('slug', $slug)->firstOrFail();
         return view('photos::photos.create', compact('album'));
     }
 
-    public function index($slug)  // afficher toutes les photos d'un album
+    /**
+     * Affiche toutes les photos d'un album, filtrées par catégorie.
+     */
+    public function index(Request $request, $slug)
     {
         $album = Album::where('slug', $slug)->firstOrFail();
-        $photos = $album->photos()->latest()->get();
-        // renvoyer aussi le client Mr name ane Mrs name
         $client = $album->client;
 
-        return view('photos::photos.index', compact('photos', 'album', 'client'));
+        // Filtre par catégorie si spécifié
+        $category = $request->get('category');
+        $query = $album->photos()->latest();
+
+        if ($category) {
+            $query->where('category', $category);
+        }
+
+        $photos = $query->get();
+        $categories = Photo::select('category')->where('album_id', $album->id)
+            ->groupBy('category')
+            ->pluck('category');
+
+        return view('photos::photos.index', compact('photos', 'album', 'client', 'categories', 'category'));
     }
 
-    public function show($slug, $id) // afficher une seule photo d'un album
+    /**
+     * Affiche une photo spécifique.
+     */
+    public function show($slug, $id)
     {
         $album = Album::where('slug', $slug)->firstOrFail();
-        $photo = $album->photos()->where('id', $id)->firstOrFail();
+        $photo = $album->photos()->findOrFail($id);
+
+        // Log l'accès à la photo
+        AlbumAccessLog::create([
+            'album_id'   => $album->id,
+            'photo_id'   => $photo->id,
+            'visitor_ip' => request()->ip(),
+            'user_agent' => request()->userAgent(),
+        ]);
 
         return view('photos::photos.show', compact('photo', 'album'));
     }
 
-    // Stocke une ou plusieurs photos
+    /**
+     * Stocke une ou plusieurs photos dans un album (pour le propriétaire).
+     */
     public function store(Request $request, $slug)
     {
-        $validated = $request->validate([
+        $request->validate([
             'photos'      => 'required|array',
             'photos.*'    => 'image|max:10240', // 10 MB max
+            'category'    => 'nullable|in:civil,religieux,coutumier,reception,autre',
             'exif_json'   => 'nullable|json',
         ]);
 
         $album = Album::where('slug', $slug)->firstOrFail();
 
         foreach ($request->file('photos') as $file) {
+            try {
+                // Nom unique
+                $fileName = $this->makeUniqueFileName($file, $album->slug);
+
+                // Stocker dans storage/private (sécurisé)
+                $path = $file->storeAs("private/albums/{$album->slug}", $fileName, 'private');
+
+                // Créer miniature
+                $thumbPath = $this->createThumbnail($path, $album->slug);
+
+                // Métadonnées
+                $photoData = [
+                    'original_path' => $path,
+                    'file_name'     => $fileName,
+                    'thumb_path'    => $thumbPath,
+                    'size_bytes'    => $file->getSize(),
+                    'mime'          => $file->getMimeType(),
+                    'category'      => $request->category ?? 'autre',
+                    'exif_json'     => $request->exif_json,
+                    'uploaded_ip'   => $request->ip(),
+                ];
+
+                $album->photos()->create($photoData);
+            } catch (\Exception $e) {
+                Log::error("Erreur lors de l'upload : " . $e->getMessage());
+                continue;
+            }
+        }
+
+        return redirect()->route('photos.index', $album->slug)
+            ->with('success', 'Photo(s) ajoutée(s) avec succès.');
+    }
+
+    /**
+     * Formulaire pour les invités (via token).
+     */
+    public function createWithToken($slug, $token)
+    {
+        $uploadToken = UploadToken::where('token', $token)
+            ->where('album_id', Album::where('slug', $slug)->firstOrFail()->id)
+            ->where('used', false)
+            ->firstOrFail();
+
+        return view('photos::photos.upload_with_token', compact('uploadToken'));
+    }
+
+    /**
+     * Stocke une photo via un token d'invité.
+     */
+    public function storeWithToken(Request $request, $slug, $token)
+    {
+        $request->validate([
+            'photo'       => 'required|image|max:10240',
+            'guest_name'  => 'nullable|string|max:100',
+        ]);
+
+        $uploadToken = UploadToken::where('token', $token)
+            ->where('album_id', Album::where('slug', $slug)->firstOrFail()->id)
+            ->where('used', false)
+            ->firstOrFail();
+
+        $album = $uploadToken->album;
+        $file = $request->file('photo');
+
+        try {
             // Nom unique
             $fileName = $this->makeUniqueFileName($file, $album->slug);
 
-            // Enregistrement du fichier
-            $path = $file->storeAs("albums/{$album->slug}", $fileName, 'public');
+            // Stocker dans storage/private
+            $path = $file->storeAs("private/albums/{$album->slug}", $fileName, 'private');
 
             // Créer miniature
             $thumbPath = $this->createThumbnail($path, $album->slug);
@@ -67,41 +165,51 @@ class PhotoController extends Controller
                 'thumb_path'    => $thumbPath,
                 'size_bytes'    => $file->getSize(),
                 'mime'          => $file->getMimeType(),
-                'exif_json'     => $validated['exif_json'] ?? null,
+                'category'      => 'invite', // Catégorie spéciale pour les invités
+                'exif_json'     => null,
                 'uploaded_ip'   => $request->ip(),
+                'guest_name'    => $request->guest_name ?? 'Invité',
             ];
 
             $album->photos()->create($photoData);
-        }
 
-        return redirect()->route('photos.index', $album->slug)
-            ->with('success', 'Photo(s) ajoutée(s) avec succès.');
+            // Marquer le token comme utilisé
+            $uploadToken->update(['used' => true]);
+
+            return redirect()->route('albums.share', $album->share_url_token)
+                ->with('success', 'Merci ! Votre photo a été ajoutée à l\'album.');
+        } catch (\Exception $e) {
+            Log::error("Erreur upload invité : " . $e->getMessage());
+            return back()->with('error', 'Une erreur est survenue. Veuillez réessayer.');
+        }
     }
 
     /**
-     * Update photo metadata.
+     * Met à jour les métadonnées d'une photo.
      */
-    public function update(Request $request, int $albumId, int $photoId)
+    public function update(Request $request, $slug, $photoId)
     {
         $request->validate([
-            'thumb_path' => 'nullable|string|max:255',
-            'exif_json'  => 'nullable|json',
+            'category'    => 'nullable|in:civil,religieux,coutumier,reception,autre,invite',
+            'caption'     => 'nullable|string|max:255',
+            'exif_json'   => 'nullable|json',
         ]);
 
-        $album = Album::findOrFail($albumId);
+        $album = Album::where('slug', $slug)->firstOrFail();
         $photo = $album->photos()->findOrFail($photoId);
 
         $photo->update([
-            'thumb_path' => $request->input('thumb_path', $photo->thumb_path),
-            'exif_json'  => $request->input('exif_json', $photo->exif_json),
+            'category'    => $request->category ?? $photo->category,
+            'caption'     => $request->caption ?? $photo->caption,
+            'exif_json'   => $request->exif_json ?? $photo->exif_json,
         ]);
 
-        return redirect()->route('albums.show', $album->slug)
+        return redirect()->route('photos.show', [$album->slug, $photo->id])
             ->with('success', 'Photo mise à jour avec succès.');
     }
 
     /**
-     * Remove a photo from an album.
+     * Supprime une photo.
      */
     public function destroy($slug, $photoId)
     {
@@ -109,13 +217,13 @@ class PhotoController extends Controller
         $photo = $album->photos()->findOrFail($photoId);
 
         // Supprimer photo originale
-        if ($photo->original_path && Storage::disk('public')->exists($photo->original_path)) {
-            Storage::disk('public')->delete($photo->original_path);
+        if ($photo->original_path && Storage::disk('private')->exists($photo->original_path)) {
+            Storage::disk('private')->delete($photo->original_path);
         }
 
         // Supprimer miniature
-        if ($photo->thumb_path && Storage::disk('public')->exists($photo->thumb_path)) {
-            Storage::disk('public')->delete($photo->thumb_path);
+        if ($photo->thumb_path && Storage::disk('private')->exists($photo->thumb_path)) {
+            Storage::disk('private')->delete($photo->thumb_path);
         }
 
         $photo->delete();
@@ -124,46 +232,99 @@ class PhotoController extends Controller
             ->with('success', 'Photo supprimée avec succès.');
     }
 
-    // makeUniqueFileName function en utilisant le slug de l'album (ex : doe_john_1.jpg, doe_john_2.jpg, etc.)
-    private function makeUniqueFileName($photo, $albumSlug)
+    /**
+     * Génère un nom de fichier unique.
+     */
+    private function makeUniqueFileName($file, $albumSlug): string
     {
-        $count = 1;
-        $extension = $photo->getClientOriginalExtension();
-        // tant que le nom de fichier existe, on incrémente le compteur
-        while (Photo::where('file_name', $albumSlug . '_' . $count . '.' . $extension)->exists()) {
-            $count++;
-        }
-        return $albumSlug . '_' . $count . '.' . $extension;
+        $extension = $file->getClientOriginalExtension();
+        return $albumSlug . '_' . Str::random(8) . '.' . $extension;
     }
 
-
     /**
-     * Crée une miniature d'une photo et la stocke.
-     *
-     * @param  string  $originalPhotoPath Le chemin de la photo originale.
-     * @param string $slug Le slug de l'album pour nommer la miniature.
-     * @return string Le chemin de la miniature créée.
+     * Crée une miniature d'une photo.
      */
-    public function createThumbnail($originalPhotoPath, $slug)
+    private function createThumbnail(string $originalPhotoPath, string $slug): string
     {
-        if (!Storage::disk('public')->exists($originalPhotoPath)) {
+        if (!Storage::disk('private')->exists($originalPhotoPath)) {
             throw new \Exception("Fichier introuvable : {$originalPhotoPath}");
         }
 
-        // ✅ En v3, on utilise `read()` et `cover()`
-        $image = Image::read(Storage::disk('public')->path($originalPhotoPath))
+        $image = Image::read(Storage::disk('private')->path($originalPhotoPath))
             ->cover(300, 300);
 
-        $thumbDirectory = "thumbs/{$slug}";
+        $thumbDirectory = "private/thumbs/{$slug}";
         $thumbFileName = pathinfo($originalPhotoPath, PATHINFO_FILENAME) . '_thumb.jpg';
         $thumbPath = "{$thumbDirectory}/{$thumbFileName}";
 
-        if (!Storage::disk('public')->exists($thumbDirectory)) {
-            Storage::disk('public')->makeDirectory($thumbDirectory);
+        if (!Storage::disk('private')->exists($thumbDirectory)) {
+            Storage::disk('private')->makeDirectory($thumbDirectory);
         }
 
-        $image->save(Storage::disk('public')->path($thumbPath));
-
+        $image->save(Storage::disk('private')->path($thumbPath));
         return $thumbPath;
+    }
+
+    /**
+     * Sert une photo de manière sécurisée (vérifie le token).
+     */
+    public function serve($slug, $photoId, $token): StreamedResponse
+    {
+        $album = Album::where('slug', $slug)->firstOrFail();
+
+        // Vérifier que le token correspond à l'album
+        if ($album->share_url_token !== $token) {
+            abort(403, 'Token invalide.');
+        }
+
+        $photo = $album->photos()->findOrFail($photoId);
+
+        // Log l'accès
+        AlbumAccessLog::create([
+            'album_id'   => $album->id,
+            'photo_id'   => $photo->id,
+            'visitor_ip' => request()->ip(),
+            'user_agent' => request()->userAgent(),
+        ]);
+
+
+        $path = Storage::disk('private')->path($photo->original_path);
+
+        return new StreamedResponse(function () use ($path) {
+            $stream = fopen($path, 'rb');
+            fpassthru($stream);
+            fclose($stream);
+        }, 200, [
+            'Content-Type' => mime_content_type($path),
+            'Content-Disposition' => 'inline; filename="' . basename($path) . '"',
+        ]);
+    }
+
+    /**
+     * Télécharge toutes les photos d'un album en ZIP.
+     */
+    public function downloadAll($slug, $token)
+    {
+        $album = Album::where('slug', $slug)->firstOrFail();
+
+        if ($album->share_url_token !== $token) {
+            abort(403, 'Token invalide.');
+        }
+
+        $zip = new ZipArchive();
+        $zipFileName = "album_{$album->slug}.zip";
+        $zipPath = sys_get_temp_dir() . '/' . $zipFileName;
+
+        if ($zip->open($zipPath, ZipArchive::CREATE) === TRUE) {
+            foreach ($album->photos as $photo) {
+                $filePath = Storage::disk('private')->path($photo->original_path);
+                $zip->addFile($filePath, $photo->file_name);
+            }
+            $zip->close();
+
+            return response()->download($zipPath, $zipFileName)->deleteFileAfterSend(true);
+        } else {
+            abort(500, 'Impossible de créer le ZIP.');
+        }
     }
 }

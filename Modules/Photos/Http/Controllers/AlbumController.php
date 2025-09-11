@@ -108,7 +108,7 @@ class AlbumController extends Controller
         ]);
 
         // Envoi de l'email de confirmation
-       Mail::to($client->email)->send(new AlbumCreatedMail($album));
+        Mail::to($client->email)->send(new AlbumCreatedMail($album));
 
         return redirect()->route('albums.index')->with('success', 'Album créé avec succès.');
     }
@@ -128,26 +128,37 @@ class AlbumController extends Controller
         return redirect()->route('albums.show', $album->slug)->with('success', 'Album mis à jour.');
     }
 
-    public function destroy($id)
+    public function destroy($slug)
     {
-        $album = Album::with('photos')->findOrFail($id);
+        $album = Album::where('slug', $slug)->firstOrFail();
 
-        // 1. Supprimer le QR code si existe
-        if ($album->qr_code_path && Storage::disk('public')->exists($album->qr_code_path)) {
-            Storage::disk('public')->delete($album->qr_code_path);
-        }
-
-        // 2. Supprimer toutes les photos associées
+        // Supprimer toutes les photos
         foreach ($album->photos as $photo) {
-            if ($photo->path && Storage::disk('public')->exists($photo->path)) {
-                Storage::disk('public')->delete($photo->path);
+            if ($photo->original_path && Storage::disk('private')->exists($photo->original_path)) {
+                Storage::disk('private')->delete($photo->original_path);
+            }
+            if ($photo->thumb_path && Storage::disk('private')->exists($photo->thumb_path)) {
+                Storage::disk('private')->delete($photo->thumb_path);
             }
             $photo->delete();
         }
 
-        // 3. Supprimer l’album
+        // Supprimer QR code s’il existe
+        if ($album->qr_code_path && Storage::disk('public')->exists($album->qr_code_path)) {
+            Storage::disk('public')->delete($album->qr_code_path);
+        }
+
+        // Supprimer tokens & logs
+        $album->uploadTokens()->delete();
+        $album->accessLogs()->delete();
+
+        // Supprimer dossier du slug (sécurité)
+        Storage::disk('private')->deleteDirectory("albums/{$album->slug}");
+        Storage::disk('private')->deleteDirectory("thumbs/{$album->slug}");
+
+        // Enfin supprimer l’album
         $album->delete();
 
-        return redirect()->route('albums.index')->with('success', 'Album et ses photos supprimés avec succès.');
+        return redirect()->route('albums.index')->with('success', 'Album supprimé avec succès.');
     }
 }

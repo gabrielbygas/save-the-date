@@ -18,12 +18,20 @@ Route::prefix('photos')->group(function () {
     Route::post('/albums', [AlbumController::class, 'store'])->name('albums.store');
     Route::get('/albums/share/{token}', [AlbumController::class, 'share'])->name('albums.share');
 
-
+    
     // Photos
     Route::get('/albums/{slug}/photos', [PhotoController::class, 'index'])->name('photos.index');
     Route::get('/albums/{slug}/upload', [PhotoController::class, 'create'])->name('photos.create');
     Route::get('/albums/{slug}/{id}', [PhotoController::class, 'show'])->name('photos.show');
     Route::post('/albums/{slug}/store', [PhotoController::class, 'store'])->name('photos.store');
+    
+    // Upload par token (pour les invités)
+    Route::get('/albums/{slug}/upload/{token}', [PhotoController::class, 'createWithToken'])->name('photos.upload.token');
+    Route::post('/albums/{slug}/upload/{token}', [PhotoController::class, 'storeWithToken'])->name('photos.store.token');
+
+    // Téléchargement sécurisé
+    Route::get('/albums/{slug}/photos/{photo}/serve/{token}', [PhotoController::class, 'serve'])->name('photos.serve');// Téléchargement sécurisé
+    Route::get('/albums/{slug}/download-all/{token}', [PhotoController::class, 'downloadAll'])->name('photos.download.all');// Téléchargement de toutes les photos par token
     Route::delete('/albums/{slug}/{id}/destroy', [PhotoController::class, 'destroy'])->name('photos.destroy');
 
     // Paiements
