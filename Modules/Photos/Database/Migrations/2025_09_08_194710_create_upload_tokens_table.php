@@ -19,6 +19,7 @@ return new class extends Migration
             $table->string('visitor_email')->unique();
             $table->string('visitor_phone')->nullable();
             $table->boolean('used')->default(false);
+            $table->dateTime('expires_at')->nullable();
             $table->timestamps();
         });
     }

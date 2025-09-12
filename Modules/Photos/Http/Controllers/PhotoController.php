@@ -43,6 +43,7 @@ class PhotoController extends Controller
         }
 
         $photos = $query->get();
+        //$photos = $query->paginate(20); // Pagination
         $categories = Photo::select('category')->where('album_id', $album->id)
             ->groupBy('category')
             ->pluck('category');
@@ -143,6 +144,7 @@ class PhotoController extends Controller
         $uploadToken = UploadToken::where('token', $token)
             ->where('album_id', Album::where('slug', $slug)->firstOrFail()->id)
             ->where('used', false)
+            ->where('expires_at', '>', now()) // Vérifie que le token n'est pas expiré
             ->firstOrFail();
 
         $album = $uploadToken->album;
@@ -238,7 +240,7 @@ class PhotoController extends Controller
     private function makeUniqueFileName($file, $albumSlug): string
     {
         $extension = $file->getClientOriginalExtension();
-        return $albumSlug . '_' . Str::random(8) . '.' . $extension;
+        return $albumSlug . '_' . bin2hex(random_bytes(8)) . '.' . $extension;
     }
 
     /**
@@ -276,6 +278,10 @@ class PhotoController extends Controller
         if ($album->share_url_token !== $token) {
             abort(403, 'Token invalide.');
         }
+        // Vérifier la date de stockage
+        if (now()->gt($album->storage_until_at)) {
+            abort(403, 'La période de stockage de cet album est terminée.');
+        }
 
         $photo = $album->photos()->findOrFail($photoId);
 
@@ -309,6 +315,12 @@ class PhotoController extends Controller
 
         if ($album->share_url_token !== $token) {
             abort(403, 'Token invalide.');
+        }
+
+        // Vérifier la taille totale
+        $totalSize = $album->photos->sum('size_bytes');
+        if ($totalSize > 500 * 1024 * 1024) { // 500 Mo max
+            abort(403, 'La taille totale des photos dépasse la limite autorisée pour le téléchargement.');
         }
 
         $zip = new ZipArchive();

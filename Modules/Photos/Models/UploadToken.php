@@ -13,7 +13,7 @@ class UploadToken extends Model
     /**
      * The attributes that are mass assignable.
      */
-    protected $fillable = ['album_id', 'token', 'visitor_name', 'visitor_email', 'visitor_phone', 'used'];
+    protected $fillable = ['album_id', 'token', 'visitor_name', 'visitor_email', 'visitor_phone', 'used', 'expires_at'];
 
     // protected static function newFactory(): UploadTokensFactory
     // {

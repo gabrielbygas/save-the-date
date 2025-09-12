@@ -13,8 +13,9 @@ return new class extends Migration
     {
         Schema::create('albums', function (Blueprint $table) {
             $table->id();
-            $table->string('slug')->unique(); // identifiant public de l’album
             $table->foreignId('client_id')->constrained()->onDelete('cascade')->unique();
+            $table->string('slug')->unique(); // identifiant public de l’album
+            $table->string('owner_token')->unique(); // token privé pour le propriétaire
             $table->string('album_title');
             $table->date('wedding_date');
             $table->enum('status', ['draft', 'active', 'archived'])->default('draft');

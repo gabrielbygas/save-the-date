@@ -14,41 +14,50 @@ class PaymentController extends Controller
     public function index()
     {
         $payments = Payment::all();
+        // $payments = Payment::paginate(20);
         return view('photos::payments.index', compact('payments'));
     }
 
     // Affiche un paiement spécifique a un album en utilisant le slug
-    public function show($slug)
+    public function show($id)
     {
-        $payment = Payment::where('slug', $slug)->firstOrFail();
+        $payment = Payment::findOrFail($id);
         return view('photos::payments.show', compact('payment'));
     }
 
     // Enregistre un nouveau paiement (lié à un album)
     public function store(Request $request, $slug)
     {
+        $album = Album::where('slug', $slug)->firstOrFail();
         $validated = $request->validate([
             'album_id' => 'required|exists:albums,id',
             'amount'   => 'required|numeric|min:0',
             'status'   => 'required|string|in:pending,paid,failed',
             'provider' => 'required|string',
-            'currency' => 'sometimes|string|size:3',
+            'currency' => 'required|string|size:3', // Obligatoire
             'provider_ref' => 'sometimes|string|nullable',
             'paid_at' => 'sometimes|date|nullable',
         ]);
-
+        // Vérifier la cohérence entre album_id et slug
+        if ($validated['album_id'] != $album->id) {
+            abort(403, 'L\'album spécifié ne correspond pas au slug.');
+        }
+        // Vérifier les doublons de paiements "paid"
+        if ($validated['status'] === 'paid' && Payment::where('album_id', $validated['album_id'])->where('status', 'paid')->exists()) {
+            return back()->with('error', 'Un paiement valide existe déjà pour cet album.');
+        }
         $payment = Payment::create($validated);
 
-        // Exemple : si payé -> activer l’album
-        if ($payment->status === 'paid') {
-            $album = Album::find($validated['album_id']);
-            $album->is_active = true;
+        // Activer l'album si le paiement est "paid"
+        if ($payment->status === 'paid' && $album->status !== 'active') {
+            $album->status = 'active';
             $album->save();
         }
 
-        return redirect()->route('photos.payments.index')
+        return redirect()->route('albums.show', $album->slug)
             ->with('success', 'Paiement enregistré avec succès.');
     }
+
 
     // Mise à jour d’un paiement
     public function update(Request $request, $id)

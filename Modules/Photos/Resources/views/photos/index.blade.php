@@ -58,10 +58,6 @@
             @if ($photos->isEmpty())
                 <div class="text-center py-8">
                     <p class="text-gray-500">Aucune photo dans cet album.</p>
-                    <a href="{{ route('photos.create', $album->slug) }}"
-                        class="mt-4 inline-block px-4 py-2 bg-pink-600 text-white rounded-lg font-bold text-sm hover:bg-pink-700 transition">
-                        Ajouter la première photo
-                    </a>
                 </div>
             @else
                 <div

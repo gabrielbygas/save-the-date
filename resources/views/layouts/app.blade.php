@@ -8,6 +8,7 @@
     <meta name="description" content="Save The Date - Commandez vos faire-part de mariage personnalisés.">
     <meta name="keywords" content="Save The Date, faire-part de mariage, mariage, invitations, personnalisation">
     <meta name="author" content="Gabriel KALALA">
+    <meta name="robots" content="noindex">
 
     <title>{{ config('app.name', 'Laravel') }}</title>
 
