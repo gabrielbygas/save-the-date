@@ -3,7 +3,7 @@
 @section('content')
     <div class="max-w-7xl mx-auto bg-white shadow-md rounded-lg p-4 md:p-6 lg:p-8">
         <div class="text-center mb-6">
-            <h2 class="text-2xl md:text-3xl font-bold text-pink-600 break-words">Album: {{ $album->album_title }}</h2>
+            <h2 class="text-2xl md:text-3xl font-bold text-pink-600 break-words">Partager l'Album: {{ $album->album_title }}</h2>
             <p class="text-xl font-semibold text-gray-800 mt-2"> Mariage de {{ ucfirst($client->mr_first_name) }}
                 {{ ucfirst($client->mr_last_name) }} 💍
                 {{ ucfirst($client->mrs_first_name) }} {{ ucfirst($client->mrs_last_name) }}</p>
@@ -33,8 +33,8 @@
         <!-- ERREURS -->
 
         <div class="text-center mb-6">
-            <h3 class="text-xl font-semibold text-gray-700 mb-2">{{ $album->client->mr_first_name }} &
-                {{ $album->client->mrs_first_name }} vous invitent à partager vos
+            <h3 class="text-xl font-semibold text-gray-700 mb-2">{{ ucfirst($client->mr_first_name) }} &
+                {{ ucfirst($client->mrs_first_name) }} vous invitent à partager vos
                 souvenirs de leur mariage</h3>
             <p class="text-gray-600 mb-4">Pour ajouter vos photos, veuillez fournir les informations suivantes :</p>
             <div class="flex items-center justify-center">

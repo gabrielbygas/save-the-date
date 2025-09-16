@@ -10,7 +10,7 @@
                 {{ \Carbon\Carbon::parse($album->wedding_date)->format('d M Y') }}</p>
             <p class="text-xs md:text-sm text-gray-500 mt-2">👥 Invités max : {{ $album->max_guests }}</p>
             <p class="text-xs md:text-sm text-gray-500 break-all mt-4">
-                <span class="font-mono" id="share-link-text">{{ route('albums.share', $album->share_url_token) }}</span>
+                <span style="background: #e2e8f0; padding: 10px; text-align: center; border-radius: 6px; font-weight: bold; font-family: monospace;" class="font-mono" id="share-link-text">{{ route('albums.share', $album->share_url_token) }}</span>
             </p>
             <p class="text-xs md:text-sm text-gray-500 mt-4">Statut : <span
                     class="uppercase font-bold text-pink-500">{{ $album->status }}</span></p>
@@ -21,7 +21,7 @@
                 <div class="text-center">
                     <img src="{{ asset('storage/' . $album->qr_code_path) }}" alt="QR Code"
                         class="w-32 h-32 md:w-40 md:h-40 mx-auto">
-                    <p class="text-sm text-gray-600 mt-2">Scannez pour accéder à l’album</p>
+                    <p class="text-sm text-gray-600 mt-2">Partager ce QR CODE à vos invités</p>
                     <div class="mt-4 flex flex-col sm:flex-row justify-center space-y-2 sm:space-y-0 sm:space-x-4">
                         {{-- Bouton pour copier le lien --}}
                         <button onclick="copyShareLink()"

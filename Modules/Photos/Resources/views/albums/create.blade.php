@@ -70,7 +70,7 @@
             </div>
 
             <div class="mb-4">
-                <label for="max_guests" class="block text-gray-700 font-medium mb-1">Nombre maximum d'invités *</label>
+                <label for="max_guests" class="block text-gray-700 font-medium mb-1">Nombre d'invités (max:300) *</label>
                 <input type="number" name="max_guests" id="max_guests" value="150" max="300" class="w-full border-gray-300 rounded-md shadow-sm focus:ring-pink-500 focus:border-pink-500" required>
             </div>
 

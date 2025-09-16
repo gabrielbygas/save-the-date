@@ -62,11 +62,10 @@
             font-weight: 400;
         }
 
-        .footer {
+        /* Styles pour centrer le bouton */
+        .btn-container {
             text-align: center;
-            color: #aaa;
-            font-size: 0.95rem;
-            margin-top: 32px;
+            margin-top: 24px;
         }
 
         .btn {
@@ -76,9 +75,15 @@
             padding: 12px 32px;
             border-radius: 6px;
             text-decoration: none;
-            margin-top: 24px;
             font-weight: 600;
             letter-spacing: 1px;
+        }
+
+        .footer {
+            text-align: center;
+            color: #aaa;
+            font-size: 0.95rem;
+            margin-top: 32px;
         }
     </style>
 </head>
@@ -95,7 +100,7 @@
             <table>
                 <tr>
                     <th>Titre de l’album&nbsp;:</th>
-                    <td>{{ $album->album_title ?? 'N/A' }}</td>
+                    <td>{{ ucfirst($album->album_title) ?? 'N/A' }}</td>
                 </tr>
                 <tr>
                     <th>Date du mariage&nbsp;:</th>
@@ -103,11 +108,12 @@
                 </tr>
                 <tr>
                     <th>Couple&nbsp;:</th>
-                    <td>{{ $album->client->mr_first_name }} & {{ $album->client->mrs_first_name }}</td>
+                    <td>{{ ucfirst($album->client->mr_first_name) }}&nbsp;{{ ucfirst($album->client->mr_last_name) }}&nbsp;💍&nbsp;
+                {{ ucfirst($album->client->mrs_first_name) }}&nbsp;{{ ucfirst($album->client->mrs_last_name) }}</td>
                 </tr>
                 <tr>
-                    <th>Email&nbsp;:</th>
-                    <td>{{ $album->client->email ?? 'N/A' }}</td>
+                    <th>Valide jusqu'au&nbsp;:</th>
+                    <td>{{ \Carbon\Carbon::parse($album->storage_until_at)->translatedFormat('d F Y') ?? 'N/A' }}</td>
                 </tr>
                 <tr>
                     <th>Nombre d’invités max&nbsp;:</th>
@@ -119,18 +125,26 @@
                 </tr>
             </table>
             <hr style="margin: 20px 0; border: none; border-top: 1px solid #e2e8f0;">
+
+            
+
+            <div class="btn-container">
+                <a href="{{ route('albums.show', $album->slug) }}" class="btn">Voir mon album</a>
+            </div>
         </div>
 
         <div style="text-align:center;">
-            <a href="{{ route('albums.show', $album->slug) }}" class="btn">Voir mon album</a>
-
-            {{-- @if ($album->qr_code_path)
+            @if ($album->qr_code_path)
                 <div style="margin-top: 24px;">
-                    <p style="color: #555;">Ou scannez ce QR code :</p>
+                    <p style="color: #555;">Partager l'album à vos invités grace ce QR CODE:</p>
                     <img src="{{ asset('storage/' . $album->qr_code_path) }}" alt="QR Code"
                          style="width: 160px; height: 160px; object-fit: contain; margin-top: 10px;">
                 </div>
-            @endif --}}
+            @endif
+            <p style="text-align: center; font-size: 14px; margin: 10px 0;">Copier et partager l'album :</p>
+            <div style="background: #e2e8f0; padding: 10px; text-align: center; border-radius: 6px; font-weight: bold; font-family: monospace;">
+                {{ route('albums.share', $album->share_url_token) }}
+            </div>
         </div>
 
         <div class="footer">
