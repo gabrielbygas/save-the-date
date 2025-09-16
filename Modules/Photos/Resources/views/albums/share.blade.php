@@ -3,7 +3,8 @@
 @section('content')
     <div class="max-w-7xl mx-auto bg-white shadow-md rounded-lg p-4 md:p-6 lg:p-8">
         <div class="text-center mb-6">
-            <h2 class="text-2xl md:text-3xl font-bold text-pink-600 break-words">Partager l'Album: {{ $album->album_title }}</h2>
+            <h2 class="text-2xl md:text-3xl font-bold text-pink-600 break-words">Partager l'Album: {{ $album->album_title }}
+            </h2>
             <p class="text-xl font-semibold text-gray-800 mt-2"> Mariage de {{ ucfirst($client->mr_first_name) }}
                 {{ ucfirst($client->mr_last_name) }} 💍
                 {{ ucfirst($client->mrs_first_name) }} {{ ucfirst($client->mrs_last_name) }}</p>
@@ -56,6 +57,15 @@
                         <label class="block mt-4">Numéro Whatsapp *</label>
                         <input type="text" name="phone" class="w-full border p-2 rounded" value="{{ old('phone') }}"
                             placeholder="+243xxxxxxxxx" required>
+                    </div>
+                    <!-- Case à cocher pour acceptation des CGU -->
+                    <div class="mb-4 mt-6">
+                        <label class="flex items-center space-x-2">
+                            <span class="text-sm">
+                                En soumettant ce formulaire, vous acceptez les <a href="{{ route('terms') }}" target="_blank"
+                                    class="text-blue-600 underline">Conditions Générales d'Utilisation</a>
+                            </span>
+                        </label>
                     </div>
                     <div class="mt-6 text-center">
                         <button type="submit"

@@ -62,7 +62,7 @@
         <p class="mb-2"> <a href="mailto:gabrielkalala@protonmail.com"
                 class="text-blue-600 underline">gabrielkalala@protonmail.com</a>&nbsp;|
             &nbsp;© {{ date('Y') }} <span class="text-gray-800">Save The Date</span> Tous droits réservés&nbsp;|
-            &nbsp;<a href="{{ route('terms') }}" class="text-blue-600 underline">Conditions d'utilisation</a>&nbsp;
+            &nbsp;<a href="{{ route('terms') }}" class="text-blue-600 underline">Conditions Générales d'Utilisation</a>&nbsp;
         </p>
     </footer>
 
