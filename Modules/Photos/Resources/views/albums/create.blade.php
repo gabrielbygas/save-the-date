@@ -61,7 +61,7 @@
 
             <div class="mb-4">
                 <label class="block mt-4">Numéro Whatsapp *</label>
-                <input type="text" name="phone" class="w-full border p-2 rounded" value="{{ old('phone') }}" placeholder="+243 081 123 789" required>
+                <input type="text" name="phone" class="w-full border p-2 rounded" value="{{ old('phone') }}" placeholder="+243xxxxxxxxx" required>
             </div>
 
             <div class="mb-4">

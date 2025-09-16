@@ -28,8 +28,7 @@
 
             <!-- Mockup Image -->
             <div class="relative">
-                <img src="{{ asset('images/qr_code.png') }}" alt="Mockup album photo"
-                    class="w-full rounded-2xl shadow-lg">
+                <img src="{{ asset('images/qr_code.png') }}" alt="Mockup album photo" class="w-full rounded-2xl shadow-lg">
             </div>
         </div>
     </section>

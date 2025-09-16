@@ -13,6 +13,7 @@ use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Log;
 use Modules\Photos\Mail\AlbumCreatedMail;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\DB;
 
 class AlbumController extends Controller
 {
@@ -27,7 +28,7 @@ class AlbumController extends Controller
         return view('photos::index', compact('albums'));
     }
 
-    public function index() // liste de tous les albums pour l'admin exclusivement
+    public function index() // liste de tous les albums
     {
         $albums = Album::all();
         $client = $albums->first()->client;
@@ -48,9 +49,9 @@ class AlbumController extends Controller
         $album = Album::where('share_url_token', $token)->with('photos')->firstOrFail();
 
         // Vérifie si l'album est actif
-        if ($album->status !== 'active') {
-            abort(403, 'Cet album n\'est pas activé. Veuillez effectuer le paiement.');
-        }
+        // if ($album->status !== 'active') {
+        //     abort(403, 'Cet album n\'est pas activé. Veuillez effectuer le paiement.');
+        // }
 
         // Vérifie si la date de stockage est dépassée
         if (now()->gt($album->storage_until_at)) {
@@ -59,7 +60,7 @@ class AlbumController extends Controller
 
         $photos = $album->photos()->latest()->get();
         $client = $album->client;
-        return view('photos::albums.show', compact('album', 'photos', 'client'));
+        return view('photos::albums.share', compact('album', 'photos', 'client'));
     }
 
 
@@ -88,54 +89,68 @@ class AlbumController extends Controller
             $slug = $originalSlug . '-' . $count++;
         }
 
-        // Générer un token propriétaire unique
-        $ownerToken = bin2hex(random_bytes(16));
-
         // Calcul automatique des dates si non fournies
         $weddingDate = \Carbon\Carbon::parse($validated['wedding_date']);
         $validated['opens_at'] = $validated['opens_at'] ?? $weddingDate->copy()->subDays(7);
         $validated['storage_until_at'] = $validated['storage_until_at'] ?? $weddingDate->copy()->addYear();
 
-        // Création / récupération client
-        $client = Client::firstOrCreate(
-            ['email' => $validated['email']],
-            $request->only(['mr_first_name', 'mr_last_name', 'mrs_first_name', 'mrs_last_name', 'phone'])
-        );
-
-        // 2. Vérification pour un album existant
-        if (Album::where('client_id', $client->id)->exists()) {
-            // Un album existe déjà pour ce client.
-            // Retournez une erreur avec un message
-            return redirect()->back()->withErrors(['message' => 'Un album a déjà été créé pour ce client.'])->withInput();
-        }
-
-        // Générer token + QR
+        // Générer token 
+        $ownerToken = bin2hex(random_bytes(16));
         $shareToken = bin2hex(random_bytes(16));
         $shareUrl = route('albums.share', $shareToken);
 
-        $qrCodeImage = QrCode::format('svg')->size(300)->generate($shareUrl);
-        $qrCodePath = 'qrcodes/' . $slug . '_qrcode.svg';
-        Storage::disk('public')->put($qrCodePath, $qrCodeImage);
+        DB::beginTransaction();
+        try {
+            // Création / récupération client
+            $client = Client::firstOrCreate(
+                ['email' => $validated['email']],
+                $request->only(['mr_first_name', 'mr_last_name', 'mrs_first_name', 'mrs_last_name', 'phone'])
+            );
 
-        // Création de l’album
-        $album = Album::create([
-            'slug'             => $slug,
-            'client_id'        => $client->id,
-            'owner_token'      => $ownerToken,
-            'album_title'      => $validated['album_title'],
-            'wedding_date'     => $validated['wedding_date'],
-            'max_guests'       => $validated['max_guests'] ?? 300,
-            'status'           => $validated['status'],
-            'opens_at'         => $validated['opens_at'],
-            'storage_until_at' => $validated['storage_until_at'],
-            'share_url_token'  => $shareToken,
-            'qr_code_path'     => $qrCodePath,
-        ]);
+            // 2. Vérification pour un album existant
+            if (Album::where('client_id', $client->id)->exists()) {
+                return redirect()->back()->withErrors(['message' => 'Un album a déjà été créé pour ce client.'])->withInput();
+            }
 
-        // Envoi de l'email de confirmation
-        Mail::to($client->email)->send(new AlbumCreatedMail($album));
+            // Générer QR code et le stocker
+            $qrCodeImage = QrCode::format('svg')->size(300)->generate($shareUrl);
+            $qrCodePath = 'qrcodes/' . $slug . '_qrcode.svg';
+            Storage::disk('public')->put($qrCodePath, $qrCodeImage);
 
-        return redirect()->route('albums.index')->with('success', 'Album créé avec succès.');
+            // Création de l’album
+            $album = Album::create([
+                'slug'             => $slug,
+                'client_id'        => $client->id,
+                'owner_token'      => $ownerToken,
+                'album_title'      => $validated['album_title'],
+                'wedding_date'     => $validated['wedding_date'],
+                'max_guests'       => $validated['max_guests'] ?? 300,
+                'status'           => $validated['status'],
+                'opens_at'         => $validated['opens_at'],
+                'storage_until_at' => $validated['storage_until_at'],
+                'share_url_token'  => $shareToken,
+                'qr_code_path'     => $qrCodePath,
+            ]);
+
+            DB::commit();
+        } catch (\Exception $e) {
+            DB::rollBack();
+            // Supprimer le QR code si généré
+            if (Storage::disk('public')->exists($qrCodePath)) {
+                Storage::disk('public')->delete($qrCodePath);
+            }
+            Log::error('Erreur lors de la création de l\'album : ' . $e->getMessage());
+            return redirect()->back()->withErrors(['message' => 'Une erreur est survenue lors de la création de l\'album.'])->withInput();
+        }
+
+        // Envoi de l'email
+        try {
+            Mail::to($client->email)->send(new AlbumCreatedMail($album));
+        } catch (\Exception $e) {
+            Log::warning('Email non envoyé : ' . $e->getMessage());
+        }
+
+        return redirect()->route('albums.show', $album->slug)->with('success', 'Album créé avec succès.');
     }
 
     public function update(Request $request, $id)

@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 use Modules\Photos\Http\Controllers\AlbumController;
 use Modules\Photos\Http\Controllers\PhotoController;
 use Modules\Photos\Http\Controllers\PaymentController;
+use App\Http\Middleware\CheckAlbumOwnerToken;
 
 // Prefix 'photos' pour tout le module
 Route::prefix('photos')->group(function () {
@@ -17,8 +18,9 @@ Route::prefix('photos')->group(function () {
     Route::get('/albums/{slug}', [AlbumController::class, 'show'])->name('albums.show');
     Route::post('/albums', [AlbumController::class, 'store'])->name('albums.store');
     Route::get('/albums/share/{token}', [AlbumController::class, 'share'])->name('albums.share');
-    Route::post('/albums/{slug}/request-upload-token', [AlbumController::class, 'requestUploadToken'])
-        ->name('albums.request_upload_token');
+    Route::post('/albums/{slug}/request-upload-token', [AlbumController::class, 'requestUploadToken'])->name('albums.request_upload_token');
+    Route::post('/albums/{slug}/update', [AlbumController::class, 'update'])->middleware(CheckAlbumOwnerToken::class)->name('albums.update');
+    Route::delete('/albums/{slug}/destroy', [AlbumController::class, 'destroy'])->middleware(CheckAlbumOwnerToken::class)->name('albums.destroy');
 
 
 

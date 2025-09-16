@@ -122,15 +122,15 @@
         </div>
 
         <div style="text-align:center;">
-            <a href="{{ route('albums.share', $album->share_url_token) }}" class="btn">Voir mon album</a>
+            <a href="{{ route('albums.show', $album->slug) }}" class="btn">Voir mon album</a>
 
-            @if ($album->qr_code_path)
+            {{-- @if ($album->qr_code_path)
                 <div style="margin-top: 24px;">
                     <p style="color: #555;">Ou scannez ce QR code :</p>
                     <img src="{{ asset('storage/' . $album->qr_code_path) }}" alt="QR Code"
                          style="width: 160px; height: 160px; object-fit: contain; margin-top: 10px;">
                 </div>
-            @endif
+            @endif --}}
         </div>
 
         <div class="footer">

@@ -19,6 +19,7 @@ class Album extends Model
     protected $fillable = [
         'slug',
         'client_id',
+        'owner_token',
         'album_title',
         'wedding_date',
         'status',
