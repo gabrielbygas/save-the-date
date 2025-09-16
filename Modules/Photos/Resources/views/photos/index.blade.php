@@ -106,7 +106,7 @@
 
     </div>
 
-    <!-- Style pour la scrollbar personnalisée -->
+    <!-- Style pour la scrollbar personnalisée -->s
     <style>
         /* Scrollbar personnalisée pour Chrome/Edge/Safari */
         ::-webkit-scrollbar {

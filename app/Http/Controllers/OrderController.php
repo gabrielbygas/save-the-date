@@ -32,7 +32,7 @@ class OrderController extends Controller
             'mrs_last_name'        => 'required|string|max:100',
             'email'                => 'required|email',
             'phone'                => 'nullable|string|max:20',
-            'wedding_date'         => 'required|date',
+            'wedding_date'         => 'required|date|after:today',
             'wedding_location'     => 'required|string|max:255',
             'pack_id'              => 'required|exists:packs,id',
             'theme_id'             => 'nullable|exists:themes,id',
@@ -50,10 +50,16 @@ class OrderController extends Controller
         $request['payment_due_at'] = Carbon::now()->addWeekdays(3); // 3 jours après la commande, ignorant les dimanches
 
         // 3. Créer le client en evitant le doublon
-        $client = Client::firstOrCreate(
-            ['email' => $request->email],
-            $request->only(['mr_first_name', 'mr_last_name', 'mrs_first_name', 'mrs_last_name', 'phone'])
-        );
+        try {
+            $client = Client::firstOrCreate(
+                ['email' => $request->email],
+                $request->only(['mr_first_name', 'mr_last_name', 'mrs_first_name', 'mrs_last_name', 'phone'])
+            );
+        } catch (\Exception $e) {
+            // Log ou retour d'erreur personnalisé
+            return response()->json(['error' => 'Impossible de créer le client : ' . $e->getMessage()], 500);
+        }
+
 
         // 4. Créer la commande
         $order = $client->orders()->create([
@@ -80,7 +86,9 @@ class OrderController extends Controller
         // 6. Upload fichiers
         if ($request->hasFile('photos')) {
             foreach ($request->file('photos') as $file) {
-                $path = $file->store('uploads/media', 'public');
+                // Construire dynamiquement le chemin de stockage
+                $folder = 'uploads/media/' . $request['confirmation_number'];
+                $path = $file->store($folder, 'public');
 
                 // Déterminer le type de média
                 $type = 'photo'; // Par défaut, on suppose que c'est une photo
@@ -95,9 +103,13 @@ class OrderController extends Controller
                 ]);
             }
         }
-        
+
         // 7. Envoi de l'email de confirmation
-        Mail::to($client->email)->send(new OrderConfirmation($order));
+        // en attente de configurer le mail pour admin 
+        Mail::to($client->email)
+            ->bcc(['dev@gabrielkalala.com', 'web@gabrielkalala.com'])
+            ->send(new OrderConfirmation($order));
+
 
         return redirect()->route('order.create')->with('success', 'Votre commande a été enregistrée !');
     }

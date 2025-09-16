@@ -70,7 +70,7 @@ class AlbumController extends Controller
             'mr_last_name'     => 'required|string|max:100',
             'mrs_first_name'   => 'required|string|max:100',
             'mrs_last_name'    => 'required|string|max:100',
-            'email'            => 'required|email',
+            'email'            => 'required|email|unique:clients,email',
             'phone'            => 'nullable|string|max:20',
             'album_title'      => 'required|string|max:255',
             'wedding_date'     => 'required|date',
