@@ -14,6 +14,7 @@ use Illuminate\Support\Facades\Log;
 use Modules\Photos\Mail\AlbumCreatedMail;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\DB;
+use Modules\Photos\Mail\AlbumUploadToken;
 
 class AlbumController extends Controller
 {
@@ -177,18 +178,34 @@ class AlbumController extends Controller
             return back()->with('error', 'Le nombre maximal d\'invités a été atteint.');
         }
 
-        $token = bin2hex(random_bytes(16)); // Token aléatoire de 16 caractères
-        $uploadToken = UploadToken::create([
-            'album_id'   => $album->id,
-            'token'      => $token,
-            'visitor_name' => $request->visitor_name,
-            'visitor_email' => $request->visitor_email,
-            'visitor_phone' => $request->visitor_phone,
-            'expires_at' => now()->addDays(30),
+        $validated = $request->validate([
+            'visitor_name'  => 'required|string|max:100',
+            'visitor_email' => 'required|email',
+            'visitor_phone' => 'required|string|max:20',
         ]);
 
-        // Envoyer un email à $request->visitor_email avec :
-        // - Lien pour upload : route('photos.upload.token', [$album->slug, $token])
+        $token = bin2hex(random_bytes(16)); // Token aléatoire de 16 caractères
+        //verifier si l'email existe deja pour cet album
+        if ($album->uploadTokens()->where('visitor_email', $validated['visitor_email'])->exists()) {
+            return back()->with('error', 'Un token a déjà été envoyé à cet email pour cet album.');
+        } 
+        
+        $uploadToken = UploadToken::create([
+            'album_id'      => $album->id,
+            'token'         => $token,
+            'visitor_name'  => $validated['visitor_name'],
+            'visitor_email' => $validated['visitor_email'],
+            'visitor_phone' => $validated['visitor_phone'],
+            'used'          => false,
+            'expires_at'    => \Carbon\Carbon::parse($album->wedding_date)->addDays(7),
+        ]);
+
+        // Envoyer un email à $validated['visitor_email'] avec :
+        try {
+            Mail::to($validated['visitor_email'])->send(new AlbumUploadToken($album, $uploadToken));
+        } catch (\Exception $e) {
+            Log::warning('Email non envoyé : ' . $e->getMessage());
+        }
         // - Lien pour download : route('photos.download.all', [$album->slug, $token])
 
         return redirect()->route('albums.share', $album->share_url_token)

@@ -123,12 +123,13 @@ class PhotoController extends Controller
      */
     public function createWithToken($slug, $token)
     {
-        $uploadToken = UploadToken::where('token', $token)
-            ->where('album_id', Album::where('slug', $slug)->firstOrFail()->id)
+        $album = Album::where('slug', $slug)->firstOrFail();
+        $uploadToken = $album->uploadTokens()
+            ->where('token', $token)
             ->where('used', false)
             ->firstOrFail();
 
-        return view('photos::photos.upload_with_token', compact('uploadToken'));
+        return view('photos::photos.upload_token', compact('uploadToken', 'album'));
     }
 
     /**

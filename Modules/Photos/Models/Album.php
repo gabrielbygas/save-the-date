@@ -50,6 +50,11 @@ class Album extends Model
         return $this->belongsTo(Client::class);
     }
 
+    public function uploadTokens()
+    {
+        return $this->hasMany(UploadToken::class);
+    }
+
     public function getShareUrl() // token
     {
         return route('albums.share', ['token' => $this->share_url_token]);

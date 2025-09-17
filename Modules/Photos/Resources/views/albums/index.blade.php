@@ -28,8 +28,8 @@
             @forelse ($albums as $album)
                 <div class="bg-white rounded-lg shadow-md overflow-hidden">
                     <div class="p-4">
-                        <h3 class="text-xl font-semibold text-gray-800">{{ ucfirst($client->mr_first_name) }} 💍
-                            {{ ucfirst($client->mrs_first_name) }}</h3>
+                        <h3 class="text-xl font-semibold text-gray-800">{{ ucfirst($album->client->mr_first_name) }} 💍
+                            {{ ucfirst($album->client->mrs_first_name) }}</h3>
                         <p class="text-sm md:text-base text-gray-500 mt-4">Album : {{ $album->album_title }}</p>
                         <p class="text-sm text-gray-500">📅
                             {{ \Carbon\Carbon::parse($album->wedding_date)->format('d M Y') }}</p>
