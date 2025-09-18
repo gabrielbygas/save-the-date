@@ -116,7 +116,9 @@ class UploadTokenController extends Controller
         if (now()->gt($album->storage_until_at)) {
             abort(403, 'La période de stockage de cet album est terminée.');
         }
-
+        
+        // reste a decider si on serve une seule photo ou toutes les photos
+        // pour l'instant on sert une seule photo. Pour toutes les photos:$photos = $album->photos();
         $photo = $album->photos()->findOrFail($photoId);
 
         // Log l'accès
