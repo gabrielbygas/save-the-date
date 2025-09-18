@@ -6,6 +6,9 @@
             <h2 class="text-2xl md:text-3xl font-bold text-pink-600 break-words">
                 Ajouter des photos à l'album : {{ $album->album_title }}
             </h2>
+            <p class="text-xl font-semibold text-gray-800 mt-2"> Mariage de {{ ucfirst($album->client->mr_first_name) }}
+                {{ ucfirst($album->client->mr_last_name) }} 💍
+                {{ ucfirst($album->client->mrs_first_name) }} {{ ucfirst($album->client->mrs_last_name) }}</p>
             <p class="text-sm md:text-base text-gray-600 mt-2">
                 📅 Mariage prévu le {{ \Carbon\Carbon::parse($album->wedding_date)->format('d M Y') }}
             </p>

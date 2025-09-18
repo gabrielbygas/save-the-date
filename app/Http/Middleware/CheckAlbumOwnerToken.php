@@ -18,16 +18,19 @@ class CheckAlbumOwnerToken
     {
         $slug = $request->route('slug'); // récupère le paramètre de route
         if (!$slug) {
-            return response()->json(['error' => 'Slug manquant dans la route.'], 400);
+            abort(403, 'Slug manquant dans la route.');
         }
 
         $album = Album::where('slug', $slug)->first();
         if (!$album) {
-            return response()->json(['error' => 'Album introuvable.'], 404);
+            abort(404, 'Album introuvable.');
         }
 
-        if ($request->owner_token !== $album->owner_token) {
-            return response()->json(['error' => 'Accès non autorisé.'], 403);
+        // Récupérer le owner_token depuis la requête (query ou body)
+        $ownerToken = $request->query('owner_token') ?? $request->input('owner_token');
+
+        if (!$ownerToken || $ownerToken !== $album->owner_token) {
+            abort(403, 'Accès non autorisé. Token invalide.');
         }
 
         return $next($request);

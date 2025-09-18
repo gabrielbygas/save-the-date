@@ -74,7 +74,12 @@
                                 <div
                                     class="absolute inset-0 bg-black bg-opacity-30 flex items-center justify-center
                                     opacity-0 group-hover:opacity-100 transition-opacity">
-                                    <div class="flex space-x-2">
+                                   Partager l'Album: libala ya biso
+Mariage de Sebastien Kabongo 💍 Naomie Omatondo
+
+📅 Mariage prévu le 22 Nov 2025
+
+ <div class="flex space-x-2">
                                         <a href="{{ route('photos.show', [$album->slug, $photo->id]) }}"
                                             class="p-2 bg-white text-pink-600 rounded-full shadow-md
                                           hover:bg-gray-100 transition flex items-center justify-center"

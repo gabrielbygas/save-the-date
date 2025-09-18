@@ -6,6 +6,9 @@
             <h2 class="text-2xl md:text-3xl font-bold text-pink-600 break-words">
                 Ajouter des photos à l'album : {{ $album->album_title }}
             </h2>
+            <p class="text-xl font-semibold text-gray-800 mt-2"> Mariage de {{ ucfirst($album->client->mr_first_name) }}
+                {{ ucfirst($album->client->mr_last_name) }} 💍
+                {{ ucfirst($album->client->mrs_first_name) }} {{ ucfirst($album->client->mrs_last_name) }}</p>
             <p class="text-sm md:text-base text-gray-600 mt-2">
                 📅 Mariage prévu le {{ \Carbon\Carbon::parse($album->wedding_date)->format('d M Y') }}
             </p>
@@ -23,6 +26,7 @@
                             d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
                     </svg>
                     <p class="mt-2 text-sm text-gray-600">
+                        {{ ucfirst($uploadToken->visitor_name) }}
                         <span class="font-medium text-pink-700 hover:text-pink-500">
                             Cliquez pour sélectionner des photos
                         </span>
@@ -36,9 +40,33 @@
                 </label>
             </div>
 
-            @error('photos.*')
-                <p class="text-red-500 text-sm mt-2">{{ $message }}</p>
-            @enderror
+            <!-- ERREURS -->
+            @if (session('success'))
+                <div class="bg-green-100 text-green-700 p-3 mb-4 rounded">
+                    {{ session('success') }}
+                </div>
+            @endif
+
+            {{-- Gère les messages d'erreur de session --}}
+            @if (session('error'))
+                <div class="bg-red-100 text-red-800 p-4 mb-4 rounded">
+                    <div class="list-disc pl-5 space-y-1">
+                        {{ session('error') }}
+                    </div>
+                </div>
+            @endif
+
+            {{-- Gère les erreurs de validation du formulaire --}}
+            @if ($errors->any())
+                <div class="bg-red-100 text-red-800 p-4 mb-4 rounded">
+                    <ul class="list-disc pl-5 space-y-1">
+                        @foreach ($errors->all() as $error)
+                            <li>{{ $error }}</li>
+                        @endforeach
+                    </ul>
+                </div>
+            @endif
+            <!-- ERREURS -->
 
             <div id="upload-error" class="hidden bg-red-100 text-red-800 p-4 mb-4 rounded text-center"></div>
 
