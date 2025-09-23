@@ -109,7 +109,8 @@
                 <tr>
                     <th>Couple&nbsp;:</th>
                     <td>{{ ucfirst($album->client->mr_first_name) }}&nbsp;{{ ucfirst($album->client->mr_last_name) }}&nbsp;💍&nbsp;
-                {{ ucfirst($album->client->mrs_first_name) }}&nbsp;{{ ucfirst($album->client->mrs_last_name) }}</td>
+                        {{ ucfirst($album->client->mrs_first_name) }}&nbsp;{{ ucfirst($album->client->mrs_last_name) }}
+                    </td>
                 </tr>
                 <tr>
                     <th>Valide jusqu'au&nbsp;:</th>
@@ -126,7 +127,7 @@
             </table>
             <hr style="margin: 20px 0; border: none; border-top: 1px solid #e2e8f0;">
 
-            
+
 
             <div class="btn-container">
                 <a href="{{ route('albums.show', $album->slug) }}" class="btn">Voir mon album</a>
@@ -138,13 +139,22 @@
                 <div style="margin-top: 24px;">
                     <p style="color: #555;">Partager l'album à vos invités grace ce QR CODE:</p>
                     <img src="{{ asset('storage/' . $album->qr_code_path) }}" alt="QR Code"
-                         style="width: 160px; height: 160px; object-fit: contain; margin-top: 10px;">
+                        style="width: 160px; height: 160px; object-fit: contain; margin-top: 10px;">
                 </div>
             @endif
-            <p style="text-align: center; font-size: 14px; margin: 10px 0;">Copier et partager l'album :</p>
-            <div style="background: #e2e8f0; padding: 10px; text-align: center; border-radius: 6px; font-weight: bold; font-family: monospace;">
+            <p style="text-align: center; font-size: 14px; margin: 10px 10px;">Copier et partager l'album :</p>
+            <div
+                style="background: #e2e8f0; padding: 10px; text-align: center; border-radius: 6px; font-weight: bold; font-family: monospace;">
                 {{ route('albums.share', $album->share_url_token) }}
             </div>
+        </div>
+
+        <div style="text-align:center;margin-top:25px;">
+            <p style="color: #555;"> Vous disposez de 3 jours ouvrables, jusqu'au
+                <strong>{{ $album->storage_until_at->translatedFormat('d F Y') }}</strong>, pour effectuer le paiement.
+            </p>
+            <p style="color: #555;"> Le paiement se fait uniquement par mobile money ou en espèces. Notre service client vous contactera pour
+                vous assister.</p>
         </div>
 
         <div class="footer">

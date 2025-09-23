@@ -12,7 +12,7 @@ use Modules\Photos\Models\AlbumAccessLog;
 use Illuminate\Support\Str;
 use Intervention\Image\Laravel\Facades\Image;
 use Illuminate\Support\Facades\Log;
-use Symfony\Component\HttpFoundation\StreamedResponse;
+use Illuminate\Support\Facades\DB;
 use ZipArchive;
 
 class PhotoController extends Controller
@@ -77,27 +77,34 @@ class PhotoController extends Controller
     {
         $request->validate([
             'photos'      => 'required|array',
-            'photos.*'    => 'image|max:10240', // 10 MB max
+            'photos.*'    => 'image|max:10240',
             'category'    => 'nullable|in:civil,religieux,coutumier,reception,autre',
             'exif_json'   => 'nullable|json',
         ]);
 
         $album = Album::where('slug', $slug)->firstOrFail();
+        $directory = "albums/{$album->slug}";
 
+        // Créer le dossier s'il n'existe pas
+        if (!Storage::disk('private')->exists($directory)) {
+            Storage::disk('private')->makeDirectory($directory);
+        }
+
+        $successCount = 0;
         foreach ($request->file('photos') as $file) {
+            DB::beginTransaction();
             try {
-                // Nom unique
-                $fileName = $this->makeUniqueFileName($file, $album->slug);
+                $fileName = $this->makeUniqueFileName($file, $album->slug); // Génère un nom de fichier unique
+                $path = $file->storeAs($directory, $fileName, 'private'); // Chemin relatif
 
-                // Stocker dans storage/private (sécurisé)
-                $path = $file->storeAs("private/albums/{$album->slug}", $fileName, 'private');
+                if (!Storage::disk('private')->exists($path)) { // Vérification du stockage
+                    throw new \Exception("Le fichier n'a pas été stocké.");
+                }
 
-                // Créer miniature
-                $thumbPath = $this->createThumbnail($path, $album->slug);
+                $thumbPath = $this->createThumbnail($path, $album->slug); // Crée la miniature
 
-                // Métadonnées
                 $photoData = [
-                    'original_path' => $path,
+                    'original_path' => $directory . '/' . $fileName, // Chemin relatif,
                     'file_name'     => $fileName,
                     'thumb_path'    => $thumbPath,
                     'size_bytes'    => $file->getSize(),
@@ -107,16 +114,50 @@ class PhotoController extends Controller
                     'uploaded_ip'   => $request->ip(),
                 ];
 
-                $album->photos()->create($photoData);
+                $photo = $album->photos()->create($photoData);
+                Log::info("Photo créée avec ID : " . $photo->id);
+                DB::commit();
+                $successCount++;
             } catch (\Exception $e) {
-                Log::error("Erreur lors de l'upload : " . $e->getMessage());
+                DB::rollBack();
+                Log::error("Erreur lors de l'upload de {$file->getClientOriginalName()} : " . $e->getMessage());
                 continue;
             }
         }
 
-        return redirect()->route('photos.index', $album->slug)
-            ->with('success', 'Photo(s) ajoutée(s) avec succès.');
+        if ($successCount > 0) { // Au moins une photo a été uploadée avec succès
+            return redirect()->route('photos.index', ['slug' => $album->slug, 'owner_token' => $album->owner_token])
+                ->with('success', "{$successCount} photo(s) ajoutée(s) avec succès.");
+        } else { // Aucune photo n'a pu être uploadée
+            return back()->with('error', 'Aucune photo n\'a pu être ajoutée. Vérifiez les fichiers et réessayez.');
+        }
     }
+
+    /**
+     * Sert une photo (pour le propriétaire).
+     */
+    public function servePhoto($slug, $filename)
+    {
+        Log::info("****Accès à servePhoto avec slug={$slug}, filename={$filename} ******************************************"); // a supprimer
+
+        $album = Album::where('slug', $slug)->firstOrFail();
+        $photo = $album->photos()->where('file_name', $filename)->firstOrFail();
+        // $path = "albums/{$slug}/{$filename}";
+        $path = $photo->original_path; // Utilise le chemin enregistré en base
+
+
+        Log::info("Chemin recherché : {$path}");
+        Log::info("Le fichier existe ? " . (Storage::disk('private')->exists($path) ? 'Oui' : 'Non'));
+
+
+        if (!Storage::disk('private')->exists($path)) {
+            Log::error("Fichier introuvable : {$path}");
+            abort(404, 'Photo introuvable.');
+        }
+
+        return response()->file(Storage::disk('private')->path($path));
+    }
+
 
 
     /**
@@ -163,7 +204,7 @@ class PhotoController extends Controller
 
         $photo->delete();
 
-        return redirect()->route('photos.index', $album->slug)
+        return redirect()->route('photos.index', ['slug' => $album->slug, 'owner_token' => $album->owner_token])
             ->with('success', 'Photo supprimée avec succès.');
     }
 

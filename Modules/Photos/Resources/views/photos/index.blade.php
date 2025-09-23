@@ -45,7 +45,7 @@
                 </a>
 
                 <!-- Bouton à droite (pleine largeur sur mobile) -->
-                <a href="{{ route('photos.create', $album->slug) }}"
+                <a href="{{ route('photos.create', ['slug' => $album->slug, 'owner_token' => $album->owner_token]) }}"
                     class="w-full sm:w-auto px-4 py-2 bg-green-600 text-white rounded-lg font-bold text-sm hover:bg-green-700 transition text-center">
                     📷 Ajouter des photos
                 </a>
@@ -65,28 +65,25 @@
                     <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
                         @foreach ($photos as $photo)
                             <div class="bg-gray-100 rounded-lg shadow overflow-hidden group relative">
-                                <a href="{{ route('photos.show', [$album->slug, $photo->id]) }}">
-                                    <img src="{{ asset('storage/' . $photo->original_path) }}"
+                                <a
+                                    href="{{ route('photos.show', [$album->slug, $photo->id, 'owner_token' => $album->owner_token]) }}">
+                                    <img src="{{ route('photos.serve.photo', [$album->slug, $photo->file_name]) }}"
                                         alt="{{ $photo->caption ?? 'Photo' }}" class="w-full h-32 md:h-40 object-cover">
+
                                 </a>
 
                                 <!-- Overlay avec boutons -->
                                 <div
                                     class="absolute inset-0 bg-black bg-opacity-30 flex items-center justify-center
                                     opacity-0 group-hover:opacity-100 transition-opacity">
-                                   Partager l'Album: libala ya biso
-Mariage de Sebastien Kabongo 💍 Naomie Omatondo
-
-📅 Mariage prévu le 22 Nov 2025
-
- <div class="flex space-x-2">
-                                        <a href="{{ route('photos.show', [$album->slug, $photo->id]) }}"
+                                    <div class="flex space-x-2">
+                                        <a href="{{ route('photos.show', [$album->slug, $photo->id, 'owner_token' => $album->owner_token]) }}"
                                             class="p-2 bg-white text-pink-600 rounded-full shadow-md
                                           hover:bg-gray-100 transition flex items-center justify-center"
                                             title="Voir la photo">
                                             🔍
                                         </a>
-                                        <a href="{{ asset('storage/' . $photo->original_path) }}"
+                                        <a href="{{ route('photos.serve.photo', [$album->slug, $photo->file_name]) }}"
                                             download="{{ $photo->file_name }}"
                                             class="p-2 bg-white text-blue-600 rounded-full shadow-md
                                           hover:bg-gray-100 transition flex items-center justify-center"

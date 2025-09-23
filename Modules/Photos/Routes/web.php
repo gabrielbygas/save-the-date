@@ -1,11 +1,12 @@
 <?php
+
 use Illuminate\Support\Facades\Route;
 use Modules\Photos\Http\Controllers\AlbumController;
 use Modules\Photos\Http\Controllers\PhotoController;
 use Modules\Photos\Http\Controllers\PaymentController;
 use Modules\Photos\Http\Controllers\UploadTokenController;
 use App\Http\Middleware\CheckAlbumOwnerToken;
-use App\Http\Middleware\CheckInviteToken; 
+use App\Http\Middleware\CheckInviteToken;
 
 // Prefix 'photos' pour tout le module
 Route::prefix('photos')->group(function () {
@@ -13,7 +14,7 @@ Route::prefix('photos')->group(function () {
     Route::get('/', [AlbumController::class, 'home'])->name('photos.home');
 
     // Albums
-    Route::get('/albums', [AlbumController::class, 'index'])->name('albums.index');
+    Route::get('/albums', [AlbumController::class, 'index'])->name('albums.index')->middleware('auth', 'admin');
     Route::get('/albums/create', [AlbumController::class, 'create'])->name('albums.create');
     Route::get('/albums/{slug}', [AlbumController::class, 'show'])->name('albums.show');
     Route::post('/albums', [AlbumController::class, 'store'])->name('albums.store');
@@ -45,7 +46,11 @@ Route::prefix('photos')->group(function () {
     Route::post('/albums/{slug}/store', [PhotoController::class, 'store'])
         ->middleware(CheckAlbumOwnerToken::class)
         ->name('photos.store');
-        
+
+    Route::get('/photos/serve/{slug}/{filename}', [PhotoController::class, 'servePhoto'])
+        ->name('photos.serve.photo');
+
+
     Route::delete('/albums/{slug}/{id}/destroy', [PhotoController::class, 'destroy'])
         ->middleware(CheckAlbumOwnerToken::class)
         ->name('photos.destroy');

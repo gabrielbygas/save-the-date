@@ -97,7 +97,7 @@
         <div class="mt-4">
             <p>Salut&nbsp;<strong>{{ ucfirst($uploadToken->visitor_name) }}</strong>!</p>
             <p>Le couple<strong>&nbsp;{{ ucfirst($album->client->mr_first_name) }}&nbsp;{{ ucfirst($album->client->mr_last_name) }}&nbsp;💍&nbsp;
-                {{ ucfirst($album->client->mrs_first_name) }}&nbsp;{{ ucfirst($album->client->mrs_last_name) }}&nbsp;</strong> vous invite à partager vos photos pour l'album de leur mariage.
+                {{ ucfirst($album->client->mrs_first_name) }}&nbsp;{{ ucfirst($album->client->mrs_last_name) }}&nbsp;</strong> vous invitent à partager vos photos pour l'album de leur mariage.
             </p>
         </div>
 

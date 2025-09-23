@@ -41,10 +41,17 @@ return [
         'public' => [
             'driver' => 'local',
             'root' => storage_path('app/public'),
-            'url' => env('APP_URL').'/storage',
+            'url' => env('APP_URL') . '/storage',
             'visibility' => 'public',
             'throw' => false,
             'report' => false,
+        ],
+
+        'private' => [
+            'driver' => 'local',
+            'root' => storage_path('app/private'), // Chemin vers le dossier de stockage privé
+            'url' => env('APP_URL') . '/storage', // Optionnel, si tu veux servir les fichiers via une URL
+            'visibility' => 'private', // Les fichiers ne sont pas accessibles publiquement
         ],
 
         's3' => [
@@ -59,7 +66,7 @@ return [
             'throw' => false,
             'report' => false,
         ],
-        
+
         'albums' => [ //photos albums storage
             'driver' => 's3',
             'key'    => env('ALBUMS_AWS_KEY'),

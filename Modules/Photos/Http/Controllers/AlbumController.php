@@ -15,6 +15,8 @@ use Modules\Photos\Mail\AlbumCreatedMail;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\DB;
 use Modules\Photos\Mail\AlbumUploadToken;
+use Carbon\Carbon;
+
 
 class AlbumController extends Controller
 {
@@ -93,7 +95,9 @@ class AlbumController extends Controller
         // Calcul automatique des dates si non fournies
         $weddingDate = \Carbon\Carbon::parse($validated['wedding_date']);
         $validated['opens_at'] = $validated['opens_at'] ?? $weddingDate->copy()->subDays(7);
-        $validated['storage_until_at'] = $validated['storage_until_at'] ?? $weddingDate->copy()->addYear();
+        $validated['storage_until_at'] = Carbon::now()->addWeekdays(3); // 3 jours pour payer
+        //$validated['opens_at'] = $validated['opens_at'] ?? $weddingDate->copy()->subDays(7);
+        //$validated['storage_until_at'] = $validated['storage_until_at'] ?? $weddingDate->copy()->addYear();
 
         // Générer token 
         $ownerToken = bin2hex(random_bytes(16));

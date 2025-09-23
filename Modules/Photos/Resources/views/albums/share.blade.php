@@ -3,7 +3,7 @@
 @section('content')
     <div class="max-w-7xl mx-auto bg-white shadow-md rounded-lg p-4 md:p-6 lg:p-8">
         <div class="text-center mb-6">
-            <h2 class="text-2xl md:text-3xl font-bold text-pink-600 break-words">Partager l'Album: {{ $album->album_title }}
+            <h2 class="text-2xl md:text-3xl font-bold text-pink-600 break-words">Invitation à l'Album: {{ $album->album_title }}
             </h2>
             <p class="text-xl font-semibold text-gray-800 mt-2"> Mariage de {{ ucfirst($client->mr_first_name) }}
                 {{ ucfirst($client->mr_last_name) }} 💍
@@ -84,7 +84,7 @@
                     <div class="mt-6 text-center">
                         <button type="submit"
                             class="bg-pink-500 hover:bg-pink-600 text-white font-semibold px-6 py-2 rounded-md">
-                            Ajouter vos photos
+                            Recevoir le lien d'upload
                         </button>
                     </div>
                 </form>

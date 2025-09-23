@@ -67,13 +67,13 @@
         <div class="m-4 md:m-8">
             <div class="flex flex-col sm:flex-row justify-between items-center gap-4">
                 <!-- Bouton à gauche (pleine largeur sur mobile) -->
-                <a href="{{ route('photos.index', $album->slug) }}"
+                <a href="{{ route('photos.index', ['slug' => $album->slug, 'owner_token' => $album->owner_token]) }}"
                     class="w-full sm:w-auto px-4 py-2 bg-pink-500 text-white rounded-lg font-bold text-sm hover:bg-pink-600 transition text-center">
                     ← Voir les photos
                 </a>
 
                 <!-- Bouton à droite (pleine largeur sur mobile) -->
-                <a href="{{ route('photos.create', $album->slug) }}"
+                <a href="{{ route('photos.create', ['slug' => $album->slug, 'owner_token' => $album->owner_token]) }}"
                     class="w-full sm:w-auto px-4 py-2 bg-green-600 text-white rounded-lg font-bold text-sm hover:bg-green-700 transition text-center">
                     📷 Ajouter des photos
                 </a>

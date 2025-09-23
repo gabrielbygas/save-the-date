@@ -40,7 +40,7 @@ class UploadTokenController extends Controller
             ->where('expires_at', '>', now()) // Vérifie que le token n'est pas expiré
             ->firstOrFail();
 
-        return view('photos::photos.upload_token', compact('uploadToken', 'album'));
+        return view('photos::upload_tokens.create', compact('uploadToken', 'album'));
     }
 
     /**
