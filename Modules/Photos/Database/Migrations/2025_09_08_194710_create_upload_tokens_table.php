@@ -16,11 +16,13 @@ return new class extends Migration
             $table->foreignId('album_id')->constrained()->onDelete('cascade');
             $table->string('token')->unique();
             $table->string('visitor_name')->nullable();
-            $table->string('visitor_email')->unique();
+            $table->string('visitor_email');
             $table->string('visitor_phone')->nullable();
             $table->boolean('used')->default(false);
             $table->dateTime('expires_at')->nullable();
+            $table->unsignedInteger('photo_count')->default(0); // max 10 Compteur de photos uploadées
             $table->timestamps();
+            $table->unique(['visitor_email', 'album_id', 'used'], 'unique_visitor_per_album');
         });
     }
 

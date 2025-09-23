@@ -50,7 +50,7 @@ class UploadTokenController extends Controller
     {
         $request->validate([
             'photo'       => 'required|image|max:10240',
-            'guest_name'  => 'nullable|string|max:100',
+            'visitor_name'  => 'nullable|string|max:100',
         ]);
 
         $uploadToken = UploadToken::where('token', $token)
@@ -58,6 +58,16 @@ class UploadTokenController extends Controller
             ->where('used', false)
             ->where('expires_at', '>', now()) // Vérifie que le token n'est pas expiré
             ->firstOrFail();
+
+        // Vérifier que l'email de l'invité correspond (optionnel)
+        if ($request->has('visitor_email') && $uploadToken->visitor_email !== $request->visitor_email) {
+            abort(403, 'Ce lien d\'upload ne vous est pas destiné.');
+        }
+
+        // Vérifier si l'invité a déjà uploadé 5 photos
+        if ($uploadToken->photo_count >= 5) {
+            return back()->with('error', 'Vous avez déjà uploadé le nombre maximal de 5 photos autorisées.');
+        }
 
         $album = $uploadToken->album;
         $file = $request->file('photo');
@@ -89,6 +99,8 @@ class UploadTokenController extends Controller
 
             // Marquer le token comme utilisé
             $uploadToken->update(['used' => true]);
+            // Incrémenter le compteur de photos pour ce token
+            $uploadToken->increment('photo_count');
 
             return redirect()->route('albums.share', $album->share_url_token)
                 ->with('success', 'Merci ! Votre photo a été ajoutée à l\'album.');
@@ -116,7 +128,7 @@ class UploadTokenController extends Controller
         if (now()->gt($album->storage_until_at)) {
             abort(403, 'La période de stockage de cet album est terminée.');
         }
-        
+
         // reste a decider si on serve une seule photo ou toutes les photos
         // pour l'instant on sert une seule photo. Pour toutes les photos:$photos = $album->photos();
         $photo = $album->photos()->findOrFail($photoId);
@@ -154,7 +166,7 @@ class UploadTokenController extends Controller
         if (now()->gt($token->expires_at)) {
             abort(403, 'Ce token a expiré et ne peut pas être supprimé.');
         }
-        
+
         $token->delete();
 
         return redirect()->route('upload_tokens.index', $album->slug)
@@ -174,7 +186,10 @@ class UploadTokenController extends Controller
             abort(403, 'Ce token a expiré et ne peut pas être réinitialisé.');
         }
 
-        $token->update(['used' => false]);
+        $token->update([
+            'used' => false,
+            'photo_count' => 0, // Réinitialiser le compteur de photos
+        ]);
 
         return redirect()->route('upload_tokens.index', $album->slug)
             ->with('success', 'Lien d\'upload réinitialisé. Il peut maintenant être réutilisé.');

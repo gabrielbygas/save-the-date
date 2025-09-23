@@ -33,7 +33,7 @@
                         ou glissez-déposez
                     </p>
                     <p class="mt-1 text-xs text-gray-500">
-                        Vous pouvez uploader maximum de 10 photos à la fois. JPEG, PNG, JPG ou GIF (max 10MB par photo)
+                        Vous pouvez uploader maximum de 5 photos à la fois. JPEG, PNG, JPG ou GIF (max 10MB par photo)
                     </p>
 
                     <p class="hidden" id="file-upload-info"> </p>

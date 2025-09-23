@@ -174,6 +174,7 @@ class AlbumController extends Controller
     public function requestUploadToken(Request $request, $slug)
     {
         $album = Album::where('slug', $slug)->firstOrFail();
+        // Vérifier que le nombre maximal d'invités n'est pas atteint
         if ($album->uploadTokens()->count() >= $album->max_guests) {
             return back()->with('error', 'Le nombre maximal d\'invités a été atteint.');
         }
@@ -185,11 +186,16 @@ class AlbumController extends Controller
         ]);
 
         $token = bin2hex(random_bytes(16)); // Token aléatoire de 16 caractères
-        //verifier si l'email existe deja pour cet album
-        if ($album->uploadTokens()->where('visitor_email', $validated['visitor_email'])->exists()) {
-            return back()->with('error', 'Un token a déjà été envoyé à cet email pour cet album.');
-        } 
-        
+
+        // Vérifier si l'invité a déjà un token non expiré pour cet album
+        $existingToken = UploadToken::where('visitor_email', $validated['visitor_email'])
+            ->where('album_id', $album->id)
+            ->where('expires_at', '>', now())
+            ->first();
+        if ($existingToken) {
+            return back()->with('error', 'Vous avez déjà un lien d\'upload actif pour cet album.');
+        }
+
         $uploadToken = UploadToken::create([
             'album_id'      => $album->id,
             'token'         => $token,
