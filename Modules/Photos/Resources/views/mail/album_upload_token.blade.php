@@ -97,7 +97,8 @@
         <div class="mt-4">
             <p>Salut&nbsp;<strong>{{ ucfirst($uploadToken->visitor_name) }}</strong>!</p>
             <p>Le couple<strong>&nbsp;{{ ucfirst($album->client->mr_first_name) }}&nbsp;{{ ucfirst($album->client->mr_last_name) }}&nbsp;💍&nbsp;
-                {{ ucfirst($album->client->mrs_first_name) }}&nbsp;{{ ucfirst($album->client->mrs_last_name) }}&nbsp;</strong> vous invitent à partager vos photos pour l'album de leur mariage.
+                    {{ ucfirst($album->client->mrs_first_name) }}&nbsp;{{ ucfirst($album->client->mrs_last_name) }}&nbsp;</strong>
+                vous invitent à partager vos photos pour l'album de leur mariage.
             </p>
         </div>
 
@@ -115,7 +116,8 @@
                 <tr>
                     <th>Couple&nbsp;:</th>
                     <td>{{ ucfirst($album->client->mr_first_name) }}&nbsp;{{ ucfirst($album->client->mr_last_name) }}&nbsp;💍&nbsp;
-                {{ ucfirst($album->client->mrs_first_name) }}&nbsp;{{ ucfirst($album->client->mrs_last_name) }}</td>
+                        {{ ucfirst($album->client->mrs_first_name) }}&nbsp;{{ ucfirst($album->client->mrs_last_name) }}
+                    </td>
                 </tr>
                 <tr>
                     <th>Valide jusqu'au&nbsp;:</th>
@@ -125,7 +127,8 @@
             <hr style="margin: 20px 0; border: none; border-top: 1px solid #e2e8f0;">
 
             <div class="btn-container">
-                <a href="{{ route('photos.upload.token', [$album->slug, $uploadToken->token]) }}" class="btn">Partager vos photos</a>
+                <a href="{{ route('photos.invite.upload', [$album->slug, $uploadToken->token]) }}"
+                    class="btn">Partager vos photos</a>
             </div>
         </div>
 

@@ -34,6 +34,9 @@ class PhotoController extends Controller
         $album = Album::where('slug', $slug)->firstOrFail();
         $client = $album->client;
 
+        // checkActiveAlbumStorage
+        $this->checkActiveAlbumStorage($album);
+
         // Filtre par catégorie si spécifié
         $category = $request->get('category');
         $query = $album->photos()->latest();
@@ -58,6 +61,9 @@ class PhotoController extends Controller
     {
         $album = Album::where('slug', $slug)->firstOrFail();
         $photo = $album->photos()->findOrFail($id);
+
+        // checkActiveAlbumStorage
+        $this->checkActiveAlbumStorage($album);
 
         // Log l'accès à la photo
         AlbumAccessLog::create([
@@ -84,6 +90,9 @@ class PhotoController extends Controller
 
         $album = Album::where('slug', $slug)->firstOrFail();
         $directory = "albums/{$album->slug}";
+
+        // checkActiveAlbumStorage
+        $this->checkActiveAlbumStorage($album);
 
         // Créer le dossier s'il n'existe pas
         if (!Storage::disk('private')->exists($directory)) {
@@ -116,6 +125,16 @@ class PhotoController extends Controller
 
                 $photo = $album->photos()->create($photoData);
                 Log::info("Photo créée avec ID : " . $photo->id);
+
+                // Log l'accès
+                AlbumAccessLog::create([
+                    'album_id'   => $album->id,
+                    'photo_id'   => $photo->id,
+                    'visitor_ip' => request()->ip(),
+                    'action'     => 'upload',
+                    'user_agent' => request()->userAgent(),
+                ]);
+
                 DB::commit();
                 $successCount++;
             } catch (\Exception $e) {
@@ -138,16 +157,12 @@ class PhotoController extends Controller
      */
     public function servePhoto($slug, $filename)
     {
-        Log::info("****Accès à servePhoto avec slug={$slug}, filename={$filename} ******************************************"); // a supprimer
-
         $album = Album::where('slug', $slug)->firstOrFail();
         $photo = $album->photos()->where('file_name', $filename)->firstOrFail();
-        // $path = "albums/{$slug}/{$filename}";
         $path = $photo->original_path; // Utilise le chemin enregistré en base
 
-
-        Log::info("Chemin recherché : {$path}");
-        Log::info("Le fichier existe ? " . (Storage::disk('private')->exists($path) ? 'Oui' : 'Non'));
+        // checkActiveAlbumStorage
+        $this->checkActiveAlbumStorage($album);
 
 
         if (!Storage::disk('private')->exists($path)) {
@@ -279,4 +294,18 @@ class PhotoController extends Controller
             abort(500, 'Impossible de créer le ZIP.');
         }
     }
-}
+
+    /**
+     * Check AlbumStorage date and payment status
+     */
+    private function checkActiveAlbumStorage(Album $album)
+    {   
+        if (now()->gt($album->storage_until_at)) {
+            abort(403, 'La période de stockage de cet album est terminée.');
+        }
+        // Vérifie si l'album est actif
+        // if ($album->status !== 'active') {
+            //abort(403, 'Cet album n\'est pas activé. Veuillez effectuer le paiement.');
+        //}
+    }
+}       

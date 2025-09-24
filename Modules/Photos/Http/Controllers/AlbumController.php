@@ -44,6 +44,10 @@ class AlbumController extends Controller
         $photos = $album->photos()->latest()->get();
         // renvoyer aussi le client Mr name ane Mrs name
         $client = $album->client;
+
+        // checkActiveAlbumStorage
+        $this->checkActiveAlbumStorage($album);
+        
         return view('photos::albums.show', compact('album', 'photos', 'client'));
     }
 
@@ -51,15 +55,8 @@ class AlbumController extends Controller
     {
         $album = Album::where('share_url_token', $token)->with('photos')->firstOrFail();
 
-        // Vérifie si l'album est actif
-        // if ($album->status !== 'active') {
-        //     abort(403, 'Cet album n\'est pas activé. Veuillez effectuer le paiement.');
-        // }
-
-        // Vérifie si la date de stockage est dépassée
-        if (now()->gt($album->storage_until_at)) {
-            abort(403, 'Le lien de partage a expiré. La période de stockage de cet album est terminée.');
-        }
+        // checkActiveAlbumStorage
+        $this->checkActiveAlbumStorage($album);
 
         $photos = $album->photos()->latest()->get();
         $client = $album->client;
@@ -162,6 +159,9 @@ class AlbumController extends Controller
     {
         $album = Album::findOrFail($id);
 
+        // checkActiveAlbumStorage
+        $this->checkActiveAlbumStorage($album);
+
         $validated = $request->validate([
             'album_title'  => 'required|string|max:255',
             'max_guests'   => 'nullable|integer|min:1|max:1000',
@@ -172,57 +172,6 @@ class AlbumController extends Controller
 
         return redirect()->route('albums.show', $album->slug)->with('success', 'Album mis à jour.');
     }
-
-
-    // creer Token d'upload pour les invités
-    public function requestUploadToken(Request $request, $slug)
-    {
-        $album = Album::where('slug', $slug)->firstOrFail();
-        // Vérifier que le nombre maximal d'invités n'est pas atteint
-        if ($album->uploadTokens()->count() >= $album->max_guests) {
-            return back()->with('error', 'Le nombre maximal d\'invités a été atteint.');
-        }
-
-        $validated = $request->validate([
-            'visitor_name'  => 'required|string|max:100',
-            'visitor_email' => 'required|email',
-            'visitor_phone' => 'required|string|max:20',
-        ]);
-
-        $token = bin2hex(random_bytes(16)); // Token aléatoire de 16 caractères
-
-        // Vérifier si l'invité a déjà un token non expiré pour cet album
-        $existingToken = UploadToken::where('visitor_email', $validated['visitor_email'])
-            ->where('album_id', $album->id)
-            ->where('expires_at', '>', now())
-            ->first();
-        if ($existingToken) {
-            return back()->with('error', 'Vous avez déjà un lien d\'upload actif pour cet album.');
-        }
-
-        $uploadToken = UploadToken::create([
-            'album_id'      => $album->id,
-            'token'         => $token,
-            'visitor_name'  => $validated['visitor_name'],
-            'visitor_email' => $validated['visitor_email'],
-            'visitor_phone' => $validated['visitor_phone'],
-            'used'          => false,
-            'expires_at'    => \Carbon\Carbon::parse($album->wedding_date)->addDays(7),
-        ]);
-
-        // Envoyer un email à $validated['visitor_email'] avec :
-        try {
-            Mail::to($validated['visitor_email'])->send(new AlbumUploadToken($album, $uploadToken));
-        } catch (\Exception $e) {
-            Log::warning('Email non envoyé : ' . $e->getMessage());
-        }
-        // - Lien pour download : route('photos.download.all', [$album->slug, $token])
-
-        return redirect()->route('albums.share', $album->share_url_token)
-            ->with('success', 'Votre lien d\'upload a été généré et envoyé à votre email !');
-    }
-
-
 
     public function destroy($slug)
     {
@@ -256,5 +205,19 @@ class AlbumController extends Controller
         $album->delete();
 
         return redirect()->route('albums.index')->with('success', 'Album supprimé avec succès.');
+    }
+
+    /**
+     * Check AlbumStorage date and payment status
+     */
+    private function checkActiveAlbumStorage(Album $album)
+    {   
+        if (now()->gt($album->storage_until_at)) {
+            abort(403, 'La période de stockage de cet album est terminée.');
+        }
+        // Vérifie si l'album est actif
+        // if ($album->status !== 'active') {
+            //abort(403, 'Cet album n\'est pas activé. Veuillez effectuer le paiement.');
+        //}
     }
 }

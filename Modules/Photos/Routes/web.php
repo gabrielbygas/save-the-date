@@ -7,6 +7,7 @@ use Modules\Photos\Http\Controllers\PaymentController;
 use Modules\Photos\Http\Controllers\UploadTokenController;
 use App\Http\Middleware\CheckAlbumOwnerToken;
 use App\Http\Middleware\CheckInviteToken;
+use Modules\Photos\Models\UploadToken;
 
 // Prefix 'photos' pour tout le module
 Route::prefix('photos')->group(function () {
@@ -19,7 +20,7 @@ Route::prefix('photos')->group(function () {
     Route::get('/albums/{slug}', [AlbumController::class, 'show'])->name('albums.show');
     Route::post('/albums', [AlbumController::class, 'store'])->name('albums.store');
     Route::get('/albums/share/{token}', [AlbumController::class, 'share'])->name('albums.share');
-    Route::post('/albums/{slug}/request-upload-token', [AlbumController::class, 'requestUploadToken'])->name('albums.request_upload_token');
+    Route::post('/albums/{slug}/request-upload-token', [UploadTokenController::class, 'store'])->name('albums.request_upload_token');
 
     // Routes pour le propriétaire (protégées par owner_token)
     Route::post('/albums/{slug}/update', [AlbumController::class, 'update'])
@@ -56,18 +57,22 @@ Route::prefix('photos')->group(function () {
         ->name('photos.destroy');
 
     // Upload par token (pour les invités)
-    Route::get('/albums/{slug}/upload/{token}', [UploadTokenController::class, 'create'])
+     Route::get('/albums/{slug}/photos/{token}', [UploadTokenController::class, 'inviteIndex'])
         ->middleware(CheckInviteToken::class)
-        ->name('photos.upload.token');
+        ->name('photos.invite.index');
+    
+    Route::get('/albums/{slug}/upload/{token}', [UploadTokenController::class, 'createInvitePhotos'])
+        ->middleware(CheckInviteToken::class)
+        ->name('photos.invite.upload');
 
-    Route::post('/albums/{slug}/upload/{token}', [UploadTokenController::class, 'store'])
+    Route::post('/albums/{slug}/upload/{token}', [UploadTokenController::class, 'storeInvitePhotos'])
         ->middleware(CheckInviteToken::class)
-        ->name('photos.store.token');
+        ->name('photos.invite.store');
 
     // Téléchargement sécurisé (pour les invités)
-    Route::get('/albums/{slug}/photos/{photo}/serve/{token}', [UploadTokenController::class, 'serve'])
+    Route::get('/albums/{slug}/photos/serve/{token}', [UploadTokenController::class, 'serveInvitePhotos'])
         ->middleware(CheckInviteToken::class)
-        ->name('photos.serve');
+        ->name('photos.invite.serve');
 
     Route::get('/albums/{slug}/download-all/{token}', [PhotoController::class, 'downloadAll'])
         ->middleware(CheckInviteToken::class)
