@@ -15,7 +15,7 @@ Route::prefix('photos')->group(function () {
     Route::get('/', [AlbumController::class, 'home'])->name('photos.home');
 
     // Albums
-    Route::get('/albums', [AlbumController::class, 'index'])->name('albums.index')->middleware('auth', 'admin');
+    Route::get('/albums', [AlbumController::class, 'index'])->name('albums.index');
     Route::get('/albums/create', [AlbumController::class, 'create'])->name('albums.create');
     Route::get('/albums/{slug}', [AlbumController::class, 'show'])->name('albums.show');
     Route::post('/albums', [AlbumController::class, 'store'])->name('albums.store');
@@ -57,20 +57,20 @@ Route::prefix('photos')->group(function () {
         ->name('photos.destroy');
 
     // Upload par token (pour les invités)
-     Route::get('/albums/{slug}/photos/{token}', [UploadTokenController::class, 'inviteIndex'])
+    Route::get('/invite/{slug}/photos/{token}', [UploadTokenController::class, 'serveInvitePhotos'])
         ->middleware(CheckInviteToken::class)
         ->name('photos.invite.index');
-    
-    Route::get('/albums/{slug}/upload/{token}', [UploadTokenController::class, 'createInvitePhotos'])
+
+    Route::get('/invite/{slug}/upload/{token}', [UploadTokenController::class, 'createInvitePhotos'])
         ->middleware(CheckInviteToken::class)
         ->name('photos.invite.upload');
 
-    Route::post('/albums/{slug}/upload/{token}', [UploadTokenController::class, 'storeInvitePhotos'])
+    Route::post('/invite/{slug}/upload/{token}', [UploadTokenController::class, 'storeInvitePhotos'])
         ->middleware(CheckInviteToken::class)
         ->name('photos.invite.store');
 
     // Téléchargement sécurisé (pour les invités)
-    Route::get('/albums/{slug}/photos/serve/{token}', [UploadTokenController::class, 'serveInvitePhotos'])
+    Route::get('/invite/{slug}/photos/serve/{token}', [UploadTokenController::class, 'serveInvitePhotos'])
         ->middleware(CheckInviteToken::class)
         ->name('photos.invite.serve');
 

@@ -29,7 +29,8 @@ class UploadTokenController extends Controller
         $album = Album::where('slug', $slug)->firstOrFail();
         $tokens = $album->uploadTokens()->latest()->get();
         //$tokens = $album->uploadTokens()->latest()->paginate(20);
-        return view('photos::upload_tokens.index', compact('album', 'tokens'));
+        //return view('photos::upload_tokens.index', compact('album', 'tokens'));
+        return view('photos::upload_tokens.invite', compact('album', 'tokens'));
     }
 
     /**
@@ -37,14 +38,26 @@ class UploadTokenController extends Controller
      */
     public function createInvitePhotos($slug, $token)
     {
-        $album = Album::where('slug', $slug)->firstOrFail();
-        $uploadToken = $album->uploadTokens()
-            ->where('token', $token)
-            ->where('used', false)
-            ->where('expires_at', '>', now()) // Vérifie que le token n'est pas expiré
-            ->firstOrFail();
+        try {
+            DB::beginTransaction();
 
-        return view('photos::upload_tokens.create', compact('uploadToken', 'album'));
+            $album = Album::where('slug', $slug)->firstOrFail();
+
+            $uploadToken = $album->uploadTokens()
+                ->where('token', $token)
+                ->where('used', false)
+                ->where('expires_at', '>', now())
+                ->lockForUpdate() // Verrouille la ligne pour éviter les conflits
+                ->firstOrFail();
+
+            DB::commit();
+
+            return view('photos::upload_tokens.create', compact('uploadToken', 'album'));
+        } catch (\Exception $e) {
+            DB::rollBack();
+            Log::error("Erreur lors de l'accès au token : " . $e->getMessage());
+            abort(404, 'Lien d\'upload introuvable ou expiré.');
+        }
     }
 
     // creer Token d'upload pour les invités
@@ -173,8 +186,6 @@ class UploadTokenController extends Controller
                     'user_agent' => request()->userAgent(),
                 ]);
 
-                // Marquer le token comme utilisé
-                $uploadToken->update(['used' => true]);
                 // Incrémenter le compteur de photos pour ce token
                 $uploadToken->increment('photo_count');
 
@@ -188,7 +199,11 @@ class UploadTokenController extends Controller
         }
 
         if ($successCount > 0) { // Au moins une photo a été uploadée avec succès
-            return redirect()->route('photos.invite.index', ['slug' => $album->slug, 'token' => $uploadToken->token])
+            if ($uploadToken->photo_count >= 5) {
+                // Marquer le token comme utilisé
+                $uploadToken->update(['used' => true]);
+            }
+            return redirect()->route('photos.invite.serve', [$album->slug, $uploadToken->token])
                 ->with('success', "{$successCount} photo(s) ajoutée(s) avec succès.");
         } else { // Aucune photo n'a pu être uploadée
             return back()->with('error', 'Aucune photo n\'a pu être ajoutée. Vérifiez les fichiers et réessayez.');
@@ -227,7 +242,7 @@ class UploadTokenController extends Controller
             ->groupBy('category')
             ->pluck('category');
 
-        return view('photos::upload_tokens.invite.index', compact('photos', 'album', 'client', 'categories', 'category'));
+        return view('photos::upload_tokens.invite', compact('photos', 'album', 'client', 'uploadToken', 'categories', 'category'));
     }
 
 

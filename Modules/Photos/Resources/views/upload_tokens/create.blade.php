@@ -34,7 +34,7 @@
                         ou glissez-déposez
                     </p>
                     <p class="mt-2 text-xs text-gray-600">
-                        Vous pouvez uploader maximum de 5 photos JPEG, PNG, JPG ou GIF (max 10MB par photo)
+                        Vous pouvez uploader maximum de <strong>5 photos</strong> JPEG, PNG, JPG ou GIF (max 10MB par photo)
                     </p>
 
                     <p class="hidden" id="file-upload-info"> </p>
@@ -82,7 +82,7 @@
         <hr class="my-10 mt-10"> <!-- DIVIDER -->
 
         <div class="m-8 flex justify-end">
-            <a href="{{ route('photos.index', ['slug' => $album->slug, 'owner_token' => $album->owner_token]) }}"
+            <a href="{{ route('photos.invite.index', [$album->slug, $uploadToken->token]) }}"
                 class="px-4 py-2 bg-green-600 text-white rounded-lg font-bold text-sm hover:bg-green-700 transition">
                 ✨ Voir les photos
             </a>
@@ -98,9 +98,9 @@
 
             form.addEventListener('submit', function(e) {
                 const files = fileInput.files;
-                if (files.length > 10) {
+                if (files.length > 5) {
                     e.preventDefault();
-                    errorBox.textContent = "🚫 Vous ne pouvez pas uploader plus de 10 photos à la fois.";
+                    errorBox.textContent = "🚫 Vous ne pouvez pas uploader plus de 5 photos à la fois.";
                     errorBox.classList.remove('hidden');
                     fileUploadInfo.classList.add('hidden');
                     fileUploadInfo.textContent = '';
@@ -117,9 +117,9 @@
                 fileUploadInfo.classList.add('hidden');
                 fileUploadInfo.textContent = '';
 
-                if (files.length > 10) {
+                if (files.length > 5) {
                     errorBox.textContent = "🚫 Vous avez sélectionné " + files.length +
-                        " fichiers. Maximum autorisé : 10.";
+                        " fichiers. Maximum autorisé : 5.";
                     errorBox.classList.remove('hidden');
                     return;
                 }
