@@ -47,11 +47,11 @@
 
         <!-- ERREURS -->
         @if (session('success'))
-            <div class="bg-green-100 text-green-700 p-3 mb-4 rounded">{{ session('success') }}</div>
+            <div id="alert-success" class="bg-green-100 text-green-700 p-3 mb-4 rounded fade-out">{{ session('success') }}</div>
         @endif
 
         @if ($errors->any())
-            <div class="bg-red-100 text-red-800 p-4 mb-4 rounded">
+            <div id="alert-error" class="bg-red-100 text-red-800 p-4 mb-4 rounded fade-out">
                 <ul class="list-disc pl-5 space-y-1">
                     @foreach ($errors->all() as $error)
                         <li>{{ $error }}</li>

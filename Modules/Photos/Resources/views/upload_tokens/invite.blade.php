@@ -19,11 +19,11 @@
 
         <!-- ERREURS -->
         @if (session('success'))
-            <div class="bg-green-100 text-green-700 p-3 mb-4 rounded">{{ session('success') }}</div>
+            <div id="alert-success" class="bg-green-100 text-green-700 p-3 mb-4 rounded fade-out">{{ session('success') }}</div>
         @endif
 
         @if ($errors->any())
-            <div class="bg-red-100 text-red-800 p-4 mb-4 rounded">
+            <div id="alert-error" class="bg-red-100 text-red-800 p-4 mb-4 rounded fade-out">
                 <ul class="list-disc pl-5 space-y-1">
                     @foreach ($errors->all() as $error)
                         <li>{{ $error }}</li>
@@ -36,15 +36,23 @@
         @endif
         <!-- ERREURS -->
 
-        <div class="m-4 md:m-8">
-            <div class="flex flex-col sm:flex-row justify-end">
-                <!-- Bouton à droite (pleine largeur sur mobile) -->
-                <a href="{{ route('photos.invite.upload', [$album->slug, $uploadToken->token]) }}"
-                    class="w-full sm:w-auto px-4 py-2 bg-green-600 text-white rounded-lg font-bold text-sm hover:bg-green-700 transition text-center">
-                    📷 Ajouter des photos
-                </a>
+        @if(!$uploadToken->used) <!-- si le token n'est pas utilise ou photos_count <=5 -->
+            <div class="m-4 md:m-8">
+                <div class="flex flex-col sm:flex-row justify-end">
+                    <!-- Bouton à droite (pleine largeur sur mobile) -->
+                    <a href="{{ route('photos.invite.upload', [$album->slug, $uploadToken->token]) }}"
+                        class="w-full sm:w-auto px-4 py-2 bg-green-600 text-white rounded-lg font-bold text-sm hover:bg-green-700 transition text-center">
+                        📷 Ajouter des photos
+                    </a>
+                </div>
             </div>
-        </div>
+        @else <!-- si le token est utilise ou photos_count >=5 -->
+            <div class="m-4 md:m-8">
+                <div class="flex flex-col sm:flex-row bg-red-100 text-red-800 p-4 mb-4 rounded justify-end">
+                    <span>Pas de possibilite d'ajouter des nouvelles photos. Vous avez déjà uploadé le nombre maximal de 5 photos autorisées.</span>
+                </div>
+            </div>
+        @endif
 
 
         <!-- Galerie de photos -->
@@ -129,4 +137,6 @@
         scrollbar-width: thin;
         scrollbar-color: #ec4899 #f1f1f1;
     </style>
+
+
 @endsection

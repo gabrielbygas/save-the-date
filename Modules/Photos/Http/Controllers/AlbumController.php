@@ -213,10 +213,12 @@ class AlbumController extends Controller
     private function checkActiveAlbumStorage(Album $album)
     {   
         if (now()->gt($album->storage_until_at)) {
+            Log::error("AlbumController - La période de stockage de cet album est terminée. ");
             abort(403, 'La période de stockage de cet album est terminée.');
         }
         // Vérifie si l'album est actif
         // if ($album->status !== 'active') {
+            // Log::error("AlbumController - Cet album n\'est pas activé. Veuillez effectuer le paiement.");
             //abort(403, 'Cet album n\'est pas activé. Veuillez effectuer le paiement.');
         //}
     }

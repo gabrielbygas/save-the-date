@@ -17,7 +17,7 @@ class CheckInviteToken
         $token = $request->route('token');
 
         if (!$slug || !$token) {
-            Log::error("Paramètres manquants : slug={$slug}, token={$token}");
+            Log::error("CheckInviteToken - Paramètres manquants : slug={$slug}, token={$token}");
             abort(403, 'Paramètres manquants.');
         }
 
@@ -29,7 +29,7 @@ class CheckInviteToken
                 ->first();
 
             if (!$uploadToken) {
-                Log::error("Token introuvable", [
+                Log::error("CheckInviteToken - Token introuvable", [
                     'slug' => $slug,
                     'token' => $token,
                     'album_id' => $album->id,
@@ -37,18 +37,8 @@ class CheckInviteToken
                 abort(403, 'Lien d\'upload introuvable: Token introuvable.');
             }
 
-            // Vérifier si le token est utilisé ou si photo_count >= 5
-            if ($uploadToken->used || $uploadToken->photo_count >= 5) {
-                Log::warning("Votre Token a déjà été utilisé ou vous avez déjà publié plus de 5 photos", [
-                    'token_id' => $uploadToken->id,
-                    'photo_count' => $uploadToken->photo_count,
-                    'used' => $uploadToken->used,
-                ]);
-                abort(403, 'Votre Token a déjà été utilisé ou vous avez déjà publié plus de 5 photos');
-            }
-
             if ($uploadToken->expires_at < now()) {
-                Log::error("Token expiré", ['token_id' => $uploadToken->id, 'expires_at' => $uploadToken->expires_at]);
+                Log::error("CheckInviteToken - Token expiré", ['token_id' => $uploadToken->id, 'expires_at' => $uploadToken->expires_at]);
                 abort(403, 'Lien d\'upload expiré.');
             }
 

@@ -19,6 +19,23 @@
     <!-- Scripts -->
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tailwindcss/ui@latest/dist/tailwind-ui.min.css">
+
+    <!-- style de message succes / error -->
+    <style>
+        /* Animation pour la disparition */
+        .fade-out {
+            opacity: 1;
+            transition: opacity 0.5s ease-out;
+        }
+
+        .fade-out.hide {
+            opacity: 0;
+            height: 0;
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+        }
+    </style>
 </head>
 
 <body class="font-sans antialiased"
@@ -50,6 +67,33 @@
                 d'Utilisation</a>&nbsp;
         </p>
     </footer>
+
+    <!-- affichage message succes / error -->
+    <script> 
+        document.addEventListener('DOMContentLoaded', function() {
+            // Masquer le message de succès après 5 secondes
+            const successAlert = document.getElementById('alert-success');
+            if (successAlert) {
+                setTimeout(function() {
+                    successAlert.classList.add('hide');
+                    setTimeout(function() {
+                        successAlert.remove();
+                    }, 500); // Supprime l'élément après l'animation
+                }, 5000); // 5 secondes
+            }
+
+            // Masquer le message d'erreur après 10 secondes
+            const errorAlert = document.getElementById('alert-error');
+            if (errorAlert) {
+                setTimeout(function() {
+                    errorAlert.classList.add('hide');
+                    setTimeout(function() {
+                        errorAlert.remove();
+                    }, 500); // Supprime l'élément après l'animation
+                }, 10000); // 10 secondes
+            }
+        });
+    </script>
 
 </body>
 
