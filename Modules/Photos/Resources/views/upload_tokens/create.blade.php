@@ -71,12 +71,22 @@
 
             <div id="upload-error" class="hidden bg-red-100 text-red-800 p-4 mb-4 rounded text-center"></div>
 
-            <div class="flex justify-center">
-                <button type="submit"
-                    class="px-6 py-2 bg-pink-600 text-white rounded-lg font-bold hover:bg-pink-700 transition">
-                    Uploader les photos
-                </button>
-            </div>
+            @if (!$uploadToken->used)
+                <!-- si le token n'est pas utilise ou photos_count <=5 -->
+                <div class="flex justify-center">
+                    <button type="submit"
+                        class="px-6 py-2 bg-pink-600 text-white rounded-lg font-bold hover:bg-pink-700 transition">
+                        Uploader les photos
+                    </button>
+                </div>
+            @else
+                <!-- si le token est utilise ou photos_count >=5 -->
+                <div class="m-4 md:m-8">
+                    <div class="flex flex-col sm:flex-row bg-red-100 text-red-800 p-4 mb-4 rounded justify-end">
+                        <span>{{ ucfirst($uploadToken->visitor_name) }} , vous ne pouvez pas ajouter de nouvelles photos. Vous avez déjà atteint la limite de 5 photos autorisées.</span>
+                    </div>
+                </div>
+            @endif
         </form>
 
         <hr class="my-10 mt-10"> <!-- DIVIDER -->

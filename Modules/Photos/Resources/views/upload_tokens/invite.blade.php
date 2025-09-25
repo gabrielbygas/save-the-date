@@ -49,7 +49,7 @@
         @else <!-- si le token est utilise ou photos_count >=5 -->
             <div class="m-4 md:m-8">
                 <div class="flex flex-col sm:flex-row bg-red-100 text-red-800 p-4 mb-4 rounded justify-end">
-                    <span>Pas de possibilite d'ajouter des nouvelles photos. Vous avez déjà uploadé le nombre maximal de 5 photos autorisées.</span>
+                    <span>{{ ucfirst($uploadToken->visitor_name) }} , vous ne pouvez pas ajouter de nouvelles photos. Vous avez déjà atteint la limite de 5 photos autorisées.</span>
                 </div>
             </div>
         @endif

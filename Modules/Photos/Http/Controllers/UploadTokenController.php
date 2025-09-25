@@ -44,7 +44,6 @@ class UploadTokenController extends Controller
 
             $uploadToken = $album->uploadTokens()
                 ->where('token', $token)
-                ->where('used', false)
                 ->where('expires_at', '>', now())
                 ->lockForUpdate() // Verrouille la ligne pour éviter les conflits
                 ->firstOrFail();
@@ -124,7 +123,6 @@ class UploadTokenController extends Controller
         // Vérifier que le token d'upload est valide
         $uploadToken = $album->uploadTokens()
             ->where('token', $token)
-            ->where('used', false)
             ->where('expires_at', '>', now())
             ->firstOrFail();
 
@@ -232,22 +230,40 @@ class UploadTokenController extends Controller
         // checkActiveAlbumStorage
         $this->checkActiveAlbumStorage($album);
 
+        // Récupérer l'email du visiteur courant
+        $visitorEmail = $uploadToken->visitor_email;
+
         // Filtre par catégorie si spécifié
         $category = $request->get('category');
-        $query = $album->photos()->latest();
 
-        if ($category) {
-            $query->where('category', $category);
-        }
+        $query = $album->photos()
+            ->when($category, function ($q) use ($category) {
+                $q->where('category', $category);
+            })
+            ->leftJoin('upload_tokens', 'upload_tokens.album_id', '=', 'photos.album_id')
+            ->select('photos.*', 'upload_tokens.visitor_email')
+            ->orderByRaw("CASE WHEN upload_tokens.visitor_email = ? THEN 0 ELSE 1 END", [$visitorEmail])
+            ->orderBy('photos.created_at', 'desc');
 
         $photos = $query->get();
-        //$photos = $query->paginate(20); // Pagination
-        $categories = Photo::select('category')->where('album_id', $album->id)
+
+        //$photos = $query->paginate(20); // Pagination si besoin
+
+        $categories = Photo::select('category')
+            ->where('album_id', $album->id)
             ->groupBy('category')
             ->pluck('category');
 
-        return view('photos::upload_tokens.invite', compact('photos', 'album', 'client', 'uploadToken', 'categories', 'category'));
+        return view('photos::upload_tokens.invite', compact(
+            'photos',
+            'album',
+            'client',
+            'uploadToken',
+            'categories',
+            'category'
+        ));
     }
+
 
 
     /**
