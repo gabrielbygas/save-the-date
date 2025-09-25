@@ -126,7 +126,6 @@ class UploadTokenController extends Controller
             ->where('expires_at', '>', now())
             ->firstOrFail();
 
-
         $directory = "albums/{$album->slug}";
 
         // checkActiveAlbumStorage
@@ -134,11 +133,11 @@ class UploadTokenController extends Controller
 
         // Vérifier que l'email de l'invité correspond
         if ($request->has('visitor_email') && $uploadToken->visitor_email !== $request->visitor_email) {
-            Log::error("UploadTokenController - Erreur - Email de l'invite invalide : " . $request->visitor_email);
+            Log::error("UploadTokenController - Erreur - Email de l'invité invalide : " . $request->visitor_email);
             abort(403, 'Ce lien d\'upload ne vous est pas destiné.');
         }
 
-        // Vérifier si l'invité a déjà uploadé 5 photos(utilisé)
+        // Vérifier si l'invité a déjà uploadé 5 photos
         if ($uploadToken->used || $uploadToken->photo_count >= 5) {
             Log::warning("CheckInviteToken - Votre Token a déjà été utilisé ou vous avez déjà publié plus de 5 photos", [
                 'token_id' => $uploadToken->id,
@@ -154,11 +153,12 @@ class UploadTokenController extends Controller
         }
 
         $successCount = 0;
+
         foreach ($request->file('photos') as $file) {
             DB::beginTransaction();
             try {
                 $fileName = $this->makeUniqueFileName($file, $album->slug); // Génère un nom de fichier unique
-                $path = $file->storeAs($directory, $fileName, 'private'); // Chemin relatif
+                $path = $file->storeAs($directory, $fileName, 'private');   // Chemin relatif
 
                 if (!Storage::disk('private')->exists($path)) { // Vérification du stockage
                     throw new \Exception("Le fichier n'a pas été stocké.");
@@ -167,26 +167,27 @@ class UploadTokenController extends Controller
                 $thumbPath = $this->createThumbnail($path, $album->slug); // Crée la miniature
 
                 $photoData = [
-                    'original_path' => $directory . '/' . $fileName, // Chemin relatif,
-                    'file_name'     => $fileName,
-                    'thumb_path'    => $thumbPath,
-                    'size_bytes'    => $file->getSize(),
-                    'mime'          => $file->getMimeType(),
-                    'category'      => $request->category ?? 'autre',
-                    'exif_json'     => $request->exif_json,
-                    'uploaded_ip'   => $request->ip(),
+                    'album_id'        => $album->id,
+                    'upload_token_id' => $uploadToken->id, // ✅ lien direct avec le visiteur
+                    'original_path'   => $directory . '/' . $fileName,
+                    'file_name'       => $fileName,
+                    'thumb_path'      => $thumbPath,
+                    'size_bytes'      => $file->getSize(),
+                    'mime'            => $file->getMimeType(),
+                    'category'        => $request->category ?? 'autre',
+                    'exif_json'       => $request->exif_json,
                 ];
 
-                $photo = $album->photos()->create($photoData);
+                $photo = Photo::create($photoData);
                 Log::info("Photo créée avec ID : " . $photo->id);
 
                 // Log l'accès
                 AlbumAccessLog::create([
                     'album_id'   => $album->id,
                     'photo_id'   => $photo->id,
-                    'visitor_ip' => request()->ip(),
+                    'visitor_ip' => $request->ip(),
                     'action'     => 'upload',
-                    'user_agent' => request()->userAgent(),
+                    'user_agent' => $request->userAgent(),
                 ]);
 
                 // Incrémenter le compteur de photos pour ce token
@@ -213,9 +214,7 @@ class UploadTokenController extends Controller
         }
     }
 
-    /**
-     * Sert les photos de manière sécurisée (vérifie le token).
-     */
+
     public function serveInvitePhotos(Request $request, $slug, $token)
     {
         $album = Album::where('slug', $slug)->firstOrFail();
@@ -230,8 +229,8 @@ class UploadTokenController extends Controller
         // checkActiveAlbumStorage
         $this->checkActiveAlbumStorage($album);
 
-        // Récupérer l'email du visiteur courant
-        $visitorEmail = $uploadToken->visitor_email;
+        // Récupérer l'ID du visiteur courant (via son token)
+        $visitorTokenId = $uploadToken->id;
 
         // Filtre par catégorie si spécifié
         $category = $request->get('category');
@@ -240,17 +239,15 @@ class UploadTokenController extends Controller
             ->when($category, function ($q) use ($category) {
                 $q->where('category', $category);
             })
-            ->leftJoin('upload_tokens', 'upload_tokens.album_id', '=', 'photos.album_id')
-            ->select('photos.*', 'upload_tokens.visitor_email')
-            ->orderByRaw("CASE WHEN upload_tokens.visitor_email = ? THEN 0 ELSE 1 END", [$visitorEmail])
-            ->orderBy('photos.created_at', 'desc');
+            ->orderByRaw("CASE WHEN upload_token_id = ? THEN 0 ELSE 1 END", [$visitorTokenId]) // ses photos d'abord
+            ->orderBy('created_at', 'desc'); // puis tri décroissant par date
 
         $photos = $query->get();
+        // $photos = $query->paginate(20); // si tu veux la pagination
 
-        //$photos = $query->paginate(20); // Pagination si besoin
-
-        $categories = Photo::select('category')
-            ->where('album_id', $album->id)
+        // Récupérer toutes les catégories présentes dans l’album
+        $categories = $album->photos()
+            ->select('category')
             ->groupBy('category')
             ->pluck('category');
 
@@ -263,6 +260,7 @@ class UploadTokenController extends Controller
             'category'
         ));
     }
+
 
 
 

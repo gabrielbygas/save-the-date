@@ -21,6 +21,16 @@ class UploadToken extends Model
         return $this->belongsTo(Album::class);
     }
 
+    
+    /**
+     * Un token peut être lié à plusieurs photos uploadées par ce visiteur.
+     */
+    public function photos()
+    {
+        return $this->hasMany(Photo::class);
+    }
+
+    
     // protected static function newFactory(): UploadTokensFactory
     // {
     //     // return UploadTokensFactory::new();

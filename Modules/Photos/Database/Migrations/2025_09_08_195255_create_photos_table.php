@@ -14,6 +14,9 @@ return new class extends Migration
        Schema::create('photos', function (Blueprint $table) {
             $table->id();
             $table->foreignId('album_id')->constrained()->onDelete('cascade');
+            $table->foreignID('upload_token_id')->nullable()
+                ->constrained('upload_tokens')
+                ->onDelete('set null'); // si le token est supprimé, on garde la photo mais sans référence
             $table->string('original_path');
             $table->string('file_name')->nullable()->unique();
             $table->string('thumb_path')->nullable();
