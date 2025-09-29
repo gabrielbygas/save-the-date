@@ -13,6 +13,7 @@ use Modules\Photos\Models\UploadToken;
 Route::prefix('photos')->group(function () {
     // Page d'accueil du module
     Route::get('/', [AlbumController::class, 'home'])->name('photos.home');
+    Route::view('/terms', 'terms')->name('photos.terms');
 
     // Albums
     Route::get('/albums', [AlbumController::class, 'index'])->name('albums.index');
