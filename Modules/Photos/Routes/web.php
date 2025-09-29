@@ -69,6 +69,10 @@ Route::prefix('photos')->group(function () {
         ->middleware(CheckInviteToken::class)
         ->name('photos.invite.store');
 
+    Route::get('/invite/{slug}/photos/{id}/{token}', [UploadTokenController::class, 'showInvitePhotos'])
+        ->middleware(CheckInviteToken::class)
+        ->name('photos.invite.show');
+
     // Téléchargement sécurisé (pour les invités)
     Route::get('/invite/{slug}/photos/serve/{token}', [UploadTokenController::class, 'serveInvitePhotos'])
         ->middleware(CheckInviteToken::class)

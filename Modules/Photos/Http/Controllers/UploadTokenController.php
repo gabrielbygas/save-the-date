@@ -214,7 +214,9 @@ class UploadTokenController extends Controller
         }
     }
 
-
+    /**
+     * affiche toutes les photos.
+     */
     public function serveInvitePhotos(Request $request, $slug, $token)
     {
         $album = Album::where('slug', $slug)->firstOrFail();
@@ -261,6 +263,40 @@ class UploadTokenController extends Controller
         ));
     }
 
+    /**
+     * Affiche une photo spécifique via un token d'invité.
+     */
+    public function showInvitePhotos($slug, $id, $token)
+    {
+        // Récupérer l'album et vérifier le token
+        $album = Album::where('slug', $slug)->firstOrFail();
+
+        // Vérifier que le token est valide
+        $uploadToken = $album->uploadTokens()
+            ->where('token', $token)
+            ->where('expires_at', '>', now())
+            ->firstOrFail();
+
+        // Récupérer la photo
+        $photo = $album->photos()->findOrFail($id);
+
+        // Vérifier que la photo appartient bien à l'album
+        if ($photo->album_id != $album->id) {
+            abort(404, 'Photo introuvable.');
+        }
+
+        // Log l'accès à la photo
+        AlbumAccessLog::create([
+            'album_id'   => $album->id,
+            'photo_id'   => $photo->id,
+            'visitor_ip' => request()->ip(),
+            'action'     => 'view',
+            'user_agent' => request()->userAgent(),
+        ]);
+
+        // Afficher la photo dans une vue dédiée
+        return view('photos::upload_tokens.show', compact('photo', 'album', 'uploadToken'));
+    }
 
 
 

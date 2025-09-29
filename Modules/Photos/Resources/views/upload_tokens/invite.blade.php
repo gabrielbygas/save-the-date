@@ -68,7 +68,7 @@
                         @foreach ($photos as $photo)
                             <div class="bg-gray-100 rounded-lg shadow overflow-hidden group relative">
                                 <a
-                                    href="{{ route('photos.show', [$album->slug, $photo->id, 'owner_token' => $album->owner_token]) }}">
+                                    href="{{ route('photos.invite.show', [$album->slug, $photo->id, $uploadToken->token]) }}">
                                     <img src="{{ route('photos.serve.photo', [$album->slug, $photo->file_name]) }}"
                                         alt="{{ $photo->caption ?? 'Photo' }}" class="w-full h-32 md:h-40 object-cover">
 
@@ -79,7 +79,7 @@
                                     class="absolute inset-0 bg-black bg-opacity-30 flex items-center justify-center
                                     opacity-0 group-hover:opacity-100 transition-opacity">
                                     <div class="flex space-x-2">
-                                        <a href="{{ route('photos.show', [$album->slug, $photo->id, 'owner_token' => $album->owner_token]) }}"
+                                        <a href="{{ route('photos.invite.show', [$album->slug, $photo->id, $uploadToken->token]) }}"
                                             class="p-2 bg-white text-pink-600 rounded-full shadow-md
                                           hover:bg-gray-100 transition flex items-center justify-center"
                                             title="Voir la photo">

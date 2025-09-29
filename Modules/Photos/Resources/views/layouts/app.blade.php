@@ -5,12 +5,15 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <meta name="description" content="Save The Date - Commandez vos faire-part de mariage personnalisés.">
-    <meta name="keywords" content="Save The Date, faire-part de mariage, mariage, invitations, personnalisation">
+   <meta name="description" content="Créez vos affiches, vidéos et albums photo de mariage personnalisés avec Save The Date. Livraison rapide et qualité professionnelle.">
+    <meta name="keywords" content="Save The Date, faire-part mariage, affiches mariage, album photo mariage, vidéo mariage, personnalisation, QR code mariage">
     <meta name="author" content="Gabriel KALALA">
-    <meta name="robots" content="noindex">
+    <meta property="og:title" content="Save The Date - Créez vos souvenirs de mariage">
+    <meta property="og:description" content="Immortalisez votre amour avec des affiches, vidéos et albums photo personnalisés pour votre mariage.">
+    <meta property="og:image" content="{{ asset('images/savethedate.webp') }}">
+    <meta property="og:url" content="{{ url()->current() }}">
 
-    <title>{{ config('app.name', 'Laravel') }}</title>
+    <title>Save The Date - Créez vos affiches & albums photo de mariage</title>
 
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.bunny.net">
