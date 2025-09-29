@@ -6,6 +6,11 @@
 
 @section('content')
     <div class="max-w-3xl mx-auto p-6 bg-white shadow rounded-xl mt-8 px-6">
+        <div class="mb-6">
+            <a href="#cgu" class="text-blue-600 underline mr-4">Conditions d’utilisation</a>
+            <a href="#privacy" class="text-blue-600 underline">Politique de confidentialité</a>
+        </div>
+
         <div id="cgu">
             <h1 class="text-2xl font-bold mb-4">Conditions Générales d'Utilisation</h1>
 
@@ -13,9 +18,15 @@
 
             <h2 class="text-xl font-semibold mt-6 mb-2">1. Objet</h2>
             <p class="mb-4">
-                L'application permet à tout utilisateur de commander la réalisation d'affiches et/ou de vidéos
-                personnalisées pour annoncer un mariage. Les présentes conditions encadrent cette commande et
+                Save The Date RDC est une application conçue pour permettre aux Mariés congolais de
+                commander la réalisation d'affiches et/ou de vidéos,
+                partager les photos de leur mariage avec leurs Invités de manière simple et sécurisée.
+                Les Invités reçoivent un lien unique pour uploader ou consulter les photos,
+                sans besoin de créer un compte. Les présentes conditions encadrent cette commande et
                 s'appliquent à tous les utilisateurs en République Démocratique du Congo et en Afrique.
+                <br>"Marié(s)" (propriétaires de l’album).
+                <br>"Invité(s)" (ceux qui uploadent).
+                <br>"Client(s)" (ceux qui commandent affiche/vidéo).
             </p>
 
             <h2 class="text-xl font-semibold mt-6 mb-2">2. Délais et livraison</h2>
@@ -28,6 +39,19 @@
                     revus
                     sans compensation.</li>
             </ul>
+            <h3 class="text-lg font-semibold mt-6 mb-2">2.1 Pour les Propriétaires d'Album</h3>
+            <ul class="list-disc pl-6 mb-4">
+                <li>Vous êtes responsable de la création et de la gestion de votre album.</li>
+                <li>Vous pouvez générer des liens d'upload pour vos Invités.</li>
+                <li>Vous garantissez que les photos partagées respectent les lois en vigueur en RDC.</li>
+            </ul>
+
+            <h3 class="text-lg font-semibold mt-6 mb-2">2.2 Pour les Invités</h3>
+            <ul class="list-disc pl-6 mb-4">
+                <li>Vous recevez un lien unique par email ou SMS pour uploader ou consulter les photos.</li>
+                <li>Vous pouvez uploader jusqu'à <span class="highlight">5 photos maximum</span> par lien.</li>
+                <li>Vous ne devez uploader que des photos liées à l'événement (mariage).</li>
+            </ul>
 
             <h2 class="text-xl font-semibold mt-6 mb-2">3. Suivi & paiement</h2>
             <ul class="list-disc pl-6 mb-4">
@@ -37,7 +61,7 @@
                     elle
                     sera annulée.</li>
                 <li>Le paiement peut se faire par mobile money ou en espèces.</li>
-                <li>Le client doit fournir une preuve de paiement (screenshot, reçu).</li>
+                <li>Le Client ou Marié doit fournir une preuve de paiement (screenshot, reçu).</li>
                 <li>Le paiement est validé uniquement après réception et vérification de la preuve.</li>
                 <li>Aucun paiement en ligne n’est disponible à ce stade.</li>
             </ul>
@@ -61,18 +85,26 @@
 
             <h2 class="text-xl font-semibold mt-6 mb-2">6. Contenu et responsabilité</h2>
             <ul class="list-disc pl-6 mb-4">
-                <li>Le client est responsable des informations et médias fournis.</li>
+                <li>Le Client (ici Marié ou Invité) est responsable des informations et médias fournis.</li>
                 <li>Des frais peuvent s'appliquer en cas d'erreurs ou de modifications importantes.</li>
-                <li>Aucune responsabilité n’est engagée en cas de données erronées fournies par le client.</li>
-                <li>Le client garantit que ses médias sont libres de droits et ne violent pas la loi ni les droits d’auteur.
+                <li>Aucune responsabilité n’est engagée en cas de données erronées fournies par le Client (ici Marié ou
+                    Invité).</li>
+                <li>Le Client (ici Marié ou Invité) garantit que ses médias sont libres de droits et ne violent pas la loi
+                    ni les droits d’auteur.
                 </li>
                 <li>Tout contenu illégal, inapproprié ou contraire aux bonnes mœurs entraîne une annulation immédiate de la
                     commande, sans remboursement.</li>
+
+                <li>Nous déclinons toutes responsabilités en cas des pertes de données dues à des circonstances
+                    indépendantes de notre volonté (ex : panne de serveur).</li>
+                <li>Nous déclinons toutes responsabilités en cas d'utilisation(s) frauduleuse(s) des liens d'upload par des
+                    tiers.</li>
+                <li>Nous déclinons toutes responsabilités en cas du contenu des photos uploadées par les utilisateurs.</li>
             </ul>
 
             <h2 class="text-xl font-semibold mt-6 mb-2">7. Annulation et remboursement</h2>
             <ul class="list-disc pl-6 mb-4">
-                <li>Commande annulée automatiquement si non payée sous 3 jours ouvrables.</li>
+                <li>Commande annulée automatiquement si non payée sous <strong>3 jours ouvrables.</strong></li>
                 <li>Aucun remboursement après paiement, sauf si nous ne livrons pas sous 72h ouvrables.</li>
                 <li>Un remboursement partiel (max. 75%) peut être accordé au cas par cas.</li>
             </ul>
@@ -81,16 +113,22 @@
             <ul class="list-disc pl-6 mb-4">
                 <li>Toutes les créations sont réalisées par des designers humains (employés ou freelances).</li>
                 <li>Nous détenons les droits exclusifs sur toutes les créations fournies.</li>
-                <li>Le client dispose uniquement d’un droit d’usage personnel et non commercial.</li>
+                <li>Le Client (ici Marié ou Invité) dispose uniquement d’un droit d’usage personnel et non commercial.</li>
             </ul>
 
-            <h2 class="text-xl font-semibold mt-6 mb-2">9. Acceptation</h2>
+            <h2 class="text-xl font-semibold mt-6 mb-2">9. Modifications des CGU</h2>
+            <p class="mb-4">
+                Nous nous réservons le droit de modifier ces CGU à tout moment. Les utilisateurs seront informés des
+                changements majeurs via l'application ou par email.
+            </p>
+
+            <h2 class="text-xl font-semibold mt-6 mb-2">10. Acceptation</h2>
             <p class="mb-4">
                 En soumettant le formulaire de commande, vous acceptez automatiquement les présentes conditions générales
                 d'utilisation.
             </p>
 
-            <h2 class="text-xl font-semibold mt-6 mb-2">10. Litiges et juridiction</h2>
+            <h2 class="text-xl font-semibold mt-6 mb-2">11. Litiges et juridiction</h2>
             <p class="mb-4">
                 Tout litige relève exclusivement de la compétence des tribunaux de la République Démocratique du Congo.
             </p>
@@ -106,7 +144,7 @@
 
             <h2 class="text-xl font-semibold mt-6 mb-2">1. Données collectées</h2>
             <ul class="list-disc pl-6 mb-4">
-                <li>Nom, email et téléphone (des mariés et des invités).</li>
+                <li>Nom, email et téléphone (des mariés et des Invités).</li>
                 <li>Adresse IP, agent utilisateur et logs de connexion.</li>
                 <li>Fichiers photos et métadonnées (exif, date, taille).</li>
             </ul>

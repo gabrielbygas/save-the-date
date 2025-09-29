@@ -34,12 +34,10 @@
         <!-- Header -->
         <header class="bg-white bg-opacity-95 shadow-md sticky top-0 z-50">
             <div class="max-w-6xl mx-auto px-4 py-4 flex justify-between items-center">
-                <h1 class="text-2xl font-bold text-pink-600">
-                    <a href="{{ route('home') }}" class="flex items-center">
-                        <img src="{{ asset('images/savethedate.webp') }}" alt="Logo Save The Date" class="h-10 mr-2">
-                        Save The Date
+                <h1 class="text-2xl font-bold text-pink-600">Save The Date</h1>
+                <a href="{{ route('home') }}" class="flex items-center">
+                        <img src="{{ asset('images/savethedate.webp') }}" alt="Logo Save The Date" class="h-16 mr-2">
                     </a>
-                </h1>
                 <nav class="flex items-center space-x-4">
                     <a href="{{ route('order.create') }}"
                        class="bg-pink-500 hover:bg-pink-600 text-white px-4 py-2 rounded-lg font-medium transition duration-200">

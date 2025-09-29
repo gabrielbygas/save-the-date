@@ -5,11 +5,14 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-   <meta name="description" content="Créez vos affiches, vidéos et albums photo de mariage personnalisés avec Save The Date. Livraison rapide et qualité professionnelle.">
-    <meta name="keywords" content="Save The Date, faire-part mariage, affiches mariage, album photo mariage, vidéo mariage, personnalisation, QR code mariage">
+    <meta name="description"
+        content="Créez vos affiches, vidéos et albums photo de mariage personnalisés avec Save The Date. Livraison rapide et qualité professionnelle.">
+    <meta name="keywords"
+        content="Save The Date, faire-part mariage, affiches mariage, album photo mariage, vidéo mariage, personnalisation, QR code mariage">
     <meta name="author" content="Gabriel KALALA">
     <meta property="og:title" content="Save The Date - Créez vos souvenirs de mariage">
-    <meta property="og:description" content="Immortalisez votre amour avec des affiches, vidéos et albums photo personnalisés pour votre mariage.">
+    <meta property="og:description"
+        content="Immortalisez votre amour avec des affiches, vidéos et albums photo personnalisés pour votre mariage.">
     <meta property="og:image" content="{{ asset('images/savethedate.webp') }}">
     <meta property="og:url" content="{{ url()->current() }}">
 
@@ -62,17 +65,24 @@
     </div>
 
     <!-- Pied de page -->
-    <footer class="bg-white shadow text-center mt-8 text-sm text-gray-500 py-2">
-        <p class="mb-2"> <a href="mailto:gabrielkalala@protonmail.com"
-                class="text-blue-600 underline">gabrielkalala@protonmail.com</a>&nbsp;|
-            &nbsp;© {{ date('Y') }} <span class="text-gray-800">Save The Date</span> Tous droits réservés&nbsp;|
-            &nbsp;<a href="{{ route('photos.terms') }}" class="text-blue-600 underline">Conditions Générales
-                d'Utilisation</a>&nbsp;
-        </p>
+    <footer class="bg-gray-100 py-6 text-center text-sm text-gray-600 mt-10">
+        <div class="max-w-6xl mx-auto px-4">
+            <p class="mb-2">
+                &copy; {{ date('Y') }} <a href="{{ route('home') }}"
+                    class="text-pink-600 hover:underline font-medium">Save The Date</a>.
+                Tous droits réservés.
+            </p>
+            <div class="flex justify-center space-x-4">
+                <a href="{{ route('photos.terms') }}" class="text-pink-600 hover:underline">Conditions
+                    d'utilisation</a>
+                <span class="text-gray-400">|</span>
+                <a href="mailto:contact@savethedate.com" class="text-pink-600 hover:underline">Contact</a>
+            </div>
+        </div>
     </footer>
 
     <!-- affichage message succes / error -->
-    <script> 
+    <script>
         document.addEventListener('DOMContentLoaded', function() {
             // Masquer le message de succès après 5 secondes
             const successAlert = document.getElementById('alert-success');
