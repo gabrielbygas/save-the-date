@@ -100,6 +100,7 @@
             <div class="mb-4 mt-6">
                 <label class="flex items-center space-x-2">
                     <span class="text-sm">
+                        <input type="checkbox" name="terms" class="form-checkbox" required>
                         En soumettant ce formulaire, vous acceptez les <a href="{{ route('terms') }}" target="_blank"
                             class="text-blue-600 underline">Conditions Générales d'Utilisation</a>
                     </span>
