@@ -207,7 +207,7 @@ class UploadTokenController extends Controller
                 // Marquer le token comme utilisé
                 $uploadToken->update(['used' => true]);
             }
-            return redirect()->route('photos.invite.serve', [$album->slug, $uploadToken->token])
+            return redirect()->route('photos.invite.index', [$album->slug, $uploadToken->token])
                 ->with('success', "{$successCount} photo(s) ajoutée(s) avec succès.");
         } else { // Aucune photo n'a pu être uploadée
             return back()->with('error', 'Aucune photo n\'a pu être ajoutée. Vérifiez les fichiers et réessayez.');

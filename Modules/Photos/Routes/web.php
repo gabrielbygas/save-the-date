@@ -15,8 +15,19 @@ Route::prefix('photos')->group(function () {
     Route::get('/', [AlbumController::class, 'home'])->name('photos.home');
     Route::view('/terms', 'photos::terms')->name('photos.terms');
 
+    // Page de login avec OTP
+    Route::get('/albums', [AlbumController::class, 'index'])->name('albums.login');
+    Route::post('/albums/send-otp', [AlbumController::class, 'sendOTP'])->name('albums.send_otp');
+    Route::post('/albums/verify-otp', [AlbumController::class, 'verifyOTP'])->name('albums.verify_otp');
+
+    // Liste des albums (protégée par OTP)
+    Route::get('/albums/list', [AlbumController::class, 'list'])->name('albums.list');
+
+    // Dans routes/web.php
+    Route::post('/albums/logout', [AlbumController::class, 'logout'])->name('albums.logout');
+
     // Albums
-    Route::get('/albums', [AlbumController::class, 'index'])->name('albums.index');
+    //Route::get('/albums', [AlbumController::class, 'index'])->name('albums.index');
     Route::get('/albums/create', [AlbumController::class, 'create'])->name('albums.create');
     Route::get('/albums/{slug}', [AlbumController::class, 'show'])->name('albums.show');
     Route::post('/albums', [AlbumController::class, 'store'])->name('albums.store');

@@ -19,7 +19,8 @@
 
         <!-- ERREURS -->
         @if (session('success'))
-            <div id="alert-success" class="bg-green-100 text-green-700 p-3 mb-4 rounded fade-out">{{ session('success') }}</div>
+            <div id="alert-success" class="bg-green-100 text-green-700 p-3 mb-4 rounded fade-out">{{ session('success') }}
+            </div>
         @endif
 
         @if ($errors->any())
@@ -36,7 +37,8 @@
         @endif
         <!-- ERREURS -->
 
-        @if(!$uploadToken->used) <!-- si le token n'est pas utilise ou photos_count <=5 -->
+        @if (!$uploadToken->used)
+            <!-- si le token n'est pas utilise ou photos_count <=5 -->
             <div class="m-4 md:m-8">
                 <div class="flex flex-col sm:flex-row justify-end">
                     <!-- Bouton à droite (pleine largeur sur mobile) -->
@@ -46,10 +48,12 @@
                     </a>
                 </div>
             </div>
-        @else <!-- si le token est utilise ou photos_count >=5 -->
+        @else
+            <!-- si le token est utilise ou photos_count >=5 -->
             <div class="m-4 md:m-8">
                 <div class="flex flex-col sm:flex-row bg-red-100 text-red-800 p-4 mb-4 rounded justify-end">
-                    <span>{{ ucfirst($uploadToken->visitor_name) }} , vous ne pouvez pas ajouter de nouvelles photos. Vous avez déjà atteint la limite de 5 photos autorisées.</span>
+                    <span>{{ ucfirst($uploadToken->visitor_name) }} , vous ne pouvez plus ajouter de nouvelles photos. Vous
+                        avez déjà atteint la limite de 5 photos autorisées.</span>
                 </div>
             </div>
         @endif

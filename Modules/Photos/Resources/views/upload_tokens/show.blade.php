@@ -39,7 +39,7 @@
             </a>
 
             <!-- Formulaire de suppression -->
-            <form action="{{ route('photos.destroy', [$album->slug, $photo->id, 'owner_token' => $album->owner_token]) }}"
+            {{-- <form action="{{ route('photos.destroy', [$album->slug, $photo->id, 'owner_token' => $album->owner_token]) }}"
                 method="POST" onsubmit="return confirm('Supprimer cette photo ?');">
                 @csrf
                 @method('DELETE')
@@ -47,7 +47,7 @@
                     class="px-4 py-2 bg-red-500 text-white rounded-lg font-bold hover:bg-red-600 mt-2 md:mt-0">
                     🗑 Supprimer
                 </button>
-            </form>
+            </form> --}}
 
         </div>
 

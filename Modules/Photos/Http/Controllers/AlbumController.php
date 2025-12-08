@@ -5,6 +5,7 @@ namespace Modules\Photos\Http\Controllers;
 use App\Http\Controllers\Controller;
 use Modules\Photos\Models\Album;
 use Modules\Photos\Models\UploadToken;
+use Modules\Photos\Models\Otp;
 use Illuminate\Http\Request;
 use App\Models\Client;
 use SimpleSoftwareIO\QrCode\Facades\QrCode;
@@ -12,6 +13,7 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Log;
 use Modules\Photos\Mail\AlbumCreatedMail;
+use Modules\Photos\Mail\SendOTPMail;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\DB;
 use Modules\Photos\Mail\AlbumUploadToken;
@@ -33,9 +35,11 @@ class AlbumController extends Controller
 
     public function index() // liste de tous les albums
     {
-        $albums = Album::all();
-        $client = $albums->first()->client;
-        return view('photos::albums.index', compact('albums', 'client'));
+        // $albums = Album::all();
+        // $client = $albums->first()->client;
+        // return view('photos::albums.index', compact('albums', 'client'));
+
+        return view('photos::albums.login');
     }
 
     public function show($slug)
@@ -47,7 +51,7 @@ class AlbumController extends Controller
 
         // checkActiveAlbumStorage
         $this->checkActiveAlbumStorage($album);
-        
+
         return view('photos::albums.show', compact('album', 'photos', 'client'));
     }
 
@@ -208,18 +212,143 @@ class AlbumController extends Controller
     }
 
     /**
+     * Génère et envoie un OTP.
+     */
+    public function sendOTP(Request $request)
+    {
+        $request->validate([
+            'identifier' => 'required|string', // Email ou téléphone
+        ]);
+
+        $identifier = $request->identifier;
+        $otp = Str::random(8); // Génère un OTP aléatoire de 8 caractères
+        $client = Client::where('email', $identifier)->first();
+
+        // Vérification pour un album existant
+        if (!$client) {
+            if ($request->expectsJson()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Aucun album trouvé pour ce client.'
+                ]);
+            }
+            return redirect()->back()->withErrors(['message' => 'Aucun album trouvé pour ce client.'])->withInput();
+        }
+
+
+        // Supprime les anciens OTPs pour cet identifiant
+        OTP::where('identifier', $identifier)->delete();
+
+        // Crée un nouvel OTP
+        $OTP = OTP::create([
+            'identifier' => $identifier,
+            'otp' => $otp,
+            'expires_at' => now()->addMinutes(10), // Expire dans 10 minutes
+        ]);
+
+        // Ici, tu devrais envoyer l'OTP par email ou SMS.
+        // Pour l'exemple, on le retourne en JSON (à remplacer par l'envoi réel).
+
+        // Envoi de l'email
+        try {
+            Mail::to($client->email)->send(new SendOTPMail($OTP));
+        } catch (\Exception $e) {
+            Log::warning('Email non envoyé : ' . $e->getMessage());
+        }
+
+
+
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Un code OTP a été envoyé à ' . $identifier,
+            'otp' => $otp, // À supprimer en production (pour test seulement)
+        ]);
+    }
+
+    /**
+     * Vérifie l'OTP et redirige vers la liste des albums.
+     */
+    public function verifyOTP(Request $request)
+    {
+        $request->validate([
+            'identifier' => 'required|string',
+            'otp' => 'required|string|size:8',
+        ]);
+
+        $otpRecord = OTP::where('identifier', $request->identifier)
+            ->where('otp', $request->otp)
+            ->where('expires_at', '>', now())
+            ->first();
+
+        // if (!$otpRecord) {
+        //     return back()->with('error', 'Code OTP invalide ou expiré.');
+        // }
+
+        if (!$otpRecord) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Code OTP invalide ou expiré.'
+            ]);
+        }
+
+        // Trouver le client associé à l'identifiant (email ou téléphone)
+        $client = Client::where('email', $request->identifier)->first();
+
+        // Stocker l'ID du client en session
+        $request->session()->put('client_id', $client->id);
+
+        // Supprime l'OTP utilisé
+        $otpRecord->delete();
+
+        // Ici, tu peux stocker l'identifiant en session ou rediriger vers la liste des albums
+        // Exemple : Redirige vers une route protégée (ex: albums.list)
+        return redirect()->route('albums.list')->with('success', 'Connexion réussie !');
+    }
+
+    /**
+     * Affiche la liste des albums du client connecté.
+     */
+    public function list(Request $request)
+    {
+        // Vérifie que le client est connecté (via session)
+        if (!$request->session()->has('client_id')) {
+            return redirect()->route('albums.login')->with('error', 'Veuillez vous authentifier.');
+        }
+
+        $clientId = $request->session()->get('client_id');
+        $client = Client::findOrFail($clientId);
+
+        // Récupère uniquement les albums du client
+        $albums = Album::where('client_id', $clientId)->get();
+
+        return view('photos::albums.index', compact('albums', 'client'));
+    }
+
+    /**
+     * Déconnecte le client.
+     */
+    public function logout(Request $request)
+    {
+        $request->session()->forget('client_id');
+        return redirect()->route('albums.login')->with('success', 'Vous êtes déconnecté.');
+    }
+
+
+
+    /**
      * Check AlbumStorage date and payment status
      */
     private function checkActiveAlbumStorage(Album $album)
-    {   
+    {
         if (now()->gt($album->storage_until_at)) {
             Log::error("AlbumController - La période de stockage de cet album est terminée. ");
             abort(403, 'La période de stockage de cet album est terminée.');
         }
         // Vérifie si l'album est actif
         // if ($album->status !== 'active') {
-            // Log::error("AlbumController - Cet album n\'est pas activé. Veuillez effectuer le paiement.");
-            //abort(403, 'Cet album n\'est pas activé. Veuillez effectuer le paiement.');
+        // Log::error("AlbumController - Cet album n\'est pas activé. Veuillez effectuer le paiement.");
+        //abort(403, 'Cet album n\'est pas activé. Veuillez effectuer le paiement.');
         //}
     }
 }
