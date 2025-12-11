@@ -7,9 +7,13 @@ use App\Http\Controllers\OrderController;
 
 Route::view('/', 'welcome')->name('home');
 
+// modify by claude
 Route::controller(OrderController::class)->group(function () {
     Route::get('/order/create', 'create')->name('order.create');
-    Route::post('/order/store', 'store')->name('order.store');
+    // Claude: Security - Add rate limiting to prevent spam orders
+    Route::post('/order/store', 'store')
+        ->middleware('throttle:10,1') // 10 orders per minute
+        ->name('order.store');
 });
 
 Route::get('/dashboard', function () {

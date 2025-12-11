@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Order extends Model
 {
+    // modify by claude
     protected $fillable = [
         'client_id',
         'pack_id',
@@ -14,10 +15,14 @@ class Order extends Model
         'wedding_title', // e.g., "Mariage de Marie et Paul"
         'wedding_date',
         'wedding_location',
-        'status', // e.g., "pending", "processing", "completed"
-        'confirmation_number', // <-- Assurez-vous qu'il est présent
         'payment_due_at',
     ];
+
+    /**
+     * The attributes that are guarded from mass assignment.
+     * Claude: Security - status and confirmation_number should not be mass assignable
+     */
+    protected $guarded = ['status', 'confirmation_number'];
     
     /** @use HasFactory<\Database\Factories\OrderFactory> */
     use HasFactory;

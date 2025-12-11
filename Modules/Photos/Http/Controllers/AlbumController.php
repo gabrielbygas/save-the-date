@@ -70,17 +70,18 @@ class AlbumController extends Controller
 
     public function store(Request $request)
     {
+        // modify by claude - improved validation
         $validated = $request->validate([
             'mr_first_name'    => 'required|string|max:100',
             'mr_last_name'     => 'required|string|max:100',
             'mrs_first_name'   => 'required|string|max:100',
             'mrs_last_name'    => 'required|string|max:100',
-            'email'            => 'required|email|unique:clients,email',
-            'phone'            => 'nullable|string|max:20',
+            'email'            => 'required|string|email:rfc,dns|max:255|unique:clients,email', // Claude: stricter email validation
+            'phone'            => ['nullable', 'string', 'regex:/^[\+]?[0-9\s\-\(\)]{8,20}$/'], // Claude: phone format validation
             'album_title'      => 'required|string|max:255',
-            'wedding_date'     => 'required|date',
+            'wedding_date'     => 'required|date|after:today|before:+2 years', // Claude: prevent past/far future dates
             'max_guests'       => 'nullable|integer|min:1|max:1000',
-            'opens_at'         => 'nullable|date',
+            'opens_at'         => 'nullable|date|before:wedding_date', // Claude: opens_at should be before wedding
             'storage_until_at' => 'nullable|date|after:wedding_date',
             'status'           => 'required|in:draft,active,archived',
         ]);
@@ -259,10 +260,10 @@ class AlbumController extends Controller
 
 
 
+        // modify by claude
         return response()->json([
             'success' => true,
             'message' => 'Un code OTP a été envoyé à ' . $identifier,
-            'otp' => $otp, // À supprimer en production (pour test seulement)
         ]);
     }
 

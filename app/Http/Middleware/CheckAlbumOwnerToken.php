@@ -29,10 +29,12 @@ class CheckAlbumOwnerToken
             abort(404, 'Album introuvable.');
         }
 
+        // modify by claude
         // Récupérer le owner_token depuis la requête (query ou body)
         $ownerToken = $request->query('owner_token') ?? $request->input('owner_token');
 
-        if (!$ownerToken || $ownerToken !== $album->owner_token) {
+        // Claude: Security - Use timing-safe comparison to prevent timing attacks
+        if (!$ownerToken || !hash_equals($album->owner_token, $ownerToken)) {
             Log::error("CheckAlbumOwnerToken - Accès non autorisé. Token invalide.");
             abort(403, 'Accès non autorisé. Token invalide.');
         }

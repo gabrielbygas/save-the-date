@@ -13,22 +13,27 @@ class Album extends Model
 {
     use HasFactory;
 
+    // modify by claude
     /**
      * The attributes that are mass assignable.
      */
     protected $fillable = [
         'slug',
         'client_id',
-        'owner_token',
         'album_title',
         'wedding_date',
         'status',
         'qr_code_path',
-        'share_url_token',
         'max_guests',
         'opens_at',
         'storage_until_at',
     ];
+
+    /**
+     * The attributes that are guarded from mass assignment.
+     * Claude: Security - Sensitive tokens should not be mass assignable
+     */
+    protected $guarded = ['owner_token', 'share_url_token'];
 
     public function photos()
     {

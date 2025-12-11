@@ -67,10 +67,11 @@ class UploadTokenController extends Controller
             return back()->with('error', 'Le nombre maximal d\'invités a été atteint.');
         }
 
+        // modify by claude - improved validation
         $validated = $request->validate([
             'visitor_name'  => 'required|string|max:100',
-            'visitor_email' => 'required|email',
-            'visitor_phone' => 'required|string|max:20',
+            'visitor_email' => 'required|string|email:rfc,dns|max:255', // Claude: stricter email validation
+            'visitor_phone' => ['required', 'string', 'regex:/^[\+]?[0-9\s\-\(\)]{8,20}$/'], // Claude: phone format validation
         ]);
 
         $token = bin2hex(random_bytes(16)); // Token aléatoire de 16 caractères
@@ -344,13 +345,23 @@ class UploadTokenController extends Controller
     }
 
 
+    // modify by claude
     /**
      * Génère un nom de fichier unique.
+     * Claude: Security - Whitelist allowed extensions to prevent malicious file uploads
      */
     private function makeUniqueFileName($file, $albumSlug): string
     {
-        $extension = $file->getClientOriginalExtension();
-        return $albumSlug . '_' . Str::random(8) . '.' . $extension;
+        // Whitelist d'extensions autorisées
+        $allowedExtensions = ['jpg', 'jpeg', 'png', 'gif', 'webp'];
+        $extension = strtolower($file->getClientOriginalExtension());
+
+        // Si l'extension n'est pas dans la whitelist, utiliser l'extension basée sur le type MIME
+        if (!in_array($extension, $allowedExtensions)) {
+            $extension = $file->guessExtension() ?? 'jpg';
+        }
+
+        return $albumSlug . '_' . Str::random(16) . '.' . $extension;
     }
 
     /**

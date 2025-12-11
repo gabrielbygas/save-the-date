@@ -223,13 +223,23 @@ class PhotoController extends Controller
             ->with('success', 'Photo supprimée avec succès.');
     }
 
+    // modify by claude
     /**
      * Génère un nom de fichier unique.
+     * Claude: Security - Whitelist allowed extensions to prevent malicious file uploads
      */
     private function makeUniqueFileName($file, $albumSlug): string
     {
-        $extension = $file->getClientOriginalExtension();
-        return $albumSlug . '_' . Str::random(8) . '.' . $extension;
+        // Whitelist d'extensions autorisées
+        $allowedExtensions = ['jpg', 'jpeg', 'png', 'gif', 'webp'];
+        $extension = strtolower($file->getClientOriginalExtension());
+
+        // Si l'extension n'est pas dans la whitelist, utiliser l'extension basée sur le type MIME
+        if (!in_array($extension, $allowedExtensions)) {
+            $extension = $file->guessExtension() ?? 'jpg';
+        }
+
+        return $albumSlug . '_' . Str::random(16) . '.' . $extension;
     }
 
     /**

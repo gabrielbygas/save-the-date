@@ -26,19 +26,50 @@ class OrderController extends Controller
     public function store(Request $request)
     {
         $request->validate([
+            // modify by claude - improved validation
             'mr_first_name'        => 'required|string|max:100',
             'mr_last_name'         => 'required|string|max:100',
             'mrs_first_name'       => 'required|string|max:100',
             'mrs_last_name'        => 'required|string|max:100',
-            'email'                => 'required|email',
-            'phone'                => 'nullable|string|max:20',
-            'wedding_date'         => 'required|date|after:today',
+            'email'                => 'required|string|email:rfc,dns|max:255', // Claude: stricter email validation
+            'phone'                => ['nullable', 'string', 'regex:/^[\+]?[0-9\s\-\(\)]{8,20}$/'], // Claude: phone format validation
+            'wedding_date'         => 'required|date|after:today|before:+2 years', // Claude: prevent far future dates
             'wedding_location'     => 'required|string|max:255',
             'pack_id'              => 'required|exists:packs,id',
             'theme_id'             => 'nullable|exists:themes,id',
             'terms'                => 'accepted',
+            // modify by claude - improved file validation
             'photos'               => 'nullable|array|max:5',
-            'photos.*'             => 'file|mimes:jpeg,png,jpg,mp4,mov,ogg|max:10240',
+            'photos.*'             => [
+                'file',
+                'mimes:jpeg,png,jpg,mp4,mov,ogg',
+                'max:51200', // 50 MB max (videos can be larger)
+                function ($attribute, $value, $fail) {
+                    // Validation basée sur le type MIME réel
+                    $mimeType = $value->getClientMimeType();
+
+                    // Pour les images: validation stricte
+                    if (str_starts_with($mimeType, 'image/')) {
+                        // Vérifier que c'est une vraie image
+                        $imageInfo = @getimagesize($value->getPathname());
+                        if ($imageInfo === false) {
+                            $fail('Le fichier n\'est pas une image valide.');
+                        }
+                        // Limite de taille pour images: 5 MB
+                        if ($value->getSize() > 5242880) {
+                            $fail('Les images ne doivent pas dépasser 5 MB.');
+                        }
+                    }
+
+                    // Pour les vidéos: vérifier que c'est bien une vidéo
+                    if (str_starts_with($mimeType, 'video/')) {
+                        $allowedVideoMimes = ['video/mp4', 'video/quicktime', 'video/ogg'];
+                        if (!in_array($mimeType, $allowedVideoMimes)) {
+                            $fail('Type de vidéo non autorisé.');
+                        }
+                    }
+                },
+            ],
         ]);
 
         $request['wedding_title'] = 'Mariage de ' . strtoupper($request->mr_first_name) . ' et ' . strtoupper($request->mrs_first_name);
@@ -83,12 +114,14 @@ class OrderController extends Controller
             'wedding_location' => $request->wedding_location,
         ]);
 
+        // modify by claude
         // 6. Upload fichiers
+        // Claude: Security - Store media on private disk instead of public to control access
         if ($request->hasFile('photos')) {
             foreach ($request->file('photos') as $file) {
                 // Construire dynamiquement le chemin de stockage
                 $folder = 'uploads/media/' . $request['confirmation_number'];
-                $path = $file->store($folder, 'public');
+                $path = $file->store($folder, 'private'); // Changed from 'public' to 'private'
 
                 // Déterminer le type de média
                 $type = 'photo'; // Par défaut, on suppose que c'est une photo

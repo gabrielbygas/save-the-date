@@ -15,10 +15,16 @@ Route::prefix('photos')->group(function () {
     Route::get('/', [AlbumController::class, 'home'])->name('photos.home');
     Route::view('/terms', 'photos::terms')->name('photos.terms');
 
+    // modify by claude
     // Page de login avec OTP
+    // Claude: Security - Add rate limiting to prevent brute force attacks
     Route::get('/albums', [AlbumController::class, 'index'])->name('albums.login');
-    Route::post('/albums/send-otp', [AlbumController::class, 'sendOTP'])->name('albums.send_otp');
-    Route::post('/albums/verify-otp', [AlbumController::class, 'verifyOTP'])->name('albums.verify_otp');
+    Route::post('/albums/send-otp', [AlbumController::class, 'sendOTP'])
+        ->middleware('throttle:5,1') // 5 attempts per minute
+        ->name('albums.send_otp');
+    Route::post('/albums/verify-otp', [AlbumController::class, 'verifyOTP'])
+        ->middleware('throttle:10,1') // 10 attempts per minute
+        ->name('albums.verify_otp');
 
     // Liste des albums (protégée par OTP)
     Route::get('/albums/list', [AlbumController::class, 'list'])->name('albums.list');
@@ -26,13 +32,18 @@ Route::prefix('photos')->group(function () {
     // Dans routes/web.php
     Route::post('/albums/logout', [AlbumController::class, 'logout'])->name('albums.logout');
 
+    // modify by claude
     // Albums
     //Route::get('/albums', [AlbumController::class, 'index'])->name('albums.index');
     Route::get('/albums/create', [AlbumController::class, 'create'])->name('albums.create');
     Route::get('/albums/{slug}', [AlbumController::class, 'show'])->name('albums.show');
-    Route::post('/albums', [AlbumController::class, 'store'])->name('albums.store');
+    Route::post('/albums', [AlbumController::class, 'store'])
+        ->middleware('throttle:10,1') // 10 albums per minute
+        ->name('albums.store');
     Route::get('/albums/share/{token}', [AlbumController::class, 'share'])->name('albums.share');
-    Route::post('/albums/{slug}/request-upload-token', [UploadTokenController::class, 'store'])->name('albums.request_upload_token');
+    Route::post('/albums/{slug}/request-upload-token', [UploadTokenController::class, 'store'])
+        ->middleware('throttle:5,1') // 5 token requests per minute
+        ->name('albums.request_upload_token');
 
     // Routes pour le propriétaire (protégées par owner_token)
     Route::post('/albums/{slug}/update', [AlbumController::class, 'update'])
