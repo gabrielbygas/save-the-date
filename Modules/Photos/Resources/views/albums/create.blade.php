@@ -93,14 +93,14 @@
     select:focus {
         outline: none;
         background: white;
-        border-color: #e91e63;
-        box-shadow: 0 0 0 3px rgba(233, 30, 99, 0.1);
+        border-color: #ec407a;
+        box-shadow: 0 0 0 3px rgba(236, 64, 122, 0.1);
     }
     
     .submit-btn {
         width: 100%;
         padding: 16px;
-        background: #e91e63;
+        background: #ec407a;
         color: white;
         border: none;
         border-radius: 12px;
@@ -112,9 +112,9 @@
     }
     
     .submit-btn:hover {
-        background: #c2185b;
+        background: #d81b60;
         transform: translateY(-1px);
-        box-shadow: 0 4px 12px rgba(233, 30, 99, 0.3);
+        box-shadow: 0 4px 12px rgba(236, 64, 122, 0.3);
     }
     
     .error-message {

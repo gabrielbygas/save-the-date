@@ -57,14 +57,14 @@
     input:focus {
         outline: none;
         background: white;
-        border-color: #e91e63;
-        box-shadow: 0 0 0 3px rgba(233, 30, 99, 0.1);
+        border-color: #ec407a;
+        box-shadow: 0 0 0 3px rgba(236, 64, 122, 0.1);
     }
     
     .submit-btn {
         width: 100%;
         padding: 12px;
-        background: #e91e63;
+        background: #ec407a;
         color: white;
         border: none;
         border-radius: 10px;
@@ -75,9 +75,9 @@
     }
     
     .submit-btn:hover {
-        background: #c2185b;
+        background: #d81b60;
         transform: translateY(-1px);
-        box-shadow: 0 4px 12px rgba(233, 30, 99, 0.3);
+        box-shadow: 0 4px 12px rgba(236, 64, 122, 0.3);
     }
     
     .error-message {
@@ -94,7 +94,7 @@
     }
     
     .info-text a {
-        color: #e91e63;
+        color: #ec407a;
         text-decoration: none;
     }
     
@@ -109,7 +109,7 @@
         <p>Accédez à votre album photo</p>
     </div>
     
-    <form action="{{ route('albums.login') }}" method="POST" novalidate>
+    <form action="{{ route('albums.send_otp') }}" method="POST" novalidate>
         @csrf
         
         <div class="form-group">

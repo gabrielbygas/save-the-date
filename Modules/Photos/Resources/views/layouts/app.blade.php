@@ -11,7 +11,7 @@
         
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-            background: linear-gradient(135deg, #ffe0e6 0%, #ffecf0 100%);
+            background: linear-gradient(135deg, #fff5f8 0%, #ffebf0 100%);
             display: flex;
             flex-direction: column;
             min-height: 100vh;
@@ -42,7 +42,7 @@
         }
         
         nav a {
-            color: #e91e63;
+            color: #ec407a;
             text-decoration: none;
             font-size: 15px;
             font-weight: 500;
@@ -78,7 +78,7 @@
         }
         
         footer a {
-            color: #e91e63;
+            color: #ec407a;
             text-decoration: none;
         }
         
