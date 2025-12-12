@@ -1,107 +1,198 @@
 @extends('photos::layouts.app')
 
+@section('title', 'Partager album - Albums Photo')
+
 @section('content')
-    <div class="max-w-7xl mx-auto bg-white shadow-md rounded-lg p-4 md:p-6 lg:p-8">
-        <div class="text-center mb-6">
-            <h2 class="text-2xl md:text-3xl font-bold text-pink-600 break-words">Invitation à l'Album: {{ $album->album_title }}
-            </h2>
-            <p class="text-xl font-semibold text-gray-800 mt-2"> Mariage de {{ ucfirst($client->mr_first_name) }}
-                {{ ucfirst($client->mr_last_name) }} 💍
-                {{ ucfirst($client->mrs_first_name) }} {{ ucfirst($client->mrs_last_name) }}</p>
-            <p class="text-sm md:text-base text-gray-600 mt-2">📅 Mariage prévu le
-                {{ \Carbon\Carbon::parse($album->wedding_date)->format('d M Y') }}</p>
-        </div>
+<style>
+    .share-container {
+        max-width: 600px;
+        margin: 0 auto;
+        background: white;
+        border-radius: 16px;
+        box-shadow: 0 2px 20px rgba(0,0,0,0.08);
+        padding: 40px;
+    }
+    
+    .share-header {
+        text-align: center;
+        margin-bottom: 40px;
+    }
+    
+    .share-header h1 {
+        font-size: 28px;
+        font-weight: 700;
+        color: #1a1a1a;
+        margin-bottom: 8px;
+    }
+    
+    .share-header p {
+        color: #666;
+        font-size: 15px;
+    }
+    
+    .share-method {
+        margin-bottom: 32px;
+        padding-bottom: 32px;
+        border-bottom: 1px solid #f0f0f0;
+    }
+    
+    .share-method:last-child {
+        border-bottom: none;
+        margin-bottom: 0;
+        padding-bottom: 0;
+    }
+    
+    .method-title {
+        font-size: 16px;
+        font-weight: 600;
+        color: #1a1a1a;
+        margin-bottom: 16px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+    
+    .method-description {
+        color: #666;
+        font-size: 14px;
+        margin-bottom: 16px;
+        line-height: 1.5;
+    }
+    
+    .share-box {
+        background: #f0ebff;
+        border: 2px dashed #d8c9ff;
+        border-radius: 12px;
+        padding: 16px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+    }
+    
+    .share-content {
+        flex: 1;
+        word-break: break-all;
+        font-size: 13px;
+        color: #1a1a1a;
+        font-family: 'Courier New', monospace;
+    }
+    
+    .btn-copy {
+        padding: 10px 16px;
+        background: #ec407a;
+        color: white;
+        border: none;
+        border-radius: 8px;
+        font-size: 13px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        white-space: nowrap;
+    }
+    
+    .btn-copy:hover {
+        background: #d81b60;
+    }
+    
+    .btn-copy.copied {
+        background: #059669;
+    }
+    
+    .qr-section {
+        text-align: center;
+        margin-top: 24px;
+        padding-top: 24px;
+        border-top: 1px solid #f0f0f0;
+    }
+    
+    .qr-code {
+        width: 200px;
+        height: 200px;
+        border-radius: 12px;
+        border: 2px solid #f0f0f0;
+        padding: 8px;
+        margin: 16px auto;
+        background: white;
+    }
+    
+    .qr-label {
+        font-size: 13px;
+        color: #666;
+        font-weight: 500;
+    }
+    
+    .btn-primary {
+        width: 100%;
+        padding: 14px;
+        background: #ec407a;
+        color: white;
+        border: none;
+        border-radius: 12px;
+        font-size: 15px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        margin-top: 32px;
+    }
+    
+    .btn-primary:hover {
+        background: #d81b60;
+        transform: translateY(-1px);
+        box-shadow: 0 4px 12px rgba(236, 64, 122, 0.3);
+    }
+    
+    @media (max-width: 600px) {
+        .share-container { padding: 30px 20px; }
+        .share-box { flex-direction: column; }
+        .btn-copy { width: 100%; }
+    }
+</style>
 
-        <hr class="my-10"> <!-- DIVIDER -->
-
-        <div class="text-center mb-6">
-            <h3 class="text-xl font-semibold text-gray-700 mb-2">{{ ucfirst($client->mr_first_name) }} &
-                {{ ucfirst($client->mrs_first_name) }} vous invitent à partager vos
-                souvenirs de leur mariage</h3>
-            <p class="text-gray-600 mb-4">Pour ajouter vos photos, veuillez fournir les informations suivantes :</p>
-            <div class="flex items-center justify-center">
-                <form action="{{ route('albums.request_upload_token', $album->slug) }}" method="POST">
-                    @csrf
-
-                    <!-- ERREURS -->
-                    @if (session('success'))
-                        <div id="alert-success" class="bg-green-100 text-green-700 p-3 mb-4 rounded fade-out">
-                            {{ session('success') }}
-                        </div>
-                    @endif
-
-                    {{-- Gère les messages d'erreur de session --}}
-                    @if (session('error'))
-                        <div id="alert-error" class="bg-red-100 text-red-800 p-4 mb-4 rounded fade-out">
-                            <div class="list-disc pl-5 space-y-1">
-                                {{ session('error') }}
-                            </div>
-                        </div>
-                    @endif
-
-                    {{-- Gère les erreurs de validation du formulaire --}}
-                    @if ($errors->any())
-                        <div id="alert-error" class="bg-red-100 text-red-800 p-4 mb-4 rounded fade-out">
-                            <ul class="list-disc pl-5 space-y-1">
-                                @foreach ($errors->all() as $error)
-                                    <li>{{ $error }}</li>
-                                @endforeach
-                                {{-- Cette partie est redondante si vous utilisez $errors->all() --}}
-                                {{-- @error('photos.0')
-                                    <div class="text-red-500 text-sm mt-1">{{ $message }}</div>
-                                @enderror --}}
-                            </ul>
-                        </div>
-                    @endif
-                    <!-- ERREURS -->
-
-                    <div class="mb-4">
-                        <label class="block">Votre Nom *</label>
-                        <input type="text" name="visitor_name"
-                            class="w-full border-gray-300 rounded-md shadow-sm focus:ring-pink-500 focus:border-pink-500"
-                            value="{{ old('visitor_name') }}" placeholder="John Doe" required>
-                    </div>
-                    <div class="mb-4">
-                        <label class="block mt-4">Email *</label>
-                        <input type="email" name="visitor_email" class="w-full border p-2 rounded"
-                            value="{{ old('email') }}" placeholder="exemple@domaine.com" required>
-                    </div>
-
-                    <div class="mb-4">
-                        <label class="block mt-4">Numéro Whatsapp *</label>
-                        <input type="text" name="visitor_phone" class="w-full border p-2 rounded"
-                            value="{{ old('phone') }}" placeholder="+243xxxxxxxxx" required>
-                    </div>
-                    <!-- Case à cocher pour acceptation des CGU -->
-                    <div class="mb-4 mt-6">
-                        <label class="flex items-center space-x-2">
-                            <span class="text-sm">
-                                En soumettant ce formulaire, vous acceptez les <a href="{{ route('terms') }}"
-                                    target="_blank" class="text-blue-600 underline">Conditions Générales d'Utilisation</a>
-                            </span>
-                        </label>
-                    </div>
-                    <div class="mt-6 text-center">
-                        <button type="submit"
-                            class="bg-pink-500 hover:bg-pink-600 text-white font-semibold px-6 py-2 rounded-md">
-                            Recevoir le lien d'upload
-                        </button>
-                    </div>
-                </form>
+<div class="share-container">
+    <div class="share-header">
+        <h1>🔗 Partager l'album</h1>
+        <p>{{ $album->album_title }}</p>
+    </div>
+    
+    <div class="share-method">
+        <div class="method-title">📲 QR Code</div>
+        <div class="method-description">Scannez le QR code pour accéder directement à l'album</div>
+        @if($album->qr_code_path)
+            <div class="qr-section">
+                <img src="{{ asset('storage/' . $album->qr_code_path) }}" alt="QR Code" class="qr-code">
+                <div class="qr-label">QR Code</div>
             </div>
+        @endif
+    </div>
+    
+    <div class="share-method">
+        <div class="method-title">🔗 Lien direct</div>
+        <div class="method-description">Partagez ce lien pour que vos invités accèdent à l'album</div>
+        <div class="share-box">
+            <div class="share-content">{{ $shareUrl }}</div>
+            <button type="button" class="btn-copy" onclick="copyToClipboard(this, '{{ $shareUrl }}')">Copier</button>
         </div>
     </div>
+    
+    <div class="share-method">
+        <div class="method-title">📧 Email</div>
+        <div class="method-description">Invitez vos invités à télécharger leurs photos</div>
+        <a href="{{ route('upload-tokens.create', $album->slug) }}" class="btn-primary">📧 Envoyer invitations</a>
+    </div>
+</div>
 
-    <script>
-        function copyShareLink() {
-            const shareLinkText = document.getElementById('share-link-text');
-            const range = document.createRange();
-            range.selectNode(shareLinkText);
-            window.getSelection().removeAllRanges();
-            window.getSelection().addRange(range);
-            document.execCommand('copy');
-            alert('Lien copié dans le presse-papiers !');
-            window.getSelection().removeAllRanges();
-        }
-    </script>
+<script>
+    function copyToClipboard(btn, text) {
+        navigator.clipboard.writeText(text).then(() => {
+            const original = btn.textContent;
+            btn.textContent = '✓ Copié!';
+            btn.classList.add('copied');
+            setTimeout(() => {
+                btn.textContent = original;
+                btn.classList.remove('copied');
+            }, 2000);
+        });
+    }
+</script>
 @endsection

@@ -1,97 +1,241 @@
 @extends('photos::layouts.app')
 
+@section('title', $album->album_title . ' - Albums Photo')
+
 @section('content')
-    <div class="max-w-7xl mx-auto bg-white shadow-md rounded-lg p-4 md:p-6 lg:p-8">
-        <div class="text-center mb-6">
-            <h2 class="text-2xl md:text-3xl font-bold text-pink-600 break-words">Album: {{ $album->album_title }}</h2>
-            <p class="text-lg font-semibold text-gray-800 mt-2"> Mariage de {{ ucfirst($client->mr_first_name) }} 💍
-                {{ ucfirst($client->mrs_first_name) }}</p>
-            <p class="text-sm md:text-base text-gray-600 mt-2">📅 Mariage prévu le
-                {{ \Carbon\Carbon::parse($album->wedding_date)->format('d M Y') }}</p>
-            <p class="text-xs md:text-sm text-gray-500 mt-2">👥 Invités max : {{ $album->max_guests }}</p>
-            <p class="text-xs md:text-sm text-gray-500 break-all mt-4">
-                <span style="background: #e2e8f0; padding: 10px; text-align: center; border-radius: 6px; font-weight: bold; font-family: monospace;" class="font-mono" id="share-link-text">{{ route('albums.share', $album->share_url_token) }}</span>
-            </p>
-            <p class="text-xs md:text-sm text-gray-500 mt-4">Statut : <span
-                    class="uppercase font-bold text-pink-500">{{ $album->status }}</span></p>
-        </div>
+<style>
+    .album-header {
+        background: white;
+        border-radius: 16px;
+        padding: 40px;
+        margin-bottom: 40px;
+        box-shadow: 0 2px 20px rgba(0,0,0,0.08);
+    }
+    
+    .header-content {
+        display: flex;
+        justify-content: space-between;
+        align-items: start;
+        gap: 40px;
+    }
+    
+    .header-text h1 {
+        font-size: 32px;
+        font-weight: 700;
+        color: #1a1a1a;
+        margin-bottom: 12px;
+    }
+    
+    .header-meta {
+        display: grid;
+        gap: 12px;
+        font-size: 15px;
+        color: #666;
+    }
+    
+    .meta-item {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+    
+    .qr-section {
+        text-align: center;
+    }
+    
+    .qr-code {
+        width: 200px;
+        height: 200px;
+        background: white;
+        border: 2px solid #f0f0f0;
+        border-radius: 12px;
+        padding: 12px;
+        display: inline-block;
+    }
+    
+    .qr-label {
+        margin-top: 12px;
+        font-size: 13px;
+        color: #666;
+        font-weight: 500;
+    }
+    
+    .btn-group {
+        display: flex;
+        gap: 12px;
+        flex-wrap: wrap;
+        margin-top: 24px;
+    }
+    
+    .btn {
+        padding: 12px 24px;
+        border: none;
+        border-radius: 10px;
+        font-size: 14px;
+        font-weight: 600;
+        cursor: pointer;
+        text-decoration: none;
+        transition: all 0.2s ease;
+    }
+    
+    .btn-primary {
+        background: #ec407a;
+        color: white;
+    }
+    
+    .btn-primary:hover {
+        background: #d81b60;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(236, 64, 122, 0.3);
+    }
+    
+    .btn-secondary {
+        background: white;
+        color: #ec407a;
+        border: 1px solid #ec407a;
+    }
+    
+    .btn-secondary:hover {
+        background: #f0ebff;
+    }
+    
+    .photos-section {
+        margin-top: 40px;
+    }
+    
+    .section-title {
+        font-size: 24px;
+        font-weight: 700;
+        color: #1a1a1a;
+        margin-bottom: 24px;
+    }
+    
+    .photos-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+        gap: 16px;
+    }
+    
+    .photo-card {
+        border-radius: 12px;
+        overflow: hidden;
+        background: white;
+        box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+        transition: all 0.3s ease;
+    }
+    
+    .photo-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+    }
+    
+    .photo-image {
+        width: 100%;
+        height: 200px;
+        object-fit: cover;
+        display: block;
+    }
+    
+    .photo-info {
+        padding: 16px;
+    }
+    
+    .photo-name {
+        font-size: 14px;
+        font-weight: 600;
+        color: #1a1a1a;
+        margin-bottom: 8px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+    
+    .photo-date {
+        font-size: 12px;
+        color: #999;
+    }
+    
+    .empty-photos {
+        text-align: center;
+        padding: 60px 20px;
+        background: white;
+        border-radius: 12px;
+    }
+    
+    .empty-icon {
+        font-size: 48px;
+        margin-bottom: 16px;
+    }
+    
+    @media (max-width: 768px) {
+        .header-content {
+            flex-direction: column;
+            gap: 24px;
+        }
+        
+        .qr-section {
+            order: -1;
+        }
+        
+        .photos-grid {
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+        }
+    }
+</style>
 
-        @if ($album->qr_code_path)
-            <div class="flex flex-col items-center mb-6">
-                <div class="text-center">
-                    <img src="{{ asset('storage/' . $album->qr_code_path) }}" alt="QR Code"
-                        class="w-32 h-32 md:w-40 md:h-40 mx-auto">
-                    <p class="text-sm text-gray-600 mt-2">Partager ce QR CODE à vos invités</p>
-                    <div class="mt-4 flex flex-col sm:flex-row justify-center space-y-2 sm:space-y-0 sm:space-x-4">
-                        {{-- Bouton pour copier le lien --}}
-                        <button onclick="copyShareLink()"
-                            class="px-3 py-1 bg-pink-500 text-white rounded-lg font-bold text-sm hover:bg-pink-600 transition">
-                            🔗 Copier le lien
-                        </button>
-
-                        {{-- Bouton pour télécharger l'image --}}
-                        <button
-                            class="px-3 py-2 bg-purple-500 text-white rounded-lg font-bold text-sm hover:bg-purple-600 transition">
-                            <a href="{{ asset('storage/' . $album->qr_code_path) }}"
-                                download="qrcode-{{ $album->slug }}.png">
-                                📥 Télécharger le QR Code
-                            </a>
-                        </button>
-
-                    </div>
+<div class="album-header">
+    <div class="header-content">
+        <div class="header-text">
+            <h1>{{ $album->album_title }}</h1>
+            <div class="header-meta">
+                <div class="meta-item">
+                    <span>👫</span> Couple: <strong>{{ $album->client->mr_first_name }} & {{ $album->client->mrs_first_name }}</strong>
+                </div>
+                <div class="meta-item">
+                    <span>📅</span> Mariage: <strong>{{ \Carbon\Carbon::parse($album->wedding_date)->format('d/m/Y') }}</strong>
+                </div>
+                <div class="meta-item">
+                    <span>📸</span> Photos: <strong>{{ $album->photos_count ?? 0 }}</strong>
                 </div>
             </div>
-        @endif
-
-        <hr class="my-4"> <!-- DIVIDER -->
-
-        <!-- ERREURS -->
-        @if (session('success'))
-            <div id="alert-success" class="bg-green-100 text-green-700 p-3 mb-4 rounded fade-out">{{ session('success') }}</div>
-        @endif
-
-        @if ($errors->any())
-            <div id="alert-error" class="bg-red-100 text-red-800 p-4 mb-4 rounded fade-out">
-                <ul class="list-disc pl-5 space-y-1">
-                    @foreach ($errors->all() as $error)
-                        <li>{{ $error }}</li>
-                    @endforeach
-                    @error('photos.0')
-                        <div class="text-red-500 text-sm mt-1">{{ $message }}</div>
-                    @enderror
-                </ul>
-            </div>
-        @endif
-        <!-- ERREURS -->
-
-        <div class="m-4 md:m-8">
-            <div class="flex flex-col sm:flex-row justify-between items-center gap-4">
-                <!-- Bouton à gauche (pleine largeur sur mobile) -->
-                <a href="{{ route('photos.index', ['slug' => $album->slug, 'owner_token' => $album->owner_token]) }}"
-                    class="w-full sm:w-auto px-4 py-2 bg-pink-500 text-white rounded-lg font-bold text-sm hover:bg-pink-600 transition text-center">
-                    ← Voir les photos
-                </a>
-
-                <!-- Bouton à droite (pleine largeur sur mobile) -->
-                <a href="{{ route('photos.create', ['slug' => $album->slug, 'owner_token' => $album->owner_token]) }}"
-                    class="w-full sm:w-auto px-4 py-2 bg-green-600 text-white rounded-lg font-bold text-sm hover:bg-green-700 transition text-center">
-                    📷 Ajouter des photos
-                </a>
-            </div>
         </div>
-
+        
+        <div class="qr-section">
+            @if($album->qr_code_path)
+                <img src="{{ asset('storage/' . $album->qr_code_path) }}" alt="QR Code" class="qr-code">
+            @endif
+            <div class="qr-label">QR Code partage</div>
+        </div>
     </div>
+    
+    <div class="btn-group">
+        <a href="{{ route('albums.edit', $album->slug) }}" class="btn btn-primary">✏️ Éditer</a>
+        <a href="{{ route('albums.share', $album->slug) }}" class="btn btn-secondary">🔗 Partager</a>
+        <a href="{{ route('upload-tokens.create', $album->slug) }}" class="btn btn-secondary">📧 Inviter</a>
+    </div>
+</div>
 
-    <script>
-        function copyShareLink() {
-            const shareLinkText = document.getElementById('share-link-text');
-            const range = document.createRange();
-            range.selectNode(shareLinkText);
-            window.getSelection().removeAllRanges();
-            window.getSelection().addRange(range);
-            document.execCommand('copy');
-            alert('Lien copié dans le presse-papiers !');
-            window.getSelection().removeAllRanges();
-        }
-    </script>
+<div class="photos-section">
+    <h2 class="section-title">Photos de l'album</h2>
+    
+    @if($album->photos->isEmpty())
+        <div class="empty-photos">
+            <div class="empty-icon">📭</div>
+            <h3 style="color: #1a1a1a; margin-bottom: 8px;">Aucune photo</h3>
+            <p style="color: #666;">Les photos apparaîtront ici une fois ajoutées</p>
+        </div>
+    @else
+        <div class="photos-grid">
+            @foreach($album->photos as $photo)
+                <div class="photo-card">
+                    <img src="{{ asset('storage/' . $photo->thumb_path) }}" alt="Photo" class="photo-image">
+                    <div class="photo-info">
+                        <div class="photo-name">{{ basename($photo->original_path) }}</div>
+                        <div class="photo-date">{{ $photo->created_at->format('d/m/Y') }}</div>
+                    </div>
+                </div>
+            @endforeach
+        </div>
+    @endif
+</div>
 @endsection

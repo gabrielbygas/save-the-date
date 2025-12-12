@@ -1,145 +1,172 @@
 @extends('photos::layouts.app')
 
+@section('title', 'Inviter des invités - Albums Photo')
+
 @section('content')
-    <div class="max-w-7xl mx-auto bg-white shadow-md rounded-lg p-4 md:p-6 lg:p-8">
-        <div class="text-center mb-6">
-            <h2 class="text-2xl md:text-3xl font-bold text-pink-600 break-words">
-                Ajouter des photos à l'album : {{ $album->album_title }}
-            </h2>
-            <p class="text-xl font-semibold text-gray-800 mt-2"> Mariage de {{ ucfirst($album->client->mr_first_name) }}
-                {{ ucfirst($album->client->mr_last_name) }} 💍
-                {{ ucfirst($album->client->mrs_first_name) }} {{ ucfirst($album->client->mrs_last_name) }}</p>
-            <p class="text-sm md:text-base text-gray-600 mt-2">
-                📅 Mariage prévu le {{ \Carbon\Carbon::parse($album->wedding_date)->format('d M Y') }}
-            </p>
-        </div>
+<style>
+    .form-container {
+        max-width: 700px;
+        margin: 0 auto;
+        background: white;
+        border-radius: 16px;
+        box-shadow: 0 2px 20px rgba(0,0,0,0.08);
+        overflow: hidden;
+    }
+    
+    .form-header {
+        padding: 40px;
+        text-align: center;
+        border-bottom: 1px solid #f0f0f0;
+    }
+    
+    .form-header h1 {
+        font-size: 28px;
+        font-weight: 700;
+        color: #1a1a1a;
+        margin-bottom: 8px;
+    }
+    
+    .form-header p {
+        color: #666;
+        font-size: 15px;
+    }
+    
+    .form-section {
+        padding: 40px;
+    }
+    
+    .form-group {
+        margin-bottom: 24px;
+    }
+    
+    label {
+        display: block;
+        font-size: 14px;
+        font-weight: 500;
+        color: #1a1a1a;
+        margin-bottom: 8px;
+    }
+    
+    input[type="email"],
+    input[type="number"],
+    input[type="date"],
+    textarea {
+        width: 100%;
+        padding: 12px 14px;
+        border: 1px solid #e0e0e0;
+        border-radius: 10px;
+        font-size: 16px;
+        font-family: inherit;
+        transition: all 0.2s ease;
+        background: #fafafa;
+    }
+    
+    input:focus,
+    textarea:focus {
+        outline: none;
+        background: white;
+        border-color: #ec407a;
+        box-shadow: 0 0 0 3px rgba(236, 64, 122, 0.1);
+    }
+    
+    .info-box {
+        background: #f0ebff;
+        border: 1px solid #d8c9ff;
+        border-radius: 10px;
+        padding: 16px;
+        margin-bottom: 24px;
+        font-size: 14px;
+        color: #1a1a1a;
+        line-height: 1.6;
+    }
+    
+    .info-box strong {
+        color: #ec407a;
+    }
+    
+    .submit-btn {
+        width: 100%;
+        padding: 14px;
+        background: #ec407a;
+        color: white;
+        border: none;
+        border-radius: 12px;
+        font-size: 15px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        margin-top: 32px;
+    }
+    
+    .submit-btn:hover {
+        background: #d81b60;
+        transform: translateY(-1px);
+        box-shadow: 0 4px 12px rgba(236, 64, 122, 0.3);
+    }
+    
+    .error-message {
+        color: #ff3b30;
+        font-size: 13px;
+        margin-top: 6px;
+    }
+    
+    .divider {
+        height: 1px;
+        background: #f0f0f0;
+        margin: 32px 0;
+    }
+    
+    .section-title {
+        font-size: 13px;
+        font-weight: 600;
+        color: #666;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        margin-bottom: 16px;
+        margin-top: 24px;
+    }
+    
+    .section-title:first-of-type {
+        margin-top: 0;
+    }
+</style>
 
-        <form action="{{ route('photos.invite.store', [$album->slug, $uploadToken->token]) }}" method="POST"
-            enctype="multipart/form-data" class="space-y-6">
-            @csrf
-
-            <div class="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center">
-                <input type="file" name="photos[]" id="photos" class="hidden" multiple
-                    accept="image/jpeg,image/png,image/jpg,image/gif" required>
-                <label for="photos" class="cursor-pointer">
-                    <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                    </svg>
-                    <p class="mt-2 text-sm text-gray-600 font-bold">
-                        {{ ucfirst($uploadToken->visitor_name) }}
-                        <span class="font-bold text-pink-700 hover:text-pink-500">
-                            Cliquez pour sélectionner des photos
-                        </span>
-                        ou glissez-déposez
-                    </p>
-                    <p class="mt-2 text-xs text-gray-600">
-                        Vous pouvez uploader maximum de <strong>5 photos</strong> JPEG, PNG, JPG ou GIF (max 10MB par photo)
-                    </p>
-
-                    <p class="hidden" id="file-upload-info"> </p>
-                </label>
-            </div>
-
-            <!-- ERREURS -->
-            @if (session('success'))
-                <div id="alert-success" class="bg-green-100 text-green-700 p-3 mb-4 rounded fade-out">
-                    {{ session('success') }}
-                </div>
-            @endif
-
-            {{-- Gère les messages d'erreur de session --}}
-            @if (session('error'))
-                <div id="alert-error" class="bg-red-100 text-red-800 p-4 mb-4 rounded fade-out">
-                    <div class="list-disc pl-5 space-y-1">
-                        {{ session('error') }}
-                    </div>
-                </div>
-            @endif
-
-            {{-- Gère les erreurs de validation du formulaire --}}
-            @if ($errors->any())
-                <div class="bg-red-100 text-red-800 p-4 mb-4 rounded">
-                    <ul class="list-disc pl-5 space-y-1">
-                        @foreach ($errors->all() as $error)
-                            <li>{{ $error }}</li>
-                        @endforeach
-                    </ul>
-                </div>
-            @endif
-            <!-- ERREURS -->
-
-            <div id="upload-error" class="hidden bg-red-100 text-red-800 p-4 mb-4 rounded text-center"></div>
-
-            @if (!$uploadToken->used)
-                <!-- si le token n'est pas utilise ou photos_count <=5 -->
-                <div class="flex justify-center">
-                    <button type="submit"
-                        class="px-6 py-2 bg-pink-600 text-white rounded-lg font-bold hover:bg-pink-700 transition">
-                        Uploader les photos
-                    </button>
-                </div>
-            @else
-                <!-- si le token est utilise ou photos_count >=5 -->
-                <div class="m-4 md:m-8">
-                    <div class="flex flex-col sm:flex-row bg-red-100 text-red-800 p-4 mb-4 rounded justify-end">
-                        <span>{{ ucfirst($uploadToken->visitor_name) }} , vous ne pouvez plus ajouter de nouvelles photos. Vous avez déjà atteint la limite de 5 photos autorisées.</span>
-                    </div>
-                </div>
-            @endif
-        </form>
-
-        <hr class="my-10 mt-10"> <!-- DIVIDER -->
-
-        <div class="m-8 flex justify-end">
-            <a href="{{ route('photos.invite.index', [$album->slug, $uploadToken->token]) }}"
-                class="px-4 py-2 bg-green-600 text-white rounded-lg font-bold text-sm hover:bg-green-700 transition">
-                ✨ Voir les photos
-            </a>
-        </div>
+<div class="form-container">
+    <div class="form-header">
+        <h1>📧 Inviter des invités</h1>
+        <p>{{ $album->album_title }}</p>
     </div>
-
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const form = document.querySelector('form');
-            const fileInput = document.getElementById('photos');
-            const errorBox = document.getElementById('upload-error');
-            const fileUploadInfo = document.getElementById('file-upload-info');
-
-            form.addEventListener('submit', function(e) {
-                const files = fileInput.files;
-                if (files.length > 5) {
-                    e.preventDefault();
-                    errorBox.textContent = "🚫 Vous ne pouvez pas uploader plus de 5 photos à la fois.";
-                    errorBox.classList.remove('hidden');
-                    fileUploadInfo.classList.add('hidden');
-                    fileUploadInfo.textContent = '';
-                    return false;
-                }
-            });
-
-            fileInput.addEventListener('change', function(e) {
-                const files = e.target.files;
-
-                // Réinitialiser les messages
-                errorBox.classList.add('hidden');
-                errorBox.textContent = '';
-                fileUploadInfo.classList.add('hidden');
-                fileUploadInfo.textContent = '';
-
-                if (files.length > 5) {
-                    errorBox.textContent = "🚫 Vous avez sélectionné " + files.length +
-                        " fichiers. Maximum autorisé : 5.";
-                    errorBox.classList.remove('hidden');
-                    return;
-                }
-
-                if (files.length > 0) {
-                    const fileNames = Array.from(files).map(file => file.name).join(', ');
-                    fileUploadInfo.textContent = `📷 Photos sélectionnées : ${fileNames}`;
-                    fileUploadInfo.classList.remove('hidden');
-                }
-            });
-        });
-    </script>
+    
+    <form class="form-section" action="{{ route('upload-tokens.store', $album->slug) }}" method="POST" novalidate>
+        @csrf
+        
+        <div class="info-box">
+            💡 Créez des liens d'invitation uniques pour que vos invités téléchargent leurs photos. Chaque invité reçoit un lien personnel et temporaire.
+        </div>
+        
+        <div class="section-title">Invité</div>
+        <div class="form-group">
+            <label for="email">Email *</label>
+            <input type="email" id="email" name="email" value="{{ old('email') }}" required autofocus>
+            @error('email')<div class="error-message">{{ $message }}</div>@enderror
+        </div>
+        
+        <div class="divider"></div>
+        
+        <div class="section-title">Permissions</div>
+        <div class="form-group">
+            <label for="max_uses">Nombre de téléchargements autorisés *</label>
+            <input type="number" id="max_uses" name="max_uses" value="{{ old('max_uses', 1) }}" min="1" max="100" required>
+            @error('max_uses')<div class="error-message">{{ $message }}</div>@enderror
+        </div>
+        
+        <div class="form-group">
+            <label for="expires_at">Lien expire le *</label>
+            <input type="date" id="expires_at" name="expires_at" value="{{ old('expires_at') }}" required>
+            @error('expires_at')<div class="error-message">{{ $message }}</div>@enderror
+        </div>
+        
+        <button type="submit" class="submit-btn">🔗 Créer lien d'invitation</button>
+    </form>
+</div>
 @endsection

@@ -1,25 +1,66 @@
 @extends('photos::layouts.app')
+
+@section('title', 'Non authentifié - Albums Photo')
+
 @section('content')
-    <div class="max-w-7xl mx-auto bg-white shadow-md rounded-lg p-4 md:p-6 lg:p-8 text-center">
-        <div class="mb-6">
-            <h1 class="text-4xl md:text-5xl font-bold text-pink-600 mb-4">401</h1>
-            <h2 class="text-xl md:text-2xl font-semibold text-gray-800 mb-2">Non autorisé.</h2>
-            @if(isset($exception) && $exception->getMessage())
-                <p class="text-gray-600 mb-4">
-                    {{ $exception->getMessage() }}
-                </p>
-            @else
-                <p class="text-gray-600 mb-4">
-                    Vous n'avez pas la permission d'accéder à cette page.
-                </p>
-            @endif
-            <a href="{{ route('photos.home') }}"
-               class="px-4 py-2 bg-pink-500 text-white rounded-lg font-bold text-sm hover:bg-pink-600 transition">
-                Retour à l'accueil
-            </a>
-        </div>
-        <div class="mt-8">
-            <img src="{{ asset('images/401_illustration.webp') }}" alt="Illustration 401" class="w-64 h-64 mx-auto">
-        </div>
-    </div>
+<style>
+    .error-container {
+        max-width: 600px;
+        margin: 0 auto;
+        text-align: center;
+        padding: 60px 20px;
+    }
+    
+    .error-icon {
+        font-size: 80px;
+        margin-bottom: 24px;
+    }
+    
+    .error-code {
+        font-size: 48px;
+        font-weight: 700;
+        color: #ec407a;
+        margin-bottom: 12px;
+    }
+    
+    .error-title {
+        font-size: 28px;
+        font-weight: 700;
+        color: #1a1a1a;
+        margin-bottom: 12px;
+    }
+    
+    .error-message {
+        font-size: 16px;
+        color: #666;
+        margin-bottom: 32px;
+        line-height: 1.5;
+    }
+    
+    .btn-home {
+        display: inline-block;
+        padding: 14px 32px;
+        background: #ec407a;
+        color: white;
+        text-decoration: none;
+        border-radius: 10px;
+        font-size: 15px;
+        font-weight: 600;
+        transition: all 0.2s ease;
+    }
+    
+    .btn-home:hover {
+        background: #d81b60;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(236, 64, 122, 0.3);
+    }
+</style>
+
+<div class="error-container">
+    <div class="error-icon">🔑</div>
+    <div class="error-code">401</div>
+    <h1 class="error-title">Authentification requise</h1>
+    <p class="error-message">Veuillez vous authentifier pour accéder à cette ressource. Si vous n'avez pas de compte, créez-en un.</p>
+    <a href="{{ route('albums.login') }}" class="btn-home">← Se connecter</a>
+</div>
 @endsection
