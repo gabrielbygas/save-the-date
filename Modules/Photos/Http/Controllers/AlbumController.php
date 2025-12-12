@@ -221,7 +221,7 @@ class AlbumController extends Controller
         ]);
 
         $identifier = $request->identifier;
-        $otp = Str::random(8); // Génère un OTP aléatoire de 8 caractères
+        $otp = str_pad(random_int(0, 999999), 6, '0', STR_PAD_LEFT); // modified by COPILOT - 6 numeric digits
         $client = Client::where('email', $identifier)->first();
 
         // Vérification pour un album existant
