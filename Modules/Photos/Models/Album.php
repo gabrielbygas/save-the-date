@@ -25,12 +25,12 @@ class Album extends Model
         'storage_until_at',
     ];
 
-    protected $guarded = ['owner_token', 'share_url_token'];
+    protected $guarded = ['owner_token', 'share_url_token']; // modified by COPILOT
 
-    protected $casts = [
-        'wedding_date' => 'date',
-        'opens_at' => 'datetime',
-        'storage_until_at' => 'datetime',
+    protected $casts = [ // modified by COPILOT
+        'wedding_date' => 'date', // modified by COPILOT
+        'opens_at' => 'datetime', // modified by COPILOT
+        'storage_until_at' => 'datetime', // modified by COPILOT
     ];
 
     public function photos()

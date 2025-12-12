@@ -69,8 +69,8 @@ class UploadTokenController extends Controller
 
         $validated = $request->validate([
             'visitor_name'  => 'required|string|max:100',
-            'visitor_email' => 'required|string|email:rfc,dns|max:255',
-            'visitor_phone' => ['required', 'string', 'regex:/^[\+]?[0-9\s\-\(\)]{8,20}$/'],
+            'visitor_email' => 'required|string|email:rfc,dns|max:255', // modified by COPILOT
+            'visitor_phone' => ['required', 'string', 'regex:/^[\+]?[0-9\s\-\(\)]{8,20}$/'], // modified by COPILOT
         ]);
 
         $token = bin2hex(random_bytes(16)); // Token aléatoire de 16 caractères
@@ -349,14 +349,14 @@ class UploadTokenController extends Controller
      */
     private function makeUniqueFileName($file, $albumSlug): string
     {
-        $allowedExtensions = ['jpg', 'jpeg', 'png', 'gif', 'webp'];
-        $extension = strtolower($file->getClientOriginalExtension());
+        $allowedExtensions = ['jpg', 'jpeg', 'png', 'gif', 'webp']; // modified by COPILOT
+        $extension = strtolower($file->getClientOriginalExtension()); // modified by COPILOT
 
-        if (!in_array($extension, $allowedExtensions)) {
-            $extension = $file->guessExtension() ?? 'jpg';
+        if (!in_array($extension, $allowedExtensions)) { // modified by COPILOT
+            $extension = $file->guessExtension() ?? 'jpg'; // modified by COPILOT
         }
 
-        return $albumSlug . '_' . Str::random(16) . '.' . $extension;
+        return $albumSlug . '_' . Str::random(16) . '.' . $extension; // modified by COPILOT
     }
 
     /**

@@ -75,12 +75,12 @@ class AlbumController extends Controller
             'mr_last_name'     => 'required|string|max:100',
             'mrs_first_name'   => 'required|string|max:100',
             'mrs_last_name'    => 'required|string|max:100',
-            'email'            => 'required|string|email:rfc,dns|max:255|unique:clients,email',
-            'phone'            => ['nullable', 'string', 'regex:/^[\+]?[0-9\s\-\(\)]{8,20}$/'],
+            'email'            => 'required|string|email:rfc,dns|max:255|unique:clients,email', // modified by COPILOT
+            'phone'            => ['nullable', 'string', 'regex:/^[\+]?[0-9\s\-\(\)]{8,20}$/'], // modified by COPILOT
             'album_title'      => 'required|string|max:255',
-            'wedding_date'     => 'required|date|after:today|before:+2 years',
+            'wedding_date'     => 'required|date|after:today|before:+2 years', // modified by COPILOT
             'max_guests'       => 'nullable|integer|min:1|max:1000',
-            'opens_at'         => 'nullable|date|before:wedding_date',
+            'opens_at'         => 'nullable|date|before:wedding_date', // modified by COPILOT
             'storage_until_at' => 'nullable|date|after:wedding_date',
             'status'           => 'required|in:draft,active,archived',
         ]);
@@ -259,10 +259,10 @@ class AlbumController extends Controller
 
 
 
-        return response()->json([
+        return response()->json([ // modified by COPILOT
             'success' => true,
             'message' => 'Un code OTP a été envoyé à ' . $identifier,
-        ]);
+        ]); // modified by COPILOT
     }
 
     /**

@@ -19,9 +19,9 @@ class Order extends Model
         'payment_due_at',
     ];
 
-    protected $casts = [
-        'wedding_date' => 'date',
-        'payment_due_at' => 'datetime',
+    protected $casts = [ // modified by COPILOT
+        'wedding_date' => 'date', // modified by COPILOT
+        'payment_due_at' => 'datetime', // modified by COPILOT
     ];
     
     use HasFactory;

@@ -30,38 +30,38 @@ class OrderController extends Controller
             'mr_last_name'         => 'required|string|max:100',
             'mrs_first_name'       => 'required|string|max:100',
             'mrs_last_name'        => 'required|string|max:100',
-            'email'                => 'required|string|email:rfc,dns|max:255',
-            'phone'                => ['nullable', 'string', 'regex:/^[\+]?[0-9\s\-\(\)]{8,20}$/'],
-            'wedding_date'         => 'required|date|after:today|before:+2 years',
+            'email'                => 'required|string|email:rfc,dns|max:255', // modified by COPILOT
+            'phone'                => ['nullable', 'string', 'regex:/^[\+]?[0-9\s\-\(\)]{8,20}$/'], // modified by COPILOT
+            'wedding_date'         => 'required|date|after:today|before:+2 years', // modified by COPILOT
             'wedding_location'     => 'required|string|max:255',
             'pack_id'              => 'required|exists:packs,id',
             'theme_id'             => 'nullable|exists:themes,id',
             'terms'                => 'accepted',
             'photos'               => 'nullable|array|max:5',
-            'photos.*'             => [
+            'photos.*'             => [ // modified by COPILOT
                 'file',
                 'mimes:jpeg,png,jpg,mp4,mov,ogg',
-                'max:51200',
-                function ($attribute, $value, $fail) {
-                    $mimeType = $value->getClientMimeType();
+                'max:51200', // modified by COPILOT
+                function ($attribute, $value, $fail) { // modified by COPILOT
+                    $mimeType = $value->getClientMimeType(); // modified by COPILOT
 
-                    if (str_starts_with($mimeType, 'image/')) {
-                        $imageInfo = @getimagesize($value->getPathname());
-                        if ($imageInfo === false) {
-                            $fail('Le fichier n\'est pas une image valide.');
+                    if (str_starts_with($mimeType, 'image/')) { // modified by COPILOT
+                        $imageInfo = @getimagesize($value->getPathname()); // modified by COPILOT
+                        if ($imageInfo === false) { // modified by COPILOT
+                            $fail('Le fichier n\'est pas une image valide.'); // modified by COPILOT
                         }
-                        if ($value->getSize() > 5242880) {
-                            $fail('Les images ne doivent pas dépasser 5 MB.');
+                        if ($value->getSize() > 5242880) { // modified by COPILOT
+                            $fail('Les images ne doivent pas dépasser 5 MB.'); // modified by COPILOT
                         }
                     }
 
-                    if (str_starts_with($mimeType, 'video/')) {
-                        $allowedVideoMimes = ['video/mp4', 'video/quicktime', 'video/ogg'];
-                        if (!in_array($mimeType, $allowedVideoMimes)) {
-                            $fail('Type de vidéo non autorisé.');
+                    if (str_starts_with($mimeType, 'video/')) { // modified by COPILOT
+                        $allowedVideoMimes = ['video/mp4', 'video/quicktime', 'video/ogg']; // modified by COPILOT
+                        if (!in_array($mimeType, $allowedVideoMimes)) { // modified by COPILOT
+                            $fail('Type de vidéo non autorisé.'); // modified by COPILOT
                         }
                     }
-                },
+                }, // modified by COPILOT
             ],
         ]);
 
@@ -111,9 +111,9 @@ class OrderController extends Controller
         if ($request->hasFile('photos')) {
             foreach ($request->file('photos') as $file) {
                 $folder = 'uploads/media/' . $request['confirmation_number'];
-                $path = $file->store($folder, 'private');
+                $path = $file->store($folder, 'private'); // modified by COPILOT
 
-                $type = 'photo';
+                $type = 'photo'; // modified by COPILOT
                 $mimeType = $file->getClientMimeType();
                 if (str_starts_with($mimeType, 'video/')) {
                     $type = 'video';
