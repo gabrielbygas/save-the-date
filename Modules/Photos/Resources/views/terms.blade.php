@@ -5,10 +5,10 @@
 @section('title', 'Conditions Générales d\'Utilisation')
 
 @section('content')
-    <div class="max-w-3xl mx-auto p-6 bg-white shadow rounded-xl mt-8 px-6">
-        <div class="mb-6">
-            <a href="#cgu" class="text-blue-600 underline mr-4">Conditions d’utilisation</a>
-            <a href="#privacy" class="text-blue-600 underline">Politique de confidentialité</a>
+    <div style="max-width: 900px; margin: 0 auto; padding: 40px 20px;"><style>.terms-nav{display:flex;gap:24px;margin-bottom:32px;border-bottom:1px solid #e9d5ff;padding-bottom:16px}.terms-nav a{color:#7c3aed;text-decoration:none;font-weight:500}h1{font-size:28px;font-weight:700;color:#1a1a1a;margin:32px 0 16px}h2{font-size:18px;font-weight:600;color:#1a1a1a;margin:24px 0 12px}h3{font-size:16px;font-weight:600;color:#1a1a1a;margin:20px 0 8px}p{color:#666;line-height:1.6;margin-bottom:12px;font-size:14px}ul{margin-left:20px;margin-bottom:12px}li{color:#666;line-height:1.6;margin-bottom:6px;font-size:14px}strong{color:#1a1a1a;font-weight:600}</style>
+        <div class="terms-nav">
+            <a href="#cgu" style="color:#7c3aed;text-decoration:none;font-weight:500">Conditions d’utilisation</a>
+            <a href="#privacy" style="color:#7c3aed;text-decoration:none;font-weight:500">Politique de confidentialité</a>
         </div>
 
         <div id="cgu">
