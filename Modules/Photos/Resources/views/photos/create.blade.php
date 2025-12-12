@@ -1,109 +1,121 @@
 @extends('photos::layouts.app')
 
 @section('content')
-    <div class="max-w-7xl mx-auto bg-white shadow-md rounded-lg p-4 md:p-6 lg:p-8">
-        <div class="text-center mb-6">
-            <h2 class="text-2xl md:text-3xl font-bold text-pink-600 break-words">
-                Ajouter des photos à l'album : {{ $album->album_title }}
-            </h2>
-            <p class="text-xl font-semibold text-gray-800 mt-2"> Mariage de {{ ucfirst($album->client->mr_first_name) }}
-                {{ ucfirst($album->client->mr_last_name) }} 💍
-                {{ ucfirst($album->client->mrs_first_name) }} {{ ucfirst($album->client->mrs_last_name) }}</p>
-            <p class="text-sm md:text-base text-gray-600 mt-2">
-                📅 Mariage prévu le {{ \Carbon\Carbon::parse($album->wedding_date)->format('d M Y') }}
-            </p>
-        </div>
-
-        <form action="{{ route('photos.store', ['slug' => $album->slug, 'owner_token' => $album->owner_token]) }}" method="POST" enctype="multipart/form-data" class="space-y-6">
-            @csrf
-
-            <div class="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center">
-                <input type="file" name="photos[]" id="photos" class="hidden" multiple
-                    accept="image/jpeg,image/png,image/jpg,image/gif" required>
-                <label for="photos" class="cursor-pointer">
-                    <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                    </svg>
-                    <p class="font-bold mt-2 text-sm text-gray-600">
-                        <span class="font-bold text-pink-700 hover:text-pink-500">
-                            Cliquez pour sélectionner des photos
-                        </span>
-                        ou glissez-déposez
-                    </p>
-                    <p class="mt-2 text-xs text-gray-600">
-                        Vous pouvez uploader maximum de 10 photos. JPEG, PNG, JPG ou GIF (max 10MB par photo)
-                    </p>
-
-                    <p class="hidden" id="file-upload-info"> </p>
-                </label>
-            </div>
-
-            @error('photos.*')
-                <p class="text-red-500 text-sm mt-2">{{ $message }}</p>
-            @enderror
-
-            <div id="upload-error" class="hidden bg-red-100 text-red-800 p-4 mb-4 rounded text-center"></div>
-
-            <div class="flex justify-center">
-                <button type="submit"
-                    class="px-6 py-2 bg-pink-600 text-white rounded-lg font-bold hover:bg-pink-700 transition">
-                    Uploader les photos
-                </button>
-            </div>
-        </form>
-
-        <hr class="my-10 mt-10"> <!-- DIVIDER -->
-
-        <div class="m-8 flex justify-end">
-            <a href="{{ route('photos.index', ['slug' => $album->slug, 'owner_token' => $album->owner_token]) }}"
-                class="px-4 py-2 bg-green-600 text-white rounded-lg font-bold text-sm hover:bg-green-700 transition">
-                ✨ Voir les photos
-            </a>
-        </div>
+<div style="max-width: 900px; margin: 0 auto; padding: 40px 20px;">
+    <!-- Header -->
+    <div style="text-align: center; margin-bottom: 40px;">
+        <h1 style="font-size: 28px; font-weight: 700; color: #1a1a1a; margin-bottom: 8px;">Ajouter des photos à {{ $album->album_title }}</h1>
+        <p style="font-size: 15px; color: #666; margin-bottom: 4px;">Mariage de {{ ucfirst($album->client->mr_first_name) }} 💍 {{ ucfirst($album->client->mrs_first_name) }}</p>
+        <p style="font-size: 13px; color: #999;">📅 {{ \Carbon\Carbon::parse($album->wedding_date)->format('d M Y') }}</p>
     </div>
 
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const form = document.querySelector('form');
-            const fileInput = document.getElementById('photos');
-            const errorBox = document.getElementById('upload-error');
-            const fileUploadInfo = document.getElementById('file-upload-info');
+    <!-- Upload Form -->
+    <form action="{{ route('photos.store', ['slug' => $album->slug, 'owner_token' => $album->owner_token]) }}" method="POST" enctype="multipart/form-data">
+        @csrf
 
-            form.addEventListener('submit', function(e) {
-                const files = fileInput.files;
-                if (files.length > 10) {
-                    e.preventDefault();
-                    errorBox.textContent = "🚫 Vous ne pouvez pas uploader plus de 10 photos à la fois.";
-                    errorBox.classList.remove('hidden');
-                    fileUploadInfo.classList.add('hidden');
-                    fileUploadInfo.textContent = '';
-                    return false;
-                }
-            });
+        <!-- Drag & Drop Area -->
+        <div style="border: 2px dashed #c4b5fd; border-radius: 12px; padding: 40px 20px; text-align: center; background: #f9f5ff; cursor: pointer; transition: all 0.2s;" id="dropArea">
+            <input type="file" name="photos[]" id="photos" style="display: none;" multiple accept="image/jpeg,image/png,image/jpg,image/gif,video/mp4,video/mov,video/ogg" required>
+            
+            <div style="font-size: 32px; margin-bottom: 12px;">📸</div>
+            <label for="photos" style="cursor: pointer;">
+                <p style="font-size: 15px; font-weight: 600; color: #7c3aed; margin-bottom: 4px;">Cliquez ou glissez des photos</p>
+                <p style="font-size: 13px; color: #999;">Max 10 fichiers, 10MB chacun</p>
+            </label>
+        </div>
 
-            fileInput.addEventListener('change', function(e) {
-                const files = e.target.files;
+        <!-- Selected Files Info -->
+        <p style="font-size: 13px; color: #666; margin-top: 12px; min-height: 20px;" id="file-upload-info"></p>
 
-                // Réinitialiser les messages
-                errorBox.classList.add('hidden');
-                errorBox.textContent = '';
-                fileUploadInfo.classList.add('hidden');
-                fileUploadInfo.textContent = '';
+        <!-- Error Message -->
+        <div id="upload-error" style="display: none; background: #fef2f2; border: 1px solid #fecaca; color: #991b1b; padding: 12px 16px; border-radius: 8px; margin-top: 16px; font-size: 14px;"></div>
 
-                if (files.length > 10) {
-                    errorBox.textContent = "🚫 Vous avez sélectionné " + files.length +
-                        " fichiers. Maximum autorisé : 10.";
-                    errorBox.classList.remove('hidden');
-                    return;
-                }
+        @error('photos.*')
+            <div style="background: #fef2f2; border: 1px solid #fecaca; color: #991b1b; padding: 12px 16px; border-radius: 8px; margin-top: 16px; font-size: 14px;">{{ $message }}</div>
+        @enderror
 
-                if (files.length > 0) {
-                    const fileNames = Array.from(files).map(file => file.name).join(', ');
-                    fileUploadInfo.textContent = `📷 Photos sélectionnées : ${fileNames}`;
-                    fileUploadInfo.classList.remove('hidden');
-                }
+        <!-- Submit Button -->
+        <div style="text-align: center; margin-top: 32px;">
+            <button type="submit" style="background: #7c3aed; color: white; padding: 12px 32px; border: none; border-radius: 8px; font-weight: 600; cursor: pointer; transition: all 0.2s; font-size: 15px;">
+                Uploader les photos
+            </button>
+        </div>
+    </form>
+
+    <!-- Back Button -->
+    <div style="text-align: center; margin-top: 32px; padding-top: 32px; border-top: 1px solid #e9d5ff;">
+        <a href="{{ route('photos.index', ['slug' => $album->slug, 'owner_token' => $album->owner_token]) }}" style="color: #7c3aed; text-decoration: none; font-weight: 500;">
+            ← Retour à la galerie
+        </a>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const form = document.querySelector('form');
+        const fileInput = document.getElementById('photos');
+        const errorBox = document.getElementById('upload-error');
+        const fileUploadInfo = document.getElementById('file-upload-info');
+        const dropArea = document.getElementById('dropArea');
+
+        // Drag and drop
+        ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+            dropArea.addEventListener(eventName, preventDefaults, false);
+        });
+
+        function preventDefaults(e) {
+            e.preventDefault();
+            e.stopPropagation();
+        }
+
+        ['dragenter', 'dragover'].forEach(eventName => {
+            dropArea.addEventListener(eventName, () => {
+                dropArea.style.background = '#f3e8ff';
+                dropArea.style.borderColor = '#7c3aed';
             });
         });
-    </script>
+
+        ['dragleave', 'drop'].forEach(eventName => {
+            dropArea.addEventListener(eventName, () => {
+                dropArea.style.background = '#f9f5ff';
+                dropArea.style.borderColor = '#c4b5fd';
+            });
+        });
+
+        dropArea.addEventListener('drop', (e) => {
+            const dt = e.dataTransfer;
+            const files = dt.files;
+            fileInput.files = files;
+            handleFiles(files);
+        });
+
+        function handleFiles(files) {
+            errorBox.style.display = 'none';
+            errorBox.textContent = '';
+            fileUploadInfo.textContent = '';
+
+            if (files.length > 10) {
+                errorBox.textContent = '🚫 Maximum 10 fichiers autorisés. Vous en avez sélectionné ' + files.length + '.';
+                errorBox.style.display = 'block';
+                return;
+            }
+
+            if (files.length > 0) {
+                const fileNames = Array.from(files).map(f => f.name).join(', ');
+                fileUploadInfo.textContent = '✅ ' + files.length + ' fichier(s) sélectionné(s)';
+                fileUploadInfo.style.color = '#16a34a';
+            }
+        }
+
+        fileInput.addEventListener('change', (e) => handleFiles(e.target.files));
+
+        form.addEventListener('submit', (e) => {
+            if (fileInput.files.length > 10) {
+                e.preventDefault();
+                errorBox.textContent = '🚫 Vous ne pouvez pas uploader plus de 10 photos à la fois.';
+                errorBox.style.display = 'block';
+            }
+        });
+    });
+</script>
 @endsection

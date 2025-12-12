@@ -1,48 +1,48 @@
-<!-- resources/views/photos/albums/index.blade.php -->
+<!-- Modules/Photos/Resources/views/albums/index.blade.php -->
 @extends('photos::layouts.app')
 
 @section('content')
-    <div class="max-w-7xl mx-auto bg-white shadow-md rounded-lg p-6 mt-10">
-        <div class="flex justify-between items-center mb-6">
-            <h1 class="text-2xl font-bold">Albums de {{ ucfirst($client->mr_first_name) }} et
-                {{ ucfirst($client->mrs_first_name) }}</h1>
-            <a href="{{ route('albums.login') }}"
-                class="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition">
-                Déconnexion
-            </a>
-        </div>
-
-        @if (session('success'))
-            <div class="bg-green-100 text-green-700 p-3 rounded mb-4">
-                {{ session('success') }}
-            </div>
-        @endif
-
-        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-            @forelse ($albums as $album)
-                <div class="bg-gray-50 rounded-lg shadow p-4">
-                    <h2 class="text-xl font-semibold mb-2">{{ $album->album_title }}</h2>
-                    <p class="text-gray-600 mb-2">
-                        Mariage prévu le {{ \Carbon\Carbon::parse($album->wedding_date)->format('d M Y') }}
-                    </p>
-                    <p class="text-gray-500 text-sm">
-                        👥 {{ $album->uploadTokens()->count() }} invité(s) | 📷 {{ $album->photos()->count() }} photo(s)
-                    </p>
-                    <div class="mt-4 flex space-x-2">
-                        <a href="{{ route('albums.show', $album->slug) }}"
-                            class="px-3 py-1.5 bg-pink-600 text-white rounded-lg text-sm hover:bg-pink-700 transition">
-                            Voir l'album
-                        </a>
-                        <a href="{{ route('albums.share', $album->share_url_token) }}"
-                            class="px-3 py-1.5 bg-blue-600 text-white rounded-lg text-sm hover:bg-blue-700 transition">
-                            Partager
-                        </a>
-                    </div>
-                </div>
-            @empty
-                <p class="text-gray-500 col-span-full text-center">Aucun album trouvé. <a
-                        href="{{ route('albums.create') }}" class="text-pink-600">Créer un album</a></p>
-            @endforelse
-        </div>
+<div style="max-width: 1200px; margin: 0 auto; padding: 40px 20px;">
+    <!-- Header -->
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 40px;">
+        <h1 style="font-size: 32px; font-weight: 700; color: #1a1a1a; margin: 0;">
+            Albums de {{ ucfirst($client->mr_first_name) }} et {{ ucfirst($client->mrs_first_name) }}
+        </h1>
+        <a href="{{ route('albums.login') }}" style="background: #7c3aed; color: white; padding: 10px 20px; border-radius: 8px; text-decoration: none; font-weight: 500; transition: background 0.2s;">
+            Déconnexion
+        </a>
     </div>
+
+    @if (session('success'))
+        <div style="background: #f0fdf4; border: 1px solid #bbf7d0; color: #166534; padding: 12px 16px; border-radius: 8px; margin-bottom: 24px; font-size: 14px;">
+            {{ session('success') }}
+        </div>
+    @endif
+
+    <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 24px;">
+        @forelse ($albums as $album)
+            <div style="background: white; border-radius: 16px; padding: 24px; box-shadow: 0 2px 8px rgba(0,0,0,0.06); transition: all 0.2s ease;">
+                <h2 style="font-size: 18px; font-weight: 600; color: #1a1a1a; margin-bottom: 12px;">{{ $album->album_title }}</h2>
+                <p style="color: #666; font-size: 14px; margin-bottom: 8px;">
+                    📅 {{ \Carbon\Carbon::parse($album->wedding_date)->format('d M Y') }}
+                </p>
+                <p style="color: #999; font-size: 13px; margin-bottom: 16px;">
+                    👥 {{ $album->uploadTokens()->count() }} invité(s) • 📷 {{ $album->photos()->count() }} photo(s)
+                </p>
+                <div style="display: flex; gap: 8px;">
+                    <a href="{{ route('albums.show', $album->slug) }}" style="flex: 1; text-align: center; background: #7c3aed; color: white; padding: 10px 12px; border-radius: 8px; text-decoration: none; font-size: 13px; font-weight: 500; transition: background 0.2s;">
+                        Voir l'album
+                    </a>
+                    <a href="{{ route('albums.share', $album->share_url_token) }}" style="flex: 1; text-align: center; background: #f3e8ff; color: #7c3aed; padding: 10px 12px; border-radius: 8px; text-decoration: none; font-size: 13px; font-weight: 500; transition: background 0.2s;">
+                        Partager
+                    </a>
+                </div>
+            </div>
+        @empty
+            <p style="color: #999; text-align: center; grid-column: 1 / -1; padding: 40px 20px;">
+                Aucun album trouvé. <a href="{{ route('albums.create') }}" style="color: #7c3aed; text-decoration: none; font-weight: 500;">Créer un album</a>
+            </p>
+        @endforelse
+    </div>
+</div>
 @endsection
