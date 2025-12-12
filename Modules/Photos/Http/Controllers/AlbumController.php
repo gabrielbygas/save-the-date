@@ -226,7 +226,6 @@ class AlbumController extends Controller
         ]);
 
         $identifier = $request->identifier;
-        $otp = str_pad(random_int(0, 99999999), 8, '0', STR_PAD_LEFT); // modified by COPILOT - 8 numeric digits
         $client = Client::where('email', $identifier)->first();
 
         // Vérification pour un album existant
@@ -240,19 +239,28 @@ class AlbumController extends Controller
             return redirect()->back()->withErrors(['message' => 'Aucun album trouvé pour ce client.'])->withInput();
         }
 
+        // Vérifier si l'identifiant a un album actif // modified by COPILOT - security check
+        $hasActiveAlbum = Album::where('client_id', $client->id)->where('status', 'active')->exists();
+        if (!$hasActiveAlbum) {
+            if ($request->expectsJson()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Aucun album actif trouvé pour ce client.'
+                ]);
+            }
+            return redirect()->back()->withErrors(['message' => 'Aucun album actif trouvé pour ce client.'])->withInput();
+        }
 
         // Supprime les anciens OTPs pour cet identifiant
         OTP::where('identifier', $identifier)->delete();
 
         // Crée un nouvel OTP
+        $otp = str_pad(random_int(0, 99999999), 8, '0', STR_PAD_LEFT); // modified by COPILOT - 8 numeric digits
         $OTP = OTP::create([
             'identifier' => $identifier,
             'otp' => $otp,
             'expires_at' => now()->addMinutes(10), // Expire dans 10 minutes
         ]);
-
-        // Ici, tu devrais envoyer l'OTP par email ou SMS.
-        // Pour l'exemple, on le retourne en JSON (à remplacer par l'envoi réel).
 
         // Envoi de l'email
         try {
@@ -260,9 +268,6 @@ class AlbumController extends Controller
         } catch (\Exception $e) {
             Log::warning('Email non envoyé : ' . $e->getMessage());
         }
-
-
-
 
         return response()->json([ // modified by COPILOT
             'success' => true,
@@ -326,8 +331,8 @@ class AlbumController extends Controller
         $clientId = $request->session()->get('client_id');
         $client = Client::findOrFail($clientId);
 
-        // Récupère uniquement les albums du client
-        $albums = Album::where('client_id', $clientId)->get();
+        // Récupère uniquement les albums du client avec eager loading // modified by COPILOT
+        $albums = Album::where('client_id', $clientId)->with(['photos' => fn($q) => $q->select('id', 'album_id', 'thumb_path')->latest()])->get();
 
         return view('photos::albums.index', compact('albums', 'client'));
     }

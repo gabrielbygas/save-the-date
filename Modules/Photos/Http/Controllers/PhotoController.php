@@ -47,9 +47,14 @@ class PhotoController extends Controller
 
         $photos = $query->get();
         //$photos = $query->paginate(20); // Pagination
-        $categories = Photo::select('category')->where('album_id', $album->id)
-            ->groupBy('category')
-            ->pluck('category');
+        
+        // Cache categories for 1 hour // modified by COPILOT
+        $cacheKey = "album_{$album->id}_categories";
+        $categories = cache()->remember($cacheKey, 3600, function () use ($album) {
+            return Photo::where('album_id', $album->id)
+                ->groupBy('category')
+                ->pluck('category');
+        });
 
         return view('photos::photos.index', compact('photos', 'album', 'client', 'categories', 'category'));
     }
@@ -82,8 +87,8 @@ class PhotoController extends Controller
     public function store(Request $request, $slug)
     {
         $request->validate([
-            'photos'      => 'required|array',
-            'photos.*'    => 'image|max:10240',
+            'photos'      => 'required|array|max:5',
+            'photos.*'    => 'image|max:10240|mimes:jpeg,jpg,png,gif,webp', // modified by COPILOT - strict MIME validation
             'category'    => 'nullable|in:civil,religieux,coutumier,reception,autre',
             'exif_json'   => 'nullable|json',
         ]);
@@ -232,6 +237,15 @@ class PhotoController extends Controller
     private function makeUniqueFileName($file, $albumSlug): string
     {
         $allowedExtensions = ['jpg', 'jpeg', 'png', 'gif', 'webp']; // modified by COPILOT
+        $allowedMimes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp']; // modified by COPILOT
+        
+        $clientMime = $file->getMimeType(); // modified by COPILOT
+        
+        // Validate MIME type strictly // modified by COPILOT
+        if (!in_array($clientMime, $allowedMimes)) { // modified by COPILOT
+            throw new \Exception("Type MIME non autorisé: {$clientMime}"); // modified by COPILOT
+        }
+        
         $extension = strtolower($file->getClientOriginalExtension()); // modified by COPILOT
 
         if (!in_array($extension, $allowedExtensions)) { // modified by COPILOT
@@ -275,7 +289,7 @@ class PhotoController extends Controller
      */
     public function downloadAll($slug, $token)
     {
-        $album = Album::where('slug', $slug)->firstOrFail();
+        $album = Album::where('slug', $slug)->with('photos')->firstOrFail(); // modified by COPILOT - eager load photos
 
         if ($album->share_url_token !== $token) {
             abort(403, 'Token invalide.');
