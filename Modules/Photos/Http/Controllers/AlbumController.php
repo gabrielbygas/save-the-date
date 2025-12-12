@@ -75,12 +75,12 @@ class AlbumController extends Controller
             'mr_last_name'     => 'required|string|max:100',
             'mrs_first_name'   => 'required|string|max:100',
             'mrs_last_name'    => 'required|string|max:100',
-            'email'            => 'required|email|unique:clients,email',
-            'phone'            => 'nullable|string|max:20',
+            'email'            => 'required|string|email:rfc,dns|max:255|unique:clients,email',
+            'phone'            => ['nullable', 'string', 'regex:/^[\+]?[0-9\s\-\(\)]{8,20}$/'],
             'album_title'      => 'required|string|max:255',
-            'wedding_date'     => 'required|date',
+            'wedding_date'     => 'required|date|after:today|before:+2 years',
             'max_guests'       => 'nullable|integer|min:1|max:1000',
-            'opens_at'         => 'nullable|date',
+            'opens_at'         => 'nullable|date|before:wedding_date',
             'storage_until_at' => 'nullable|date|after:wedding_date',
             'status'           => 'required|in:draft,active,archived',
         ]);
@@ -262,7 +262,6 @@ class AlbumController extends Controller
         return response()->json([
             'success' => true,
             'message' => 'Un code OTP a été envoyé à ' . $identifier,
-            'otp' => $otp, // À supprimer en production (pour test seulement)
         ]);
     }
 

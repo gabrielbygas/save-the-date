@@ -30,15 +30,39 @@ class OrderController extends Controller
             'mr_last_name'         => 'required|string|max:100',
             'mrs_first_name'       => 'required|string|max:100',
             'mrs_last_name'        => 'required|string|max:100',
-            'email'                => 'required|email',
-            'phone'                => 'nullable|string|max:20',
-            'wedding_date'         => 'required|date|after:today',
+            'email'                => 'required|string|email:rfc,dns|max:255',
+            'phone'                => ['nullable', 'string', 'regex:/^[\+]?[0-9\s\-\(\)]{8,20}$/'],
+            'wedding_date'         => 'required|date|after:today|before:+2 years',
             'wedding_location'     => 'required|string|max:255',
             'pack_id'              => 'required|exists:packs,id',
             'theme_id'             => 'nullable|exists:themes,id',
             'terms'                => 'accepted',
             'photos'               => 'nullable|array|max:5',
-            'photos.*'             => 'file|mimes:jpeg,png,jpg,mp4,mov,ogg|max:10240',
+            'photos.*'             => [
+                'file',
+                'mimes:jpeg,png,jpg,mp4,mov,ogg',
+                'max:51200',
+                function ($attribute, $value, $fail) {
+                    $mimeType = $value->getClientMimeType();
+
+                    if (str_starts_with($mimeType, 'image/')) {
+                        $imageInfo = @getimagesize($value->getPathname());
+                        if ($imageInfo === false) {
+                            $fail('Le fichier n\'est pas une image valide.');
+                        }
+                        if ($value->getSize() > 5242880) {
+                            $fail('Les images ne doivent pas dépasser 5 MB.');
+                        }
+                    }
+
+                    if (str_starts_with($mimeType, 'video/')) {
+                        $allowedVideoMimes = ['video/mp4', 'video/quicktime', 'video/ogg'];
+                        if (!in_array($mimeType, $allowedVideoMimes)) {
+                            $fail('Type de vidéo non autorisé.');
+                        }
+                    }
+                },
+            ],
         ]);
 
         $request['wedding_title'] = 'Mariage de ' . strtoupper($request->mr_first_name) . ' et ' . strtoupper($request->mrs_first_name);
@@ -86,12 +110,10 @@ class OrderController extends Controller
         // 6. Upload fichiers
         if ($request->hasFile('photos')) {
             foreach ($request->file('photos') as $file) {
-                // Construire dynamiquement le chemin de stockage
                 $folder = 'uploads/media/' . $request['confirmation_number'];
-                $path = $file->store($folder, 'public');
+                $path = $file->store($folder, 'private');
 
-                // Déterminer le type de média
-                $type = 'photo'; // Par défaut, on suppose que c'est une photo
+                $type = 'photo';
                 $mimeType = $file->getClientMimeType();
                 if (str_starts_with($mimeType, 'video/')) {
                     $type = 'video';

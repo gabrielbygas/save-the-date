@@ -10,16 +10,20 @@ class Order extends Model
     protected $fillable = [
         'client_id',
         'pack_id',
-        'theme_id', // Nullable, can be set later
-        'wedding_title', // e.g., "Mariage de Marie et Paul"
+        'theme_id',
+        'wedding_title',
         'wedding_date',
         'wedding_location',
-        'status', // e.g., "pending", "processing", "completed"
-        'confirmation_number', // <-- Assurez-vous qu'il est présent
+        'status',
+        'confirmation_number',
         'payment_due_at',
     ];
+
+    protected $casts = [
+        'wedding_date' => 'date',
+        'payment_due_at' => 'datetime',
+    ];
     
-    /** @use HasFactory<\Database\Factories\OrderFactory> */
     use HasFactory;
 
     public function client()

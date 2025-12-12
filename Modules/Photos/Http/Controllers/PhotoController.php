@@ -224,12 +224,18 @@ class PhotoController extends Controller
     }
 
     /**
-     * Génère un nom de fichier unique.
+     * Génère un nom de fichier unique avec validation d'extension.
      */
     private function makeUniqueFileName($file, $albumSlug): string
     {
-        $extension = $file->getClientOriginalExtension();
-        return $albumSlug . '_' . Str::random(8) . '.' . $extension;
+        $allowedExtensions = ['jpg', 'jpeg', 'png', 'gif', 'webp'];
+        $extension = strtolower($file->getClientOriginalExtension());
+
+        if (!in_array($extension, $allowedExtensions)) {
+            $extension = $file->guessExtension() ?? 'jpg';
+        }
+
+        return $albumSlug . '_' . Str::random(16) . '.' . $extension;
     }
 
     /**

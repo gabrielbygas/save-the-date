@@ -69,8 +69,8 @@ class UploadTokenController extends Controller
 
         $validated = $request->validate([
             'visitor_name'  => 'required|string|max:100',
-            'visitor_email' => 'required|email',
-            'visitor_phone' => 'required|string|max:20',
+            'visitor_email' => 'required|string|email:rfc,dns|max:255',
+            'visitor_phone' => ['required', 'string', 'regex:/^[\+]?[0-9\s\-\(\)]{8,20}$/'],
         ]);
 
         $token = bin2hex(random_bytes(16)); // Token aléatoire de 16 caractères
@@ -345,12 +345,18 @@ class UploadTokenController extends Controller
 
 
     /**
-     * Génère un nom de fichier unique.
+     * Génère un nom de fichier unique avec validation d'extension.
      */
     private function makeUniqueFileName($file, $albumSlug): string
     {
-        $extension = $file->getClientOriginalExtension();
-        return $albumSlug . '_' . Str::random(8) . '.' . $extension;
+        $allowedExtensions = ['jpg', 'jpeg', 'png', 'gif', 'webp'];
+        $extension = strtolower($file->getClientOriginalExtension());
+
+        if (!in_array($extension, $allowedExtensions)) {
+            $extension = $file->guessExtension() ?? 'jpg';
+        }
+
+        return $albumSlug . '_' . Str::random(16) . '.' . $extension;
     }
 
     /**
