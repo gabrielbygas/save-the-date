@@ -45,7 +45,7 @@
             </div>
             
             <div style="display: flex; flex-direction: column; gap: 12px;">
-                <button onclick="copyShareLink()" style="width: 100%; background: #7c3aed; color: white; border: none; padding: 12px; border-radius: 8px; font-weight: 500; cursor: pointer; transition: background 0.2s; hover:background: #6d28d9;">
+                <button id="copyBtn" onclick="copyShareLink()" style="width: 100%; background: #7c3aed; color: white; border: none; padding: 12px; border-radius: 8px; font-weight: 500; cursor: pointer; transition: background 0.2s;">
                     🔗 Copier le lien
                 </button>
                 <a href="{{ asset('storage/' . $album->qr_code_path) }}" download="qrcode-{{ $album->slug }}.png" style="display: block; background: #f3f4f6; color: #1f2937; border: none; padding: 12px; border-radius: 8px; font-weight: 500; text-decoration: none; text-align: center; transition: background 0.2s;">
@@ -71,11 +71,15 @@
         const el = document.getElementById('share-link-text');
         const text = el.textContent.trim();
         navigator.clipboard.writeText(text).then(() => {
-            const btn = event.target;
+            const btn = document.getElementById('copyBtn');
             const original = btn.textContent;
             btn.textContent = '✓ Copié!';
-            setTimeout(() => btn.textContent = original, 2000);
-        });
+            btn.style.background = '#10b981';
+            setTimeout(() => {
+                btn.textContent = original;
+                btn.style.background = '#7c3aed';
+            }, 2000);
+        }).catch(err => alert('Erreur de copie'));
     }
 </script>
 @endsection
