@@ -1,110 +1,240 @@
 @extends('photos::layouts.app')
 
+@section('title', 'Créer un album - Albums Photo')
+
 @section('content')
-    <div class="max-w-2xl mx-auto bg-white shadow-md rounded-lg p-6">
-        <h2 class="text-2xl font-bold text-pink-600 mb-4 text-center">Créer un nouvel album de mariage</h2>
-        <p class="text-sm text-gray-600 text-center mb-6">Immortalisez votre amour et partagez vos souvenirs avec vos invités
-            💍</p>
+<style>
+    .form-container {
+        max-width: 700px;
+        margin: 0 auto;
+        background: white;
+        border-radius: 16px;
+        box-shadow: 0 2px 20px rgba(0,0,0,0.08);
+        overflow: hidden;
+    }
+    
+    .form-header {
+        padding: 40px;
+        text-align: center;
+        border-bottom: 1px solid #f0f0f0;
+    }
+    
+    .form-header h1 {
+        font-size: 32px;
+        font-weight: 700;
+        color: #1a1a1a;
+        margin-bottom: 8px;
+    }
+    
+    .form-header p {
+        color: #666;
+        font-size: 16px;
+    }
+    
+    .form-section {
+        padding: 40px;
+    }
+    
+    .form-group {
+        margin-bottom: 24px;
+    }
+    
+    .form-row {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 20px;
+    }
+    
+    @media (max-width: 600px) {
+        .form-row { grid-template-columns: 1fr; }
+        .form-section { padding: 30px 20px; }
+        .form-header { padding: 30px 20px; }
+    }
+    
+    .section-title {
+        font-size: 14px;
+        font-weight: 600;
+        color: #666;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        margin-bottom: 16px;
+        margin-top: 24px;
+    }
+    
+    .section-title:first-of-type {
+        margin-top: 0;
+    }
+    
+    label {
+        display: block;
+        font-size: 14px;
+        font-weight: 500;
+        color: #1a1a1a;
+        margin-bottom: 8px;
+    }
+    
+    input[type="text"],
+    input[type="email"],
+    input[type="tel"],
+    input[type="date"],
+    input[type="number"],
+    select {
+        width: 100%;
+        padding: 12px 14px;
+        border: 1px solid #e0e0e0;
+        border-radius: 10px;
+        font-size: 16px;
+        font-family: inherit;
+        transition: all 0.2s ease;
+        background: #fafafa;
+    }
+    
+    input:focus,
+    select:focus {
+        outline: none;
+        background: white;
+        border-color: #e91e63;
+        box-shadow: 0 0 0 3px rgba(233, 30, 99, 0.1);
+    }
+    
+    .submit-btn {
+        width: 100%;
+        padding: 16px;
+        background: #e91e63;
+        color: white;
+        border: none;
+        border-radius: 12px;
+        font-size: 16px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        margin-top: 32px;
+    }
+    
+    .submit-btn:hover {
+        background: #c2185b;
+        transform: translateY(-1px);
+        box-shadow: 0 4px 12px rgba(233, 30, 99, 0.3);
+    }
+    
+    .error-message {
+        color: #ff3b30;
+        font-size: 13px;
+        margin-top: 6px;
+    }
+    
+    .divider {
+        height: 1px;
+        background: #f0f0f0;
+        margin: 32px 0;
+    }
+</style>
 
-        @if (session('success'))
-            <div class="bg-green-100 text-green-700 p-3 mb-4 rounded">{{ session('success') }}</div>
-        @endif
-
-        @if ($errors->any())
-            <div class="bg-red-100 text-red-800 p-4 mb-4 rounded">
-                <ul class="list-disc pl-5 space-y-1">
-                    @foreach ($errors->all() as $error)
-                        <li>{{ $error }}</li>
-                    @endforeach
-                    @error('photos.0')
-                        <div class="text-red-500 text-sm mt-1">{{ $message }}</div>
-                    @enderror
-                </ul>
-            </div>
-        @endif
-
-        <form action="{{ route('albums.store') }}" method="POST">
-            @csrf
-
-            {{-- Coordonnées de Monsieur --}}
-            <div class="grid grid-cols-2 gap-4">
-                <div class="mb-4">
-                    <label class="block">Prénom Monsieur *</label>
-                    <input type="text" name="mr_first_name"
-                        class="w-full border-gray-300 rounded-md shadow-sm focus:ring-pink-500 focus:border-pink-500"
-                        value="{{ old('mr_first_name') }}" placeholder="John" required>
-                </div>
-                <div class="mb-4">
-                    <label class="block">Nom Monsieur *</label>
-                    <input type="text" name="mr_last_name"
-                        class="w-full border-gray-300 rounded-md shadow-sm focus:ring-pink-500 focus:border-pink-500"
-                        value="{{ old('mr_last_name') }}" placeholder="Doe" required>
-                </div>
-            </div>
-
-            {{-- Coordonnées de Madame --}}
-            <div class="grid grid-cols-2 gap-4 mt-4">
-                <div class="mb-4">
-                    <label class="block">Prénom Madame *</label>
-                    <input type="text" name="mrs_first_name"
-                        class="w-full border-gray-300 rounded-md shadow-sm focus:ring-pink-500 focus:border-pink-500"
-                        value="{{ old('mrs_first_name') }}" placeholder="Jane" required>
-                </div>
-                <div class="mb-4">
-                    <label class="block">Nom Madame *</label>
-                    <input type="text" name="mrs_last_name"
-                        class="w-full border-gray-300 rounded-md shadow-sm focus:ring-pink-500 focus:border-pink-500"
-                        value="{{ old('mrs_last_name') }}" placeholder="Kayla" required>
-                </div>
-            </div>
-
-            <div class="mb-4">
-                <label for="album_title" class="block text-gray-700 font-medium mb-1">Titre album *</label>
-                <input type="text" name="album_title" id="album_title"
-                    class="w-full border-gray-300 rounded-md shadow-sm focus:ring-pink-500 focus:border-pink-500" required>
-            </div>
-
-            <div class="mb-4">
-                <label class="block mt-4">Email *</label>
-                <input type="email" name="email" class="w-full border p-2 rounded" value="{{ old('email') }}"
-                    placeholder="exemple@domaine.com" required>
-            </div>
-
-            <div class="mb-4">
-                <label class="block mt-4">Numéro Whatsapp *</label>
-                <input type="text" name="phone" class="w-full border p-2 rounded" value="{{ old('phone') }}"
-                    placeholder="+243xxxxxxxxx" required>
-            </div>
-
-            <div class="mb-4">
-                <label for="wedding_date" class="block text-gray-700 font-medium mb-1">Date du mariage *</label>
-                <input type="date" name="wedding_date" id="wedding_date"
-                    class="w-full border-gray-300 rounded-md shadow-sm focus:ring-pink-500 focus:border-pink-500" required>
-            </div>
-
-            <div class="mb-4">
-                <label for="max_guests" class="block text-gray-700 font-medium mb-1">Nombre d'invités (max:300) *</label>
-                <input type="number" name="max_guests" id="max_guests" value="150" max="300"
-                    class="w-full border-gray-300 rounded-md shadow-sm focus:ring-pink-500 focus:border-pink-500" required>
-            </div>
-
-            <input type="hidden" name="status" value="draft">
-
-            <!-- Case à cocher pour acceptation des CGU -->
-            <div class="mb-4 mt-6">
-                <label class="flex items-center space-x-2">
-                    <span class="text-sm">
-                        En soumettant ce formulaire, vous acceptez les <a href="{{ route('terms') }}" target="_blank"
-                            class="text-blue-600 underline">Conditions Générales d'Utilisation</a>
-                    </span>
-                </label>
-            </div>
-
-            <div class="mt-6 text-center">
-                <button type="submit" class="bg-pink-500 hover:bg-pink-600 text-white font-semibold px-6 py-2 rounded-md">
-                    Créer mon album
-                </button>
-            </div>
-        </form>
+<div class="form-container">
+    <div class="form-header">
+        <h1>📸 Créer un album</h1>
+        <p>Partagez vos photos de mariage avec vos invités</p>
     </div>
+    
+    <form class="form-section" action="{{ route('albums.store') }}" method="POST" novalidate>
+        @csrf
+        
+        <div class="section-title">Couple</div>
+        <div class="form-row">
+            <div class="form-group">
+                <label for="mr_first_name">Prénom (M) *</label>
+                <input type="text" id="mr_first_name" name="mr_first_name" value="{{ old('mr_first_name') }}" required>
+                @error('mr_first_name')<div class="error-message">{{ $message }}</div>@enderror
+            </div>
+            <div class="form-group">
+                <label for="mr_last_name">Nom (M) *</label>
+                <input type="text" id="mr_last_name" name="mr_last_name" value="{{ old('mr_last_name') }}" required>
+                @error('mr_last_name')<div class="error-message">{{ $message }}</div>@enderror
+            </div>
+        </div>
+        
+        <div class="form-row">
+            <div class="form-group">
+                <label for="mrs_first_name">Prénom (Mme) *</label>
+                <input type="text" id="mrs_first_name" name="mrs_first_name" value="{{ old('mrs_first_name') }}" required>
+                @error('mrs_first_name')<div class="error-message">{{ $message }}</div>@enderror
+            </div>
+            <div class="form-group">
+                <label for="mrs_last_name">Nom (Mme) *</label>
+                <input type="text" id="mrs_last_name" name="mrs_last_name" value="{{ old('mrs_last_name') }}" required>
+                @error('mrs_last_name')<div class="error-message">{{ $message }}</div>@enderror
+            </div>
+        </div>
+        
+        <div class="section-title">Contact</div>
+        <div class="form-row">
+            <div class="form-group">
+                <label for="email">Email *</label>
+                <input type="email" id="email" name="email" value="{{ old('email') }}" required>
+                @error('email')<div class="error-message">{{ $message }}</div>@enderror
+            </div>
+            <div class="form-group">
+                <label for="phone">Téléphone</label>
+                <input type="tel" id="phone" name="phone" value="{{ old('phone') }}">
+            </div>
+        </div>
+        
+        <div class="divider"></div>
+        
+        <div class="section-title">Album</div>
+        <div class="form-group">
+            <label for="album_title">Titre de l'album *</label>
+            <input type="text" id="album_title" name="album_title" value="{{ old('album_title') }}" required>
+            @error('album_title')<div class="error-message">{{ $message }}</div>@enderror
+        </div>
+        
+        <div class="form-row">
+            <div class="form-group">
+                <label for="wedding_date">Date du mariage *</label>
+                <input type="date" id="wedding_date" name="wedding_date" value="{{ old('wedding_date') }}" required>
+                @error('wedding_date')<div class="error-message">{{ $message }}</div>@enderror
+            </div>
+            <div class="form-group">
+                <label for="max_guests">Nombre d'invités max</label>
+                <input type="number" id="max_guests" name="max_guests" value="{{ old('max_guests') }}" min="1" max="1000">
+            </div>
+        </div>
+        
+        <div class="form-row">
+            <div class="form-group">
+                <label for="opens_at">Album ouvert à partir du</label>
+                <input type="date" id="opens_at" name="opens_at" value="{{ old('opens_at') }}">
+            </div>
+            <div class="form-group">
+                <label for="storage_until_at">Photos conservées jusqu'au</label>
+                <input type="date" id="storage_until_at" name="storage_until_at" value="{{ old('storage_until_at') }}">
+            </div>
+        </div>
+        
+        <div class="form-group">
+            <label for="status">Statut *</label>
+            <select name="status" id="status" required>
+                <option value="">Sélectionner un statut</option>
+                <option value="draft" @if(old('status') == 'draft') selected @endif>Brouillon</option>
+                <option value="active" @if(old('status') == 'active') selected @endif>Actif</option>
+                <option value="archived" @if(old('status') == 'archived') selected @endif>Archivé</option>
+            </select>
+            @error('status')<div class="error-message">{{ $message }}</div>@enderror
+        </div>
+        
+        <button type="submit" class="submit-btn">Créer mon album</button>
+    </form>
+</div>
+
+<script>
+    document.querySelector('form').addEventListener('submit', e => {
+        const form = e.target;
+        if (!form.checkValidity()) {
+            e.preventDefault();
+            form.querySelectorAll('input:invalid, select:invalid').forEach(field => {
+                field.closest('.form-group')?.classList.add('error');
+            });
+        }
+    });
+</script>
 @endsection

@@ -1,85 +1,132 @@
-<!-- resources/views/photos/albums/login.blade.php -->
 @extends('photos::layouts.app')
 
+@section('title', 'Se connecter - Albums Photo')
+
 @section('content')
-    <div class="max-w-md mx-auto bg-white shadow-md rounded-lg p-6 mt-10">
-        <h1 class="text-2xl font-bold text-center mb-6">Accès aux Albums</h1>
+<style>
+    .login-container {
+        max-width: 450px;
+        margin: 0 auto;
+        background: white;
+        border-radius: 16px;
+        box-shadow: 0 2px 20px rgba(0,0,0,0.08);
+        padding: 40px;
+    }
+    
+    .login-header {
+        text-align: center;
+        margin-bottom: 32px;
+    }
+    
+    .login-header h1 {
+        font-size: 28px;
+        font-weight: 700;
+        color: #1a1a1a;
+        margin-bottom: 8px;
+    }
+    
+    .login-header p {
+        color: #666;
+        font-size: 15px;
+    }
+    
+    .form-group {
+        margin-bottom: 24px;
+    }
+    
+    label {
+        display: block;
+        font-size: 14px;
+        font-weight: 500;
+        color: #1a1a1a;
+        margin-bottom: 8px;
+    }
+    
+    input[type="email"],
+    input[type="text"] {
+        width: 100%;
+        padding: 12px 14px;
+        border: 1px solid #e0e0e0;
+        border-radius: 10px;
+        font-size: 16px;
+        font-family: inherit;
+        transition: all 0.2s ease;
+        background: #fafafa;
+    }
+    
+    input:focus {
+        outline: none;
+        background: white;
+        border-color: #e91e63;
+        box-shadow: 0 0 0 3px rgba(233, 30, 99, 0.1);
+    }
+    
+    .submit-btn {
+        width: 100%;
+        padding: 12px;
+        background: #e91e63;
+        color: white;
+        border: none;
+        border-radius: 10px;
+        font-size: 15px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.2s ease;
+    }
+    
+    .submit-btn:hover {
+        background: #c2185b;
+        transform: translateY(-1px);
+        box-shadow: 0 4px 12px rgba(233, 30, 99, 0.3);
+    }
+    
+    .error-message {
+        color: #ff3b30;
+        font-size: 13px;
+        margin-top: 6px;
+    }
+    
+    .info-text {
+        text-align: center;
+        color: #666;
+        font-size: 13px;
+        margin-top: 20px;
+    }
+    
+    .info-text a {
+        color: #e91e63;
+        text-decoration: none;
+    }
+    
+    .info-text a:hover {
+        text-decoration: underline;
+    }
+</style>
 
-        @if (session('error'))
-            <div class="bg-red-100 text-red-700 p-3 rounded mb-4">
-                {{ session('error') }}
-            </div>
-        @endif
-
-        @if (session('success'))
-            <div class="bg-green-100 text-green-700 p-3 rounded mb-4">
-                {{ session('success') }}
-            </div>
-        @endif
-
-        <!-- Formulaire pour demander un OTP -->
-        <form id="otpForm" action="{{ route('albums.send_otp') }}" method="POST" class="space-y-4">
-            @csrf
-            <div>
-                <label for="identifier" class="block text-sm font-medium text-gray-700">Email ou Téléphone</label>
-                <input type="text" name="identifier" id="identifier" required
-                    class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-pink-500 focus:border-pink-500">
-            </div>
-            <button type="submit"
-                class="w-full bg-pink-600 text-white py-2 px-4 rounded-md hover:bg-pink-700 focus:outline-none focus:ring-2 focus:ring-pink-500">
-                Envoyer le code OTP
-            </button>
-        </form>
-
-        <!-- Formulaire pour vérifier l'OTP (caché au début) -->
-        <form id="verifyOTPForm" action="{{ route('albums.verify_otp') }}" method="POST" class="space-y-4 mt-6 hidden">
-            @csrf
-            <input type="hidden" name="identifier" id="hiddenIdentifier">
-            <div>
-                <label for="otp" class="block text-sm font-medium text-gray-700">Code OTP</label>
-                <input type="text" name="otp" id="otp" required
-                    class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-pink-500 focus:border-pink-500"
-                    placeholder="Ex: ABCD1234">
-            </div>
-            <button type="submit"
-                class="w-full bg-pink-600 text-white py-2 px-4 rounded-md hover:bg-pink-700 focus:outline-none focus:ring-2 focus:ring-pink-500">
-                Vérifier le code
-            </button>
-        </form>
+<div class="login-container">
+    <div class="login-header">
+        <h1>Se connecter</h1>
+        <p>Accédez à votre album photo</p>
     </div>
-
-    <script>
-        document.getElementById('otpForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-            const form = e.target;
-            const identifier = form.querySelector('[name="identifier"]').value;
-
-            fetch(form.action, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Accept': 'application/json',
-                        'X-CSRF-TOKEN': document.querySelector('input[name="_token"]').value
-                    },
-                    body: JSON.stringify({
-                        identifier
-                    })
-                })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.success) {
-                        alert(data
-                            .message); // En production, utilise un toast ou une notification plus élégante
-                        document.getElementById('hiddenIdentifier').value = identifier;
-                        document.getElementById('otpForm').classList.add('hidden');
-                        document.getElementById('verifyOTPForm').classList.remove('hidden');
-                    } else {
-                        alert('Erreur : ' + (data.message || 'Une erreur est survenue.'));
-                    }
-                })
-                .catch(error => {
-                    alert('Erreur : ' + error.message);
-                });
-        });
-    </script>
+    
+    <form action="{{ route('albums.login') }}" method="POST" novalidate>
+        @csrf
+        
+        <div class="form-group">
+            <label for="identifier">Email ou identifiant *</label>
+            <input type="email" id="identifier" name="identifier" value="{{ old('identifier') }}" required autofocus>
+            @error('identifier')<div class="error-message">{{ $message }}</div>@enderror
+        </div>
+        
+        <button type="submit" class="submit-btn">Envoyer le code OTP</button>
+    </form>
+    
+    <div class="info-text">
+        Vous recevrez un code à 6 chiffres par email
+    </div>
+    
+    <div class="info-text" style="margin-top: 32px; padding-top: 20px; border-top: 1px solid #f0f0f0;">
+        Pas encore d'album? <a href="{{ route('albums.create') }}">Créer un album</a>
+    </div>
+</div>
 @endsection

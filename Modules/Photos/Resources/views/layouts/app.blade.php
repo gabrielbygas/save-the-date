@@ -4,62 +4,115 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>@yield('title', 'Albums Photo')</title>
-    
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
-    
     <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        html, body { height: 100%; }
+        
         body {
-            font-family: 'Poppins', sans-serif;
-            background: linear-gradient(135deg, #e0f2fe 0%, #fce7f3 100%);
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #ffe0e6 0%, #ffecf0 100%);
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
         }
         
-        .navbar { background: white !important; box-shadow: 0 2px 8px rgba(0,0,0,0.08); }
-        
-        .card { border: 0; box-shadow: 0 2px 8px rgba(0,0,0,0.08); }
-        .card:hover { transform: translateY(-4px); box-shadow: 0 8px 24px rgba(0,0,0,0.12); }
-        
-        .btn-primary { background: #0ea5e9; border: 0; font-weight: 600; }
-        .btn-primary:hover { background: #0284c7; }
-        
-        .gallery-item {
-            position: relative;
-            overflow: hidden;
-            border-radius: 10px;
-            aspect-ratio: 1;
+        nav {
+            background: white;
+            box-shadow: 0 1px 12px rgba(0,0,0,0.08);
+            position: sticky;
+            top: 0;
+            z-index: 100;
         }
         
-        .gallery-item img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            transition: transform 0.3s ease;
+        nav .nav-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 16px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
         }
         
-        .gallery-item:hover img { transform: scale(1.1); }
+        nav .logo {
+            font-size: 20px;
+            font-weight: 700;
+            color: #1a1a1a;
+            text-decoration: none;
+        }
         
-        .fade-in { animation: fadeIn 0.6s ease-in; }
+        nav a {
+            color: #e91e63;
+            text-decoration: none;
+            font-size: 15px;
+            font-weight: 500;
+            transition: opacity 0.2s ease;
+            margin-left: 24px;
+        }
         
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
+        nav a:hover {
+            opacity: 0.7;
+        }
+        
+        main {
+            padding: 40px 20px;
+            flex: 1;
+        }
+        
+        main .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        footer {
+            background: white;
+            border-top: 1px solid #f0f0f0;
+            padding: 40px 20px;
+            text-align: center;
+            color: #666;
+            font-size: 14px;
+        }
+        
+        footer p {
+            margin-bottom: 12px;
+        }
+        
+        footer a {
+            color: #e91e63;
+            text-decoration: none;
+        }
+        
+        footer a:hover {
+            text-decoration: underline;
         }
     </style>
-    
-    @yield('styles')
 </head>
-<body class="fade-in">
-    @include('photos::partials.header')
+<body>
+    <nav>
+        <div class="nav-content">
+            <a href="{{ route('photos.home') }}" class="logo">📸 Albums Photo</a>
+            <div>
+                <a href="{{ route('albums.login') }}">Se connecter</a>
+                <a href="{{ route('albums.create') }}">Créer album</a>
+            </div>
+        </div>
+    </nav>
     
-    <main class="py-5">
+    <main>
         <div class="container">
             @yield('content')
         </div>
     </main>
     
-    @include('photos::partials.footer')
-    
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    @yield('scripts')
+    <footer>
+        <p><strong>📸 Albums Photo</strong> • Partagez vos souvenirs de mariage</p>
+        <p style="font-size: 13px;">
+            <a href="{{ route('terms') }}">Conditions</a> • 
+            <a href="mailto:contact@savethedate.com">Contact</a>
+        </p>
+        <p style="margin-top: 16px; border-top: 1px solid #f0f0f0; padding-top: 16px;">
+            &copy; {{ date('Y') }} Save The Date. Tous droits réservés.
+        </p>
+    </footer>
 </body>
 </html>
