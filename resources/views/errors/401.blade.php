@@ -1,25 +1,21 @@
 @extends('layouts.app')
 @section('content')
-    <div class="max-w-7xl mx-auto bg-white shadow-md rounded-lg p-4 md:p-6 lg:p-8 text-center">
-        <div class="mb-6">
-            <h1 class="text-4xl md:text-5xl font-bold text-pink-600 mb-4">401</h1>
-            <h2 class="text-xl md:text-2xl font-semibold text-gray-800 mb-2">Non autorisé.</h2>
-            @if(isset($exception) && $exception->getMessage())
-                <p class="text-gray-600 mb-4">
+<div class="min-h-screen bg-gradient-to-br from-blue-50 to-slate-100 flex items-center justify-center px-4">
+    <div class="text-center max-w-md">
+        <div class="mb-8">
+            <h1 class="text-8xl font-light text-slate-300 mb-4">401</h1>
+            <h2 class="text-2xl font-medium text-slate-900 mb-3">Non autorisé</h2>
+            <p class="text-slate-600 leading-relaxed">
+                @if(isset($exception) && $exception->getMessage())
                     {{ $exception->getMessage() }}
-                </p>
-            @else
-                <p class="text-gray-600 mb-4">
-                    Vous n'avez pas la permission d'accéder à cette page.
-                </p>
-            @endif
-            <a href="{{ route('home') }}"
-               class="px-4 py-2 bg-pink-500 text-white rounded-lg font-bold text-sm hover:bg-pink-600 transition">
-                Retour à l'accueil
-            </a>
+                @else
+                    Vous devez être authentifié pour accéder à cette page.
+                @endif
+            </p>
         </div>
-        <div class="mt-8">
-            <img src="{{ asset('images/401_illustration.webp') }}" alt="Illustration 401" class="w-64 h-64 mx-auto">
-        </div>
+        <a href="{{ route('home') }}" class="inline-block px-8 py-3 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 transition-all duration-300 transform hover:scale-105">
+            Retour à l'accueil
+        </a>
     </div>
+</div>
 @endsection

@@ -57,14 +57,14 @@
     input:focus {
         outline: none;
         background: white;
-        border-color: #ec407a;
-        box-shadow: 0 0 0 3px rgba(236, 64, 122, 0.1);
+        border-color: #7c3aed;
+        box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.1);
     }
     
     .submit-btn {
         width: 100%;
         padding: 12px;
-        background: #ec407a;
+        background: #7c3aed;
         color: white;
         border: none;
         border-radius: 10px;
@@ -75,9 +75,9 @@
     }
     
     .submit-btn:hover:not(:disabled) {
-        background: #d81b60;
+        background: #6d28d9;
         transform: translateY(-1px);
-        box-shadow: 0 4px 12px rgba(236, 64, 122, 0.3);
+        box-shadow: 0 4px 12px rgba(124, 58, 237, 0.3);
     }
     
     .submit-btn:disabled {
@@ -147,7 +147,7 @@
     }
     
     .info-text a {
-        color: #ec407a;
+        color: #7c3aed;
         text-decoration: none;
     }
     
@@ -163,7 +163,7 @@
     .email-reset button {
         background: none;
         border: none;
-        color: #ec407a;
+        color: #7c3aed;
         cursor: pointer;
         font-size: 13px;
         text-decoration: underline;
@@ -171,7 +171,7 @@
     }
     
     .email-reset button:hover {
-        color: #d81b60;
+        color: #6d28d9;
     }
 </style>
 

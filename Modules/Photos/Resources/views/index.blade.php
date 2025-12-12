@@ -43,25 +43,25 @@
     }
     
     .btn-primary {
-        background: #ec407a;
+        background: #7c3aed;
         color: white;
     }
     
     .btn-primary:hover {
-        background: #d81b60;
+        background: #6d28d9;
         transform: translateY(-2px);
-        box-shadow: 0 4px 12px rgba(236, 64, 122, 0.3);
+        box-shadow: 0 4px 12px rgba(124, 58, 237, 0.3);
     }
     
     .btn-secondary {
         background: white;
-        color: #ec407a;
+        color: #7c3aed;
         border: 1px solid #f0f0f0;
     }
     
     .btn-secondary:hover {
         background: #fafafa;
-        border-color: #ec407a;
+        border-color: #7c3aed;
     }
     
     .features {

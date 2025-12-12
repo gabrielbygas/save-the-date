@@ -42,9 +42,15 @@ class AlbumController extends Controller
         return view('photos::albums.login');
     }
 
-    public function show($slug)
+    public function show($slug, Request $request)
     {
-        $album = Album::where('slug', $slug)->with('photos')->firstOrFail();
+        // Vérifie que le client est connecté (via session)
+        if (!$request->session()->has('client_id')) {
+            return redirect()->route('albums.login')->with('error', 'Veuillez vous authentifier.');
+        }
+
+        $clientId = $request->session()->get('client_id');
+        $album = Album::where('slug', $slug)->where('client_id', $clientId)->with('photos')->firstOrFail();
         $photos = $album->photos()->latest()->get();
         // renvoyer aussi le client Mr name ane Mrs name
         $client = $album->client;
