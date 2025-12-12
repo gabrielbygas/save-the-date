@@ -300,9 +300,12 @@ class AlbumController extends Controller
         // Supprime l'OTP utilisé
         $otpRecord->delete();
 
-        // Ici, tu peux stocker l'identifiant en session ou rediriger vers la liste des albums
-        // Exemple : Redirige vers une route protégée (ex: albums.list)
-        return redirect()->route('albums.list')->with('success', 'Connexion réussie !');
+        // Retourner JSON pour AJAX // modified by COPILOT
+        return response()->json([
+            'success' => true,
+            'message' => 'Connexion réussie !',
+            'redirect' => route('albums.list')
+        ]); // modified by COPILOT
     }
 
     /**
