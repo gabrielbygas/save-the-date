@@ -37,15 +37,21 @@
         <div style="background: white; border-radius: 16px; padding: 24px; text-align: center; margin-bottom: 24px; box-shadow: 0 2px 8px rgba(0,0,0,0.06);">
             <p style="color: #666; font-size: 14px; margin-bottom: 16px;">Partager avec vos invités</p>
             <img src="{{ asset('storage/' . $album->qr_code_path) }}" alt="QR Code" style="width: 160px; height: 160px; margin: 0 auto 24px;">
+            
+            <!-- Share Link Display -->
+            <div style="background: #f9fafb; padding: 12px; border-radius: 8px; margin-bottom: 16px; border: 1px solid #e5e7eb;">
+                <p style="font-size: 11px; color: #999; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.5px;">Lien de partage</p>
+                <p style="font-size: 13px; color: #1f2937; font-family: monospace; word-break: break-all; margin: 0;" id="share-link-text">{{ route('albums.share', $album->share_url_token) }}</p>
+            </div>
+            
             <div style="display: flex; flex-direction: column; gap: 12px;">
-                <button onclick="copyShareLink()" style="width: 100%; background: #7c3aed; color: white; border: none; padding: 12px; border-radius: 8px; font-weight: 500; cursor: pointer; transition: background 0.2s;">
+                <button onclick="copyShareLink()" style="width: 100%; background: #7c3aed; color: white; border: none; padding: 12px; border-radius: 8px; font-weight: 500; cursor: pointer; transition: background 0.2s; hover:background: #6d28d9;">
                     🔗 Copier le lien
                 </button>
                 <a href="{{ asset('storage/' . $album->qr_code_path) }}" download="qrcode-{{ $album->slug }}.png" style="display: block; background: #f3f4f6; color: #1f2937; border: none; padding: 12px; border-radius: 8px; font-weight: 500; text-decoration: none; text-align: center; transition: background 0.2s;">
                     📥 Télécharger QR Code
                 </a>
             </div>
-            <p style="font-size: 12px; color: #999; margin-top: 16px; background: #f9fafb; padding: 12px; border-radius: 8px; font-family: monospace; word-break: break-all;" id="share-link-text">{{ route('albums.share', $album->share_url_token) }}</p>
         </div>
     @endif
 

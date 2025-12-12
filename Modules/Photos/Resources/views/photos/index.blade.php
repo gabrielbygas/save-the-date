@@ -40,28 +40,20 @@
             Aucune photo dans cet album.
         </div>
     @else
-        <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 16px;">
+        <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 12px; grid-auto-rows: 180px;">
             @foreach ($photos as $photo)
-                <div style="position: relative; border-radius: 12px; overflow: hidden; background: #f3f4f6; aspect-ratio: 1; group;">
-                    <a href="{{ route('photos.show', [$album->slug, $photo->id, 'owner_token' => $album->owner_token]) }}">
-                        <img src="{{ route('photos.serve.photo', [$album->slug, $photo->file_name]) }}" alt="{{ $photo->caption ?? 'Photo' }}" style="width: 100%; height: 100%; object-fit: cover;">
-                    </a>
+                <div style="position: relative; border-radius: 12px; overflow: hidden; background: #f3f4f6; group; cursor: pointer; transition: transform 0.2s;" onmouseover="this.style.transform='scale(1.02)'" onmouseout="this.style.transform='scale(1)'">
+                    <img src="{{ route('photos.serve.photo', [$album->slug, $photo->file_name]) }}" alt="{{ $photo->caption ?? 'Photo' }}" style="width: 100%; height: 100%; object-fit: cover;">
                     
                     <!-- Overlay Actions -->
-                    <div style="position: absolute; inset: 0; background: rgba(0,0,0,0.4); display: flex; align-items: center; justify-content: center; gap: 12px; opacity: 0; transition: opacity 0.2s; cursor: pointer;" onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0'">
-                        <a href="{{ route('photos.show', [$album->slug, $photo->id, 'owner_token' => $album->owner_token]) }}" style="width: 40px; height: 40px; background: white; color: #7c3aed; border-radius: 50%; display: flex; align-items: center; justify-content: center; text-decoration: none; font-size: 18px; transition: all 0.2s;">
-                            🔍
+                    <div style="position: absolute; inset: 0; background: rgba(0,0,0,0.5); display: flex; align-items: center; justify-content: center; gap: 10px; opacity: 0; transition: opacity 0.2s;" onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0'">
+                        <a href="{{ route('photos.show', [$album->slug, $photo->id, 'owner_token' => $album->owner_token]) }}" style="width: 36px; height: 36px; background: white; color: #7c3aed; border-radius: 50%; display: flex; align-items: center; justify-content: center; text-decoration: none; font-size: 16px; transition: all 0.2s;">
+                            👁️
                         </a>
-                        <a href="{{ route('photos.serve.photo', [$album->slug, $photo->file_name]) }}" download="{{ $photo->file_name }}" style="width: 40px; height: 40px; background: white; color: #7c3aed; border-radius: 50%; display: flex; align-items: center; justify-content: center; text-decoration: none; font-size: 18px; transition: all 0.2s;">
-                            📥
+                        <a href="{{ route('photos.serve.photo', [$album->slug, $photo->file_name]) }}" download="{{ $photo->file_name }}" style="width: 36px; height: 36px; background: white; color: #7c3aed; border-radius: 50%; display: flex; align-items: center; justify-content: center; text-decoration: none; font-size: 16px; transition: all 0.2s;">
+                            ⬇️
                         </a>
                     </div>
-
-                    @if ($photo->caption)
-                        <div style="position: absolute; bottom: 0; left: 0; right: 0; background: rgba(0,0,0,0.7); color: white; padding: 8px; font-size: 12px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
-                            {{ $photo->caption }}
-                        </div>
-                    @endif
                 </div>
             @endforeach
         </div>
