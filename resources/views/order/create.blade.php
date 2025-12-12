@@ -1,155 +1,151 @@
 @extends('layouts.app')
 
+@section('title', 'Créer une commande')
+
 @section('content')
-    <div class="max-w-2xl mx-auto p-6 bg-white shadow rounded-xl mt-8">
-        <h1 class="text-2xl font-bold mb-8 mt-5 text-center">Passer une commande Save The Date</h1>
-
-        @if (session('success'))
-            <div class="bg-green-100 text-green-700 p-3 mb-4 rounded">{{ session('success') }}</div>
-        @endif
-
-        @if ($errors->any())
-            <div class="bg-red-100 text-red-800 p-4 mb-4 rounded">
-                <ul class="list-disc pl-5 space-y-1">
-                    @foreach ($errors->all() as $error)
-                        <li>{{ $error }}</li>
-                    @endforeach
-                    @error('photos.0')
-                        <div class="text-red-500 text-sm mt-1">{{ $message }}</div>
-                    @enderror
-                </ul>
-            </div>
-        @endif
-
-
-        <form action="{{ route('order.store') }}" method="POST" enctype="multipart/form-data">
-            @csrf
-
-            {{-- Coordonnées de Monsieur --}}
-            <div class="grid grid-cols-2 gap-4">
-                <div>
-                    <label class="block">Prénom Monsieur *</label>
-                    <input type="text" name="mr_first_name" class="w-full border p-2 rounded"
-                        value="{{ old('mr_first_name') }}" placeholder="John" required>
+<div class="row justify-content-center">
+    <div class="col-lg-8">
+        <div class="card shadow-lg p-5">
+            <h2 class="fw-bold mb-5 text-center">Créez votre commande 💍</h2>
+            
+            <form action="{{ route('order.store') }}" method="POST" enctype="multipart/form-data" novalidate>
+                @csrf
+                
+                <!-- Couple Information -->
+                <div class="mb-5">
+                    <h5 class="fw-bold mb-4">👰 Informations du couple</h5>
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label class="form-label">Prénom (Monsieur) *</label>
+                            <input type="text" class="form-control @error('mr_first_name') is-invalid @enderror" 
+                                   name="mr_first_name" value="{{ old('mr_first_name') }}" required>
+                            @error('mr_first_name')<span class="invalid-feedback">{{ $message }}</span>@enderror
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Nom (Monsieur) *</label>
+                            <input type="text" class="form-control @error('mr_last_name') is-invalid @enderror" 
+                                   name="mr_last_name" value="{{ old('mr_last_name') }}" required>
+                            @error('mr_last_name')<span class="invalid-feedback">{{ $message }}</span>@enderror
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Prénom (Madame) *</label>
+                            <input type="text" class="form-control @error('mrs_first_name') is-invalid @enderror" 
+                                   name="mrs_first_name" value="{{ old('mrs_first_name') }}" required>
+                            @error('mrs_first_name')<span class="invalid-feedback">{{ $message }}</span>@enderror
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Nom (Madame) *</label>
+                            <input type="text" class="form-control @error('mrs_last_name') is-invalid @enderror" 
+                                   name="mrs_last_name" value="{{ old('mrs_last_name') }}" required>
+                            @error('mrs_last_name')<span class="invalid-feedback">{{ $message }}</span>@enderror
+                        </div>
+                    </div>
                 </div>
-                <div>
-                    <label class="block">Nom Monsieur *</label>
-                    <input type="text" name="mr_last_name" class="w-full border p-2 rounded"
-                        value="{{ old('mr_last_name') }}" placeholder="Doe" required>
+                
+                <!-- Contact Information -->
+                <div class="mb-5">
+                    <h5 class="fw-bold mb-4">📧 Contact</h5>
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label class="form-label">Email *</label>
+                            <input type="email" class="form-control @error('email') is-invalid @enderror" 
+                                   name="email" value="{{ old('email') }}" required>
+                            @error('email')<span class="invalid-feedback">{{ $message }}</span>@enderror
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Téléphone</label>
+                            <input type="tel" class="form-control" name="phone" value="{{ old('phone') }}">
+                        </div>
+                    </div>
                 </div>
-            </div>
-
-            {{-- Coordonnées de Madame --}}
-            <div class="grid grid-cols-2 gap-4 mt-4">
-                <div>
-                    <label class="block">Prénom Madame *</label>
-                    <input type="text" name="mrs_first_name" class="w-full border p-2 rounded"
-                        value="{{ old('mrs_first_name') }}" placeholder="Jane" required>
+                
+                <!-- Wedding Details -->
+                <div class="mb-5">
+                    <h5 class="fw-bold mb-4">💒 Détails du mariage</h5>
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label class="form-label">Date du mariage *</label>
+                            <input type="date" class="form-control @error('wedding_date') is-invalid @enderror" 
+                                   name="wedding_date" value="{{ old('wedding_date') }}" required>
+                            @error('wedding_date')<span class="invalid-feedback">{{ $message }}</span>@enderror
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Lieu *</label>
+                            <input type="text" class="form-control @error('wedding_location') is-invalid @enderror" 
+                                   name="wedding_location" value="{{ old('wedding_location') }}" required>
+                            @error('wedding_location')<span class="invalid-feedback">{{ $message }}</span>@enderror
+                        </div>
+                    </div>
                 </div>
-                <div>
-                    <label class="block">Nom Madame *</label>
-                    <input type="text" name="mrs_last_name" class="w-full border p-2 rounded"
-                        value="{{ old('mrs_last_name') }}" placeholder="Kayla" required>
+                
+                <!-- Package Selection -->
+                <div class="mb-5">
+                    <h5 class="fw-bold mb-4">📦 Pack</h5>
+                    <div class="row g-3">
+                        @foreach($packs as $pack)
+                            <div class="col-md-4">
+                                <div class="form-check">
+                                    <input type="radio" class="form-check-input" name="pack_id" 
+                                           value="{{ $pack->id }}" id="pack{{ $pack->id }}" 
+                                           @if(old('pack_id') == $pack->id) checked @endif required>
+                                    <label class="form-check-label d-block p-3 border rounded" for="pack{{ $pack->id }}">
+                                        <strong>{{ $pack->name }}</strong>
+                                        <p class="small text-muted mb-0">{{ $pack->description }}</p>
+                                    </label>
+                                </div>
+                            </div>
+                        @endforeach
+                    </div>
                 </div>
-            </div>
-
-            <label class="block mt-4">Email *</label>
-            <input type="email" name="email" class="w-full border p-2 rounded" value="{{ old('email') }}"
-                placeholder="exemple@domaine.com" required>
-
-            <label class="block mt-4">Numéro Whatsapp *</label>
-            <input type="text" name="phone" class="w-full border p-2 rounded" value="{{ old('phone') }}"
-                placeholder="+243 081 123 789" required>
-
-            <label class="block mt-4">Date du mariage *</label>
-            <input type="date" name="wedding_date" class="w-full border p-2 rounded" value="{{ old('wedding_date') }}"
-                required>
-
-            <label class="block mt-4">Lieu du mariage *</label>
-            <input type="text" name="wedding_location" class="w-full border p-2 rounded"
-                value="{{ old('wedding_location') }}" placeholder="Kinshasa, Le Jardin" required>
-
-            {{-- Sélections --}}
-            <label class="block mt-4">Pack *</label>
-            <select name="pack_id" class="w-full border p-2 rounded" required>
-                @foreach ($packs as $pack)
-                    <option value="{{ $pack->id }}" {{ old('pack_id') == $pack->id ? 'selected' : '' }}>
-                        {{ $pack->name }} - {{ intval($pack->price) }}$</option>
-                @endforeach
-            </select>
-
-            <label class="block mt-4">Thème *</label>
-            <select name="theme_id" class="w-full border p-2 rounded">
-                <option value="">-- Aucun --</option>
-                @foreach ($themes as $theme)
-                    <option value="{{ $theme->id }}" {{ old('theme_id') == $theme->id ? 'selected' : '' }}>
-                        {{ $theme->name }}</option>
-                @endforeach
-            </select>
-
-            {{-- Upload --}}
-            <label class="block mt-4">Medias (JPG/PNG max 2Mo, MP4/MOV max 20Mo, max 5 fichiers)</label>
-            <input type="file" name="photos[]" multiple class="w-full border p-2 rounded"
-                accept="image/jpeg,image/png,video/mp4,video/mov,video/ogg">
-            <p class="text-sm text-gray-500 mt-1">Vous pouvez télécharger jusqu'à 5 fichiers au total, avec un maximum de 20
-                Mo par fichier.</p>
-
-            {{-- Message --}}
-
-            <!-- Case à cocher pour acceptation des CGU -->
-            <div class="mb-4 mt-6">
-                <label class="flex items-center space-x-2">
-                    <span class="text-sm">
-                        <input type="checkbox" name="terms" class="form-checkbox" required>
-                        En soumettant ce formulaire, vous acceptez les <a href="{{ route('terms') }}" target="_blank"
-                            class="text-blue-600 underline">Conditions Générales d'Utilisation</a>
-                    </span>
-                </label>
-            </div>
-
-            <div class="flex justify-center mt-6">
-                <button type="submit" class="bg-pink-500 hover:bg-pink-600 text-white px-4 py-2 rounded">
-                    Envoyer la commande
-                </button>
-            </div>
-        </form>
+                
+                <!-- Theme Selection -->
+                <div class="mb-5">
+                    <h5 class="fw-bold mb-4">🎨 Thème</h5>
+                    <select class="form-select @error('theme_id') is-invalid @enderror" name="theme_id">
+                        <option value="">Sélectionnez un thème</option>
+                        @foreach($themes as $theme)
+                            <option value="{{ $theme->id }}" @if(old('theme_id') == $theme->id) selected @endif>
+                                {{ $theme->name }}
+                            </option>
+                        @endforeach
+                    </select>
+                    @error('theme_id')<span class="invalid-feedback d-block">{{ $message }}</span>@enderror
+                </div>
+                
+                <!-- File Upload -->
+                <div class="mb-5">
+                    <h5 class="fw-bold mb-4">📸 Fichiers (max 5)</h5>
+                    <input type="file" class="form-control @error('photos') is-invalid @enderror" 
+                           name="photos[]" multiple accept="image/*,video/*">
+                    <small class="text-muted d-block mt-2">Formats: JPG, PNG, MP4, MOV</small>
+                    @error('photos')<span class="invalid-feedback d-block">{{ $message }}</span>@enderror
+                </div>
+                
+                <!-- Terms -->
+                <div class="mb-4">
+                    <div class="form-check">
+                        <input type="checkbox" class="form-check-input @error('terms') is-invalid @enderror" 
+                               name="terms" id="terms" @if(old('terms')) checked @endif required>
+                        <label class="form-check-label" for="terms">
+                            J'accepte les <a href="{{ route('terms') }}" target="_blank">conditions d'utilisation</a>
+                        </label>
+                        @error('terms')<span class="invalid-feedback d-block">{{ $message }}</span>@enderror
+                    </div>
+                </div>
+                
+                <button type="submit" class="btn btn-primary btn-lg w-100">Valider ma commande</button>
+            </form>
+        </div>
     </div>
+</div>
 
-
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const fileInput = document.querySelector('input[name="photos[]"]');
-
-            fileInput.addEventListener('change', function() {
-                const files = Array.from(fileInput.files);
-                const maxFiles = 5;
-                const allowedTypes = ['image/jpeg', 'image/png', 'video/mp4', 'video/mov', 'video/ogg'];
-                const maxSize = 20 * 1024 * 1024; // 20MB
-
-                // Vérifie le nombre de fichiers
-                if (files.length > maxFiles) {
-                    alert(`Vous ne pouvez sélectionner que ${maxFiles} fichiers.`);
-                    fileInput.value = ''; // Annule la sélection
-                    return;
-                }
-
-                // Vérifie chaque fichier
-                for (let file of files) {
-                    if (!allowedTypes.includes(file.type)) {
-                        alert(`Fichier non autorisé : ${file.name}`);
-                        fileInput.value = '';
-                        return;
-                    }
-                    if (file.size > maxSize) {
-                        alert(`Fichier trop volumineux (${file.name}) : max 10 Mo.`);
-                        fileInput.value = '';
-                        return;
-                    }
-                }
-
-            });
-        });
-    </script>
-
-
+<script>
+    document.querySelector('form').addEventListener('submit', function(e) {
+        if (!this.checkValidity()) {
+            e.preventDefault();
+            e.stopPropagation();
+        }
+        this.classList.add('was-validated');
+    });
+</script>
 @endsection
