@@ -207,7 +207,7 @@
             <input type="hidden" id="otp-identifier" name="identifier">
             
             <div class="form-group">
-                <label for="otp">Code OTP (6 chiffres) *</label>
+                <label for="otp">Code OTP (8 chiffres) *</label>
                 <input type="text" id="otp" name="otp" maxlength="8" placeholder="00000000" required>
             </div>
             

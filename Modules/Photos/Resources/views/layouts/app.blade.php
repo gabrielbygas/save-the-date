@@ -11,7 +11,7 @@
         
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-            background: linear-gradient(135deg, #fff5f8 0%, #ffebf0 100%);
+            background: #f0ebff;
             display: flex;
             flex-direction: column;
             min-height: 100vh;
@@ -107,7 +107,7 @@
     <footer>
         <p><strong>📸 Albums Photo</strong> • Partagez vos souvenirs de mariage</p>
         <p style="font-size: 13px;">
-            <a href="{{ route('terms') }}">Conditions</a> • 
+            <a href="{{ route('photos.terms') }}">Conditions</a> • 
             <a href="mailto:contact@savethedate.com">Contact</a>
         </p>
         <p style="margin-top: 16px; border-top: 1px solid #f0f0f0; padding-top: 16px;">
