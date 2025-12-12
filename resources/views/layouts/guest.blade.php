@@ -4,58 +4,71 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>@yield('title', 'Save The Date')</title>
-    
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
-    
     <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
         body {
-            font-family: 'Poppins', sans-serif;
-            background: linear-gradient(135deg, #fce7f3 0%, #fef3c7 100%);
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #e8f0f7 100%);
             min-height: 100vh;
             display: flex;
+            flex-direction: column;
             align-items: center;
             justify-content: center;
+            padding: 20px;
         }
         
         .card {
-            border: 0;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
-            border-radius: 15px;
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 2px 20px rgba(0,0,0,0.08);
+            width: 100%;
+            max-width: 450px;
+            padding: 40px;
         }
         
-        .btn-primary {
-            background: #ec4899;
-            border: 0;
-            font-weight: 600;
+        .card h1 {
+            font-size: 28px;
+            font-weight: 700;
+            color: #1a1a1a;
+            text-align: center;
+            margin-bottom: 32px;
         }
         
-        .btn-primary:hover {
-            background: #be185d;
+        .card a {
+            display: inline-block;
+            margin-top: 8px;
+            color: #0a84ff;
+            text-decoration: none;
+            font-size: 14px;
         }
         
-        .fade-in {
-            animation: fadeIn 0.6s ease-in;
+        .card a:hover {
+            text-decoration: underline;
         }
         
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
+        footer {
+            position: absolute;
+            bottom: 20px;
+            font-size: 13px;
+            color: #999;
+            text-align: center;
+        }
+        
+        footer a {
+            color: #0a84ff;
+            text-decoration: none;
         }
     </style>
 </head>
-<body class="fade-in">
-    <div class="container">
-        <div class="row justify-content-center">
-            <div class="col-lg-5">
-                <div class="card p-5">
-                    <h2 class="text-center fw-bold mb-5">Save The Date 💍</h2>
-                    @yield('content')
-                </div>
-            </div>
-        </div>
+<body>
+    <div class="card">
+        <h1>💍 Save The Date</h1>
+        @yield('content')
     </div>
     
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <footer>
+        <a href="{{ route('home') }}">← Accueil</a>
+    </footer>
 </body>
 </html>

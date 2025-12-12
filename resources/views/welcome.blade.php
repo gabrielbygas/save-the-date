@@ -5,148 +5,336 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Save The Date - Affiches & Albums Photo de Mariage</title>
     <meta name="description" content="Créez vos affiches, vidéos et albums photo de mariage personnalisés">
-    
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
-    
     <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
         body {
-            font-family: 'Poppins', sans-serif;
-            background: linear-gradient(135deg, #fce7f3 0%, #fef3c7 100%);
-            overflow-x: hidden;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #e8f0f7 100%);
+            min-height: 100vh;
         }
         
-        .hero-section {
-            min-height: 80vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background: rgba(255,255,255,0.95);
-            border-radius: 20px;
-            margin: 40px 0;
-            animation: fadeIn 0.8s ease-in;
-        }
-        
-        .feature-card {
-            border: 0;
-            padding: 30px;
-            text-align: center;
-            transition: all 0.3s;
-            background: #f8f9fa;
-        }
-        
-        .feature-card:hover {
-            transform: translateY(-10px);
-            box-shadow: 0 10px 30px rgba(236, 72, 153, 0.2);
+        nav {
             background: white;
+            box-shadow: 0 1px 12px rgba(0,0,0,0.08);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        
+        nav .nav-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 16px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        nav .logo {
+            font-size: 20px;
+            font-weight: 700;
+            color: #1a1a1a;
+            text-decoration: none;
+        }
+        
+        nav a {
+            color: #0a84ff;
+            text-decoration: none;
+            font-size: 15px;
+            font-weight: 500;
+            transition: opacity 0.2s ease;
+        }
+        
+        nav a:hover {
+            opacity: 0.7;
+        }
+        
+        .hero {
+            max-width: 900px;
+            margin: 60px auto 40px;
+            padding: 0 20px;
+            text-align: center;
+        }
+        
+        .hero h1 {
+            font-size: 48px;
+            font-weight: 700;
+            color: #1a1a1a;
+            margin-bottom: 16px;
+            line-height: 1.2;
+        }
+        
+        .hero p {
+            font-size: 18px;
+            color: #666;
+            margin-bottom: 32px;
+            line-height: 1.5;
+        }
+        
+        .hero-buttons {
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        
+        .btn {
+            padding: 12px 24px;
+            border-radius: 10px;
+            font-size: 15px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.2s ease;
+            border: none;
+            cursor: pointer;
         }
         
         .btn-primary {
-            background: #ec4899;
-            border: 0;
-            padding: 12px 30px;
-            font-weight: 600;
+            background: #0a84ff;
+            color: white;
         }
         
         .btn-primary:hover {
-            background: #be185d;
+            background: #0070d2;
             transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(236, 72, 153, 0.3);
+            box-shadow: 0 4px 12px rgba(10, 132, 255, 0.3);
         }
         
-        .section-album {
+        .btn-secondary {
             background: white;
-            padding: 60px 0;
-            margin: 40px 0;
-            border-radius: 20px;
+            color: #0a84ff;
+            border: 1px solid #e0e0e0;
         }
         
-        .icon-check {
-            color: #10b981;
-            margin-right: 10px;
+        .btn-secondary:hover {
+            background: #fafafa;
+            border-color: #0a84ff;
         }
         
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
+        .features {
+            max-width: 1200px;
+            margin: 80px auto;
+            padding: 0 20px;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 24px;
         }
         
-        @keyframes slideUp {
-            from { transform: translateY(30px); opacity: 0; }
-            to { transform: translateY(0); opacity: 1; }
+        .feature-card {
+            background: white;
+            padding: 32px;
+            border-radius: 16px;
+            box-shadow: 0 2px 20px rgba(0,0,0,0.08);
+            transition: all 0.3s ease;
         }
         
-        .slide-up { animation: slideUp 0.6s ease-out; }
+        .feature-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 32px rgba(0,0,0,0.12);
+        }
+        
+        .feature-icon {
+            font-size: 32px;
+            margin-bottom: 12px;
+        }
+        
+        .feature-card h3 {
+            font-size: 18px;
+            font-weight: 600;
+            color: #1a1a1a;
+            margin-bottom: 8px;
+        }
+        
+        .feature-card p {
+            color: #666;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+        
+        .section {
+            max-width: 1200px;
+            margin: 100px auto;
+            padding: 0 20px;
+        }
+        
+        .section-title {
+            font-size: 36px;
+            font-weight: 700;
+            color: #1a1a1a;
+            margin-bottom: 48px;
+            text-align: center;
+        }
+        
+        .two-col {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 60px;
+            align-items: center;
+        }
+        
+        .section h2 {
+            font-size: 32px;
+            font-weight: 700;
+            color: #1a1a1a;
+            margin-bottom: 24px;
+            line-height: 1.3;
+        }
+        
+        .section p {
+            font-size: 16px;
+            color: #666;
+            line-height: 1.6;
+            margin-bottom: 20px;
+        }
+        
+        .benefits {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            margin: 32px 0;
+        }
+        
+        .benefit {
+            display: flex;
+            gap: 12px;
+            align-items: flex-start;
+        }
+        
+        .benefit-check {
+            color: #34c759;
+            font-size: 20px;
+            flex-shrink: 0;
+        }
+        
+        .benefit-text {
+            color: #666;
+            font-size: 15px;
+        }
+        
+        .mockup {
+            background: #f5f7fa;
+            border-radius: 16px;
+            min-height: 400px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #999;
+        }
+        
+        footer {
+            background: white;
+            border-top: 1px solid #f0f0f0;
+            padding: 40px 20px;
+            text-align: center;
+            margin-top: 100px;
+            color: #666;
+            font-size: 14px;
+        }
+        
+        footer a {
+            color: #0a84ff;
+            text-decoration: none;
+        }
+        
+        footer a:hover {
+            text-decoration: underline;
+        }
+        
+        @media (max-width: 768px) {
+            .hero h1 { font-size: 32px; }
+            .hero p { font-size: 16px; }
+            .hero-buttons { flex-direction: column; }
+            .two-col { grid-template-columns: 1fr; gap: 40px; }
+            .section-title { font-size: 28px; }
+            .section h2 { font-size: 24px; }
+        }
     </style>
 </head>
 <body>
     <!-- Navigation -->
-    @include('partials.header')
+    <nav>
+        <div class="nav-content">
+            <a href="{{ route('home') }}" class="logo">💍 Save The Date</a>
+            <a href="{{ route('order.create') }}">Créer une commande</a>
+        </div>
+    </nav>
     
-    <main>
-        <!-- Hero Section -->
-        <section class="hero-section">
-            <div class="container">
-                <div class="text-center slide-up">
-                    <h1 class="display-4 fw-bold mb-4">Créez vos affiches & vidéos de mariage 💍</h1>
-                    <p class="lead mb-5 text-muted">Designs uniques avec livraison en <strong>72h max</strong></p>
-                    
-                    <div class="row g-4 mb-5">
-                        <div class="col-md-4">
-                            <div class="feature-card">
-                                <h5 class="fw-bold mb-3">1️⃣ Formulaire</h5>
-                                <p class="small text-muted">Choisissez pack & thème</p>
-                            </div>
-                        </div>
-                        <div class="col-md-4">
-                            <div class="feature-card">
-                                <h5 class="fw-bold mb-3">2️⃣ Paiement</h5>
-                                <p class="small text-muted">Sécurisé & simple</p>
-                            </div>
-                        </div>
-                        <div class="col-md-4">
-                            <div class="feature-card">
-                                <h5 class="fw-bold mb-3">3️⃣ Livraison</h5>
-                                <p class="small text-muted">Par mail & WhatsApp</p>
-                            </div>
-                        </div>
+    <!-- Hero -->
+    <div class="hero">
+        <h1>Créez vos affiches & vidéos de mariage</h1>
+        <p>Designs uniques avec livraison en 72h max</p>
+        <div class="hero-buttons">
+            <a href="{{ route('order.create') }}" class="btn btn-primary">Commander</a>
+            <a href="#albums" class="btn btn-secondary">En savoir plus</a>
+        </div>
+    </div>
+    
+    <!-- Features -->
+    <div class="features">
+        <div class="feature-card">
+            <div class="feature-icon">✏️</div>
+            <h3>Remplissez le formulaire</h3>
+            <p>Choisissez un pack, un thème et envoyez vos informations</p>
+        </div>
+        <div class="feature-card">
+            <div class="feature-icon">💳</div>
+            <h3>Paiement sécurisé</h3>
+            <p>Processus rapide et simple par WhatsApp</p>
+        </div>
+        <div class="feature-card">
+            <div class="feature-icon">🚀</div>
+            <h3>Livraison rapide</h3>
+            <p>Vos fichiers vous seront livrés dans les délais impartis</p>
+        </div>
+    </div>
+    
+    <!-- Albums Section -->
+    <div class="section" id="albums">
+        <h2 class="section-title">Collectez vos souvenirs</h2>
+        <div class="two-col">
+            <div>
+                <h2>Album photo avec QR code</h2>
+                <p>Créez un album privé pour vos invités. Partagez via QR code et collectez tous vos souvenirs en un seul endroit.</p>
+                
+                <div class="benefits">
+                    <div class="benefit">
+                        <div class="benefit-check">✓</div>
+                        <div class="benefit-text">QR code privé et sécurisé</div>
                     </div>
-                    
-                    <a href="{{ route('order.create') }}" class="btn btn-primary btn-lg">Commencer</a>
-                </div>
-            </div>
-        </section>
-        
-        <!-- Album Section -->
-        <section class="section-album">
-            <div class="container">
-                <div class="row align-items-center g-5">
-                    <div class="col-lg-6 slide-up" style="animation-delay: 0.2s;">
-                        <h2 class="display-6 fw-bold mb-4">Collectez vos souvenirs 📸</h2>
-                        <p class="lead mb-4">Album photo avec QR code privé pour vos invités</p>
-                        
-                        <ul class="list-unstyled">
-                            <li class="mb-3"><span class="icon-check">✓</span> QR code privé & sécurisé</li>
-                            <li class="mb-3"><span class="icon-check">✓</span> Aucune inscription requise</span></li>
-                            <li class="mb-3"><span class="icon-check">✓</span> Photos en haute qualité</li>
-                            <li class="mb-3"><span class="icon-check">✓</span> Jusqu'à 300 invités</li>
-                        </ul>
-                        
-                        <a href="{{ route('photos.home') }}" class="btn btn-primary mt-4">Créer album</a>
+                    <div class="benefit">
+                        <div class="benefit-check">✓</div>
+                        <div class="benefit-text">Aucune inscription requise pour vos invités</div>
                     </div>
-                    <div class="col-lg-6 slide-up" style="animation-delay: 0.4s;">
-                        <div class="bg-light p-5 rounded-lg text-center" style="min-height: 300px; display: flex; align-items: center; justify-content: center;">
-                            <p class="text-muted">📱 Exemple QR Code</p>
-                        </div>
+                    <div class="benefit">
+                        <div class="benefit-check">✓</div>
+                        <div class="benefit-text">Photos en haute qualité</div>
+                    </div>
+                    <div class="benefit">
+                        <div class="benefit-check">✓</div>
+                        <div class="benefit-text">Jusqu'à 300 invités</div>
                     </div>
                 </div>
+                
+                <a href="{{ route('photos.home') }}" class="btn btn-primary" style="display: inline-block; margin-top: 24px;">Créer mon album</a>
             </div>
-        </section>
-    </main>
+            
+            <div class="mockup">
+                <span>📱 Exemple QR Code</span>
+            </div>
+        </div>
+    </div>
     
     <!-- Footer -->
-    @include('partials.footer')
-    
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <footer>
+        <p><strong>💍 Save The Date</strong> • Créez vos souvenirs de mariage</p>
+        <p style="margin-top: 12px; font-size: 13px;">
+            <a href="{{ route('terms') }}">Conditions</a> • 
+            <a href="mailto:contact@savethedate.com">Contact</a>
+        </p>
+        <p style="margin-top: 16px; border-top: 1px solid #f0f0f0; padding-top: 16px;">
+            &copy; {{ date('Y') }} Save The Date. Tous droits réservés.
+        </p>
+    </footer>
 </body>
 </html>

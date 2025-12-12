@@ -4,73 +4,108 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>@yield('title', 'Save The Date')</title>
-    <meta name="description" content="Save The Date - Créez vos affiches & albums photo de mariage">
-    
-    <!-- Bootstrap 5 -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    
-    <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
-    
     <style>
-        :root {
-            --primary: #ec4899;
-            --primary-dark: #be185d;
-            --secondary: #64748b;
-            --light: #f8f9fa;
-            --border: #e2e8f0;
-        }
-        
-        * { font-family: 'Poppins', sans-serif; }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
         
         body {
-            background: linear-gradient(135deg, #fce7f3 0%, #fef3c7 100%);
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #e8f0f7 100%);
             min-height: 100vh;
         }
         
-        .btn-primary { background: var(--primary); border: 0; }
-        .btn-primary:hover { background: var(--primary-dark); transform: translateY(-2px); }
-        
-        .card {
-            border: 0;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-            transition: all 0.3s ease;
+        nav {
+            background: white;
+            box-shadow: 0 1px 12px rgba(0,0,0,0.08);
+            position: sticky;
+            top: 0;
+            z-index: 100;
         }
         
-        .card:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+        nav .nav-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 16px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
         }
         
-        .fade-in { animation: fadeIn 0.6s ease-in; }
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        nav .logo {
+            font-size: 20px;
+            font-weight: 700;
+            color: #1a1a1a;
+            text-decoration: none;
+        }
         
-        .slide-in { animation: slideIn 0.5s ease-out; }
-        @keyframes slideIn { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+        nav a {
+            color: #0a84ff;
+            text-decoration: none;
+            font-size: 15px;
+            font-weight: 500;
+            transition: opacity 0.2s ease;
+            margin-left: 24px;
+        }
+        
+        nav a:hover {
+            opacity: 0.7;
+        }
+        
+        main {
+            padding: 40px 20px;
+            flex: 1;
+        }
+        
+        main .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        footer {
+            background: white;
+            border-top: 1px solid #f0f0f0;
+            padding: 40px 20px;
+            text-align: center;
+            margin-top: 60px;
+            color: #666;
+            font-size: 14px;
+        }
+        
+        footer a {
+            color: #0a84ff;
+            text-decoration: none;
+        }
+        
+        footer a:hover {
+            text-decoration: underline;
+        }
     </style>
-    
-    @yield('styles')
 </head>
-<body class="fade-in">
-    <!-- Navigation -->
-    @include('partials.header')
+<body>
+    <nav>
+        <div class="nav-content">
+            <a href="{{ route('home') }}" class="logo">💍 Save The Date</a>
+            <div>
+                <a href="{{ route('order.create') }}">Commander</a>
+                <a href="{{ route('photos.home') }}">Albums</a>
+            </div>
+        </div>
+    </nav>
     
-    <!-- Main Content -->
-    <main class="py-5">
+    <main>
         <div class="container">
             @yield('content')
         </div>
     </main>
     
-    <!-- Footer -->
-    @include('partials.footer')
-    
-    <!-- Bootstrap JS -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    
-    <!-- Flash Messages -->
-    @include('partials.flash-messages')
-    
-    @yield('scripts')
+    <footer>
+        <p><strong>💍 Save The Date</strong> • Créez vos souvenirs de mariage</p>
+        <p style="margin-top: 12px; font-size: 13px;">
+            <a href="{{ route('terms') }}">Conditions</a> • 
+            <a href="mailto:contact@savethedate.com">Contact</a>
+        </p>
+        <p style="margin-top: 16px; border-top: 1px solid #f0f0f0; padding-top: 16px;">
+            &copy; {{ date('Y') }} Save The Date. Tous droits réservés.
+        </p>
+    </footer>
 </body>
 </html>
