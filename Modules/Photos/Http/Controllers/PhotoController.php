@@ -22,7 +22,7 @@ class PhotoController extends Controller
      */
     public function create($slug)
     {
-        $album = Album::where('slug', $slug)->firstOrFail();
+        $album = Album::where('slug', $slug)->with('client')->firstOrFail(); // modified by COPILOT - eager load client
         return view('photos::photos.create', compact('album'));
     }
 
@@ -31,7 +31,7 @@ class PhotoController extends Controller
      */
     public function index(Request $request, $slug)
     {
-        $album = Album::where('slug', $slug)->firstOrFail();
+        $album = Album::where('slug', $slug)->with('client')->firstOrFail(); // modified by COPILOT - eager load
         $client = $album->client;
 
         // checkActiveAlbumStorage
@@ -59,7 +59,7 @@ class PhotoController extends Controller
      */
     public function show($slug, $id)
     {
-        $album = Album::where('slug', $slug)->firstOrFail();
+        $album = Album::where('slug', $slug)->with('client')->firstOrFail(); // modified by COPILOT - eager load
         $photo = $album->photos()->findOrFail($id);
 
         // checkActiveAlbumStorage
@@ -157,20 +157,23 @@ class PhotoController extends Controller
      */
     public function servePhoto($slug, $filename)
     {
-        $album = Album::where('slug', $slug)->firstOrFail();
+        $album = Album::where('slug', $slug)->with('client')->firstOrFail(); // modified by COPILOT - eager load
         $photo = $album->photos()->where('file_name', $filename)->firstOrFail();
-        $path = $photo->original_path; // Utilise le chemin enregistré en base
+        $path = $photo->original_path;
 
         // checkActiveAlbumStorage
         $this->checkActiveAlbumStorage($album);
-
 
         if (!Storage::disk('private')->exists($path)) {
             Log::error("Fichier introuvable : {$path}");
             abort(404, 'Photo introuvable.');
         }
 
-        return response()->file(Storage::disk('private')->path($path));
+        // modified by COPILOT - Add HTTP caching headers (browser cache for 30 days)
+        return response()->file(Storage::disk('private')->path($path))
+            ->header('Cache-Control', 'public, max-age=2592000, immutable') // 30 days
+            ->header('ETag', md5_file(Storage::disk('private')->path($path)))
+            ->header('Last-Modified', date('r', filemtime(Storage::disk('private')->path($path))));
     }
 
 

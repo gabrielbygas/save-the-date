@@ -29,7 +29,7 @@ class AlbumController extends Controller
 
     public function home()
     {
-        $albums = Album::all();
+        $albums = Album::with('client', 'photos')->get(); // modified by COPILOT - eager load
         return view('photos::index', compact('albums'));
     }
 
@@ -50,9 +50,8 @@ class AlbumController extends Controller
         }
 
         $clientId = $request->session()->get('client_id');
-        $album = Album::where('slug', $slug)->where('client_id', $clientId)->with('photos')->firstOrFail();
-        $photos = $album->photos()->latest()->get();
-        // renvoyer aussi le client Mr name ane Mrs name
+        $album = Album::where('slug', $slug)->where('client_id', $clientId)->with(['client', 'photos' => fn($q) => $q->latest()])->firstOrFail(); // modified by COPILOT - eager load both
+        $photos = $album->photos;
         $client = $album->client;
 
         // checkActiveAlbumStorage
@@ -63,12 +62,12 @@ class AlbumController extends Controller
 
     public function share($token)
     {
-        $album = Album::where('share_url_token', $token)->with('photos')->firstOrFail();
+        $album = Album::where('share_url_token', $token)->with(['client', 'photos' => fn($q) => $q->latest()])->firstOrFail(); // modified by COPILOT - eager load both
 
         // checkActiveAlbumStorage
         $this->checkActiveAlbumStorage($album);
 
-        $photos = $album->photos()->latest()->get();
+        $photos = $album->photos;
         $client = $album->client;
         return view('photos::albums.share', compact('album', 'photos', 'client'));
     }

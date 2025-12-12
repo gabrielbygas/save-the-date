@@ -17,28 +17,29 @@ class CheckAlbumOwnerToken
      */
     public function handle(Request $request, Closure $next): Response
     {
-        $slug = $request->route('slug'); // récupère le paramètre de route
+        $slug = $request->route('slug');
         if (!$slug) {
             Log::error("CheckAlbumOwnerToken - Slug manquant dans la route.");
             abort(403, 'Slug manquant dans la route.');
         }
 
-        $album = Album::where('slug', $slug)->first();
-        if (!$album) {
-            Log::error("CheckAlbumOwnerToken - Album introuvable.");
-            abort(404, 'Album introuvable.');
+        $album = Album::where('slug', $slug)->firstOrFail();
+
+        // Check if authenticated via session (owner)
+        if ($request->session()->has('client_id')) {
+            $clientId = $request->session()->get('client_id');
+            if ($album->client_id === $clientId) {
+                return $next($request); // modified by COPILOT
+            }
         }
 
-        // modify by claude
-        // Récupérer le owner_token depuis la requête (query ou body)
+        // Check if authenticated via owner_token
         $ownerToken = $request->query('owner_token') ?? $request->input('owner_token');
-
-        // Claude: Security - Use timing-safe comparison to prevent timing attacks
-        if (!$ownerToken || !hash_equals($album->owner_token, $ownerToken)) {
-            Log::error("CheckAlbumOwnerToken - Accès non autorisé. Token invalide.");
-            abort(403, 'Accès non autorisé. Token invalide.');
+        if ($ownerToken && hash_equals($album->owner_token, $ownerToken)) {
+            return $next($request); // modified by COPILOT
         }
 
-        return $next($request);
+        Log::error("CheckAlbumOwnerToken - Accès non autorisé", ['slug' => $slug, 'client_id' => $request->session()->get('client_id')]);
+        abort(403, 'Accès non autorisé.');
     }
 }
