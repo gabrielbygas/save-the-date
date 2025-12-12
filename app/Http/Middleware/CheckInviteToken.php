@@ -21,17 +21,24 @@ class CheckInviteToken
             abort(403, 'Paramètres manquants.');
         }
 
+        // modify by claude
         try {
             $album = Album::where('slug', $slug)->firstOrFail();
-            
-            $uploadToken = UploadToken::where('token', $token)
-                ->where('album_id', $album->id)
-                ->first();
+
+            // Claude: Security - Get all tokens for this album and use timing-safe comparison
+            $uploadTokens = UploadToken::where('album_id', $album->id)->get();
+            $uploadToken = null;
+
+            foreach ($uploadTokens as $dbToken) {
+                if (hash_equals($dbToken->token, $token)) {
+                    $uploadToken = $dbToken;
+                    break;
+                }
+            }
 
             if (!$uploadToken) {
                 Log::error("CheckInviteToken - Token introuvable", [
                     'slug' => $slug,
-                    'token' => $token,
                     'album_id' => $album->id,
                 ]);
                 abort(403, 'Lien d\'upload introuvable: Token introuvable.');
