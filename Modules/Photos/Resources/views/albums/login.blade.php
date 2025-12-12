@@ -208,7 +208,7 @@
             
             <div class="form-group">
                 <label for="otp">Code OTP (6 chiffres) *</label>
-                <input type="text" id="otp" name="otp" maxlength="6" placeholder="000000" required>
+                <input type="text" id="otp" name="otp" maxlength="8" placeholder="00000000" required>
             </div>
             
             <div class="error-message" id="otp-error"></div>
@@ -298,8 +298,8 @@
         const otp = document.getElementById('otp').value;
         const btn = document.getElementById('otp-submit');
         
-        if (otp.length !== 6 || isNaN(otp)) {
-            otpError.textContent = 'Le code OTP doit contenir 6 chiffres.';
+        if (otp.length !== 8 || isNaN(otp)) {
+            otpError.textContent = 'Le code OTP doit contenir 8 chiffres.';
             otpError.classList.add('show');
             return;
         }
