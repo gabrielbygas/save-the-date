@@ -7,9 +7,13 @@
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         
+        html, body { height: 100%; }
+        
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
             background: linear-gradient(135deg, #f5f7fa 0%, #e8f0f7 100%);
+            display: flex;
+            flex-direction: column;
             min-height: 100vh;
         }
         
@@ -65,9 +69,12 @@
             border-top: 1px solid #f0f0f0;
             padding: 40px 20px;
             text-align: center;
-            margin-top: 60px;
             color: #666;
             font-size: 14px;
+        }
+        
+        footer p {
+            margin-bottom: 12px;
         }
         
         footer a {
@@ -99,7 +106,7 @@
     
     <footer>
         <p><strong>💍 Save The Date</strong> • Créez vos souvenirs de mariage</p>
-        <p style="margin-top: 12px; font-size: 13px;">
+        <p style="font-size: 13px;">
             <a href="{{ route('terms') }}">Conditions</a> • 
             <a href="mailto:contact@savethedate.com">Contact</a>
         </p>
